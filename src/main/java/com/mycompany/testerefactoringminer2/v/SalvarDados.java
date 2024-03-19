@@ -10,9 +10,9 @@ public class SalvarDados {
     private int qntRefatoracoes;
 
     private  int qntComentarios;
-    private List<String> userEmail;
+    private String userEmail;
 
-    public SalvarDados(String hash, String data, int qntRefatoracoes, int qntComentarios, List<String> userEmail){
+    public SalvarDados(String hash, String data, int qntRefatoracoes, int qntComentarios, String userEmail){
 
         this.hash = hash;
         this.data = data;
@@ -54,11 +54,11 @@ public class SalvarDados {
         this.qntComentarios = qntComentarios;
     }
 
-    public List<String> getUserEmail() {
+    public String getUserEmail() {
         return userEmail;
     }
 
-    public void setUserEmail(List<String> userEmail) {
+    public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
 

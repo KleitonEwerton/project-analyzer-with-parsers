@@ -82,8 +82,8 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-            String nomeProjeto = "xxl-job";
-            String url = "https://github.com/xuxueli/xxl-job.git";
+            String nomeProjeto = "auto";
+            String url = "https://github.com/google/auto.git";
 
             dataInicio = new Date();
 
@@ -145,6 +145,19 @@ public class ExecRefactoringMiner240v {
         System.out.println("Iniciando...");
         System.out.println("Projeto " + projectUrl);
         List<SalvarDados> salvarDados = new ArrayList<>();
+
+        String command = "git log --all --pretty=format:\"%H|%ae|%ai\"" ;
+        CLIExecution execute = CLIExecute.execute(command, "tmp/" + projectName);
+        HashMap<String, String[]> dadosDosCommits = new HashMap<>();
+
+        for (String line : execute.getOutput()) {
+
+            String[] parts = line.split("\\|");
+
+            dadosDosCommits.put(parts[0], new String[]{parts[1], parts[2]});
+
+        }
+
         try {
 
             for (String hashCommit : commits) {
@@ -168,15 +181,15 @@ public class ExecRefactoringMiner240v {
 
                             refactoringMap.put(commitId, refactoringList);
 
-
                         }
 
 
                     });
 
                     List<CommentReporterComplete.CommentReportEntry> listCommentReportEntry = CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, hashCommit);
-
-                    SalvarDados sdados = new SalvarDados(hashCommit,CommentReporterComplete.lastData,refactoringList.size(), listCommentReportEntry.size(),CommentReporterComplete.userEmails);
+                    String [] partesData = dadosDosCommits.get(hashCommit)[1].split(" ");
+                    String data = partesData[0] + " " + partesData[1];
+                    SalvarDados sdados = new SalvarDados(hashCommit,data,refactoringList.size(), listCommentReportEntry.size(), dadosDosCommits.get(hashCommit)[0]);
                     salvarDados.add(sdados);
 
                 } catch (Exception e) {
@@ -212,7 +225,6 @@ public class ExecRefactoringMiner240v {
         CLIExecution execute = CLIExecute.execute(command, path);
 
         List<String> hashs = new ArrayList<>();
-
 
         if (!execute.getError().isEmpty()) {
             throw new RuntimeException("The path does not have a Git Repository or Name is Bigger");
@@ -376,15 +388,8 @@ public class ExecRefactoringMiner240v {
                 writer.append(dado.getHash()).append(",")
                         .append(dado.getData()).append(",")
                         .append(String.valueOf(dado.getQntRefatoracoes())).append(",")
-                        .append(String.valueOf(dado.getQntComentarios())).append(",");
+                        .append(String.valueOf(dado.getQntComentarios())).append(",").append(dado.getUserEmail()).append(";\n");;
 
-                // Tratar lista de emails
-                List<String> emails = dado.getUserEmail();
-                StringBuilder emailsConcatenados = new StringBuilder();
-                for (String email : emails) {
-                    emailsConcatenados.append(email).append(";");
-                }
-                writer.append(emailsConcatenados.toString()).append("\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
