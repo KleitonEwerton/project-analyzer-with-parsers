@@ -84,7 +84,7 @@ public class ExecRefactoringMiner240v {
 
             String nomeProjeto = "auto";
             String url = "https://github.com/google/auto.git";
-
+            String url =
             dataInicio = new Date();
 
             final Thread[] thread = new Thread[1];

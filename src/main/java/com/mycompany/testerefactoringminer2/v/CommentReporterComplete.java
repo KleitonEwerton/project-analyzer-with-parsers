@@ -45,6 +45,17 @@ public class CommentReporterComplete {
         private boolean isOrphan;
         private String data;
 
+        /**
+         * Cria uma entrada de relatório de comentário.
+         *
+         * @param hash O hash associado à entrada.
+         * @param type O tipo de entrada.
+         * @param text O texto associado à entrada.
+         * @param startNumber O número da linha de início.
+         * @param endNumber O número da linha de término.
+         * @param isOrphan Indica se a entrada é órfã.
+         * @param data Os dados associados à entrada.
+         */
         CommentReportEntry(String hash, String type, String text, int startNumber, int endNumber, boolean isOrphan, String data) {
             this.hash = hash;
             this.type = type;
@@ -55,11 +66,15 @@ public class CommentReporterComplete {
 
         }
 
+        //Teste comentario linha
         @Override
         public String toString() {
             return startLine + " to " + endLine + " | " + type + " | " + isOrphan + " | " + this.hash + " | " + this.data + " | ";
         }
     }
+    /*
+    Teste de comentario de bloco
+    * */
     public static void processJavaFile(Path filePath) {
 
         try{
@@ -70,7 +85,7 @@ public class CommentReporterComplete {
 
             List<CommentReportEntry> lsc = cu.getAllContainedComments()
                     .stream()
-                    .map(p -> new CommentReportEntry(hash, p.getClass().getSimpleName(),
+                    .map(p -> new CommentReportEntry(hash, p.getClass().getSimpleName() + p.getComment(),
                             p.getContent(),
                             p.getRange().map(r -> r.begin.line).orElse(-1),
                             p.getRange().map(r -> r.end.line).orElse(-1),
