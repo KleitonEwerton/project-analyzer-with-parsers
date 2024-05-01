@@ -1,40 +1,39 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
+
 package com.mycompany.testerefactoringminer2.v;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mycompany.testerefactoringminer2.v.CLI.CLIExecute;
 import com.mycompany.testerefactoringminer2.v.CLI.CLIExecution;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.List;
+
 import org.eclipse.jgit.lib.Repository;
+
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.*;
+import java.util.*;
 
 public class ExecRefactoringMiner240v {
 
     public static String dataPasta = "data/";
     public static String logFile = "data/log.json";
     public static long exeMaxTime = 3600000;
-    public static Date dataInicio;
 
     public static void oldMain(String[] args) throws Exception {
+
         String caminhoDoArquivo = dataPasta + "java-teste.xlsx";
 
         Map<String, String[]> projetos = lerPlanilha(caminhoDoArquivo);
@@ -44,17 +43,16 @@ public class ExecRefactoringMiner240v {
             String[] atributos = projeto.getValue();
 
             String url = atributos[0];
-            dataInicio = new Date();
 
             final Thread[] thread = new Thread[1];
-            final boolean[] isTimedOut = {false};
+            final boolean[] isTimedOut = { false };
 
             thread[0] = new Thread(() -> {
                 long startTime = System.currentTimeMillis();
                 try {
                     checar(nomeProjeto, url);
                 } catch (Exception e) {
-                    salvarLog(nomeProjeto, dataInicio, new Date(), 0, false, 0, "Mensagem: \n   " + e.getMessage() + "\n\nException: \n   " + e.toString() + "\n\nTEMPO MAXIMO ATINGIDO\n");
+                    e.printStackTrace();
                 }
                 long endTime = System.currentTimeMillis();
                 long executionTime = endTime - startTime;
@@ -73,7 +71,6 @@ public class ExecRefactoringMiner240v {
                     thread[0].interrupt(); // Interrompe a thread se exceder o tempo
                 }
             } catch (InterruptedException e) {
-                salvarLog(nomeProjeto, dataInicio, new Date(), 0, false, 0, "Mensagem: \n   " + e.getMessage() + "\n\nException: \n   " + e.toString() + "\n\nTEMPO MAXIMO ATINGIDO\n");
             }
 
         }
@@ -82,80 +79,79 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-            String nomeProjeto = "auto";
-            String url = "https://github.com/google/auto.git";
-            String url =
-            dataInicio = new Date();
+        String nomeProjeto = "java-paser-refactoring-and-comments";
+        // String url = "https://github.com/google/auto.git";
+        String url = "https://github.com/KleitonEwerton/java-paser-refactoring-and-comments.git";
 
-            final Thread[] thread = new Thread[1];
-            final boolean[] isTimedOut = {false};
+        final Thread[] thread = new Thread[1];
 
-            thread[0] = new Thread(() -> {
-                long startTime = System.currentTimeMillis();
-                try {
+        final boolean[] isTimedOut = { false };
 
-                    checar(nomeProjeto, url);
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    salvarLog(nomeProjeto, dataInicio, new Date(), 0, false, 0, "Mensagem: \n   " + e.getMessage() + "\n\nException: \n   " + e.toString() + "\n\nTEMPO MAXIMO ATINGIDO\n");
-                }
-                long endTime = System.currentTimeMillis();
-                long executionTime = endTime - startTime;
-                if (executionTime > exeMaxTime) { // timeout
-                    isTimedOut[0] = true;
-                }
-
-            });
-
-            thread[0].start();
-
+        thread[0] = new Thread(() -> {
+            long startTime = System.currentTimeMillis();
             try {
-                thread[0].join(exeMaxTime); // Aguarda a conclusão da tarefa ou o tempo de execução
-                if (isTimedOut[0]) {
 
-                    thread[0].interrupt(); // Interrompe a thread se exceder o tempo
-                }
-            } catch (InterruptedException e) {
-                salvarLog(nomeProjeto, dataInicio, new Date(), 0, false, 0, "Mensagem: \n   " + e.getMessage() + "\n\nException: \n   " + e.toString() + "\n\nTEMPO MAXIMO ATINGIDO\n");
+                checar(nomeProjeto, url);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+            long endTime = System.currentTimeMillis();
+
+            long executionTime = endTime - startTime;
+
+            if (executionTime > exeMaxTime) { // timeout
+
+                isTimedOut[0] = true;
+
             }
 
+        });
+
+        thread[0].start();
+
+        try {
+            thread[0].join(exeMaxTime); // Aguarda a conclusão da tarefa ou o tempo de execução
+            if (isTimedOut[0]) {
+
+                thread[0].interrupt(); // Interrompe a thread se exceder o tempo
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-
+    }
 
     public static void checar(String projectName, String projectUrl) throws Exception {
 
-        long tempoInicial = System.currentTimeMillis();
-
         GitService gitService = new GitServiceImpl();
+
         GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
 
-        Repository repo = gitService.cloneIfNotExists(
-                "tmp/" + projectName,
-                projectUrl);
-
+        Repository repo = gitService.cloneIfNotExists("tmp/" + projectName, projectUrl);
 
         Map<String, List<String>> refactoringMap = new HashMap<>();
+
         List<String> commits = printCommits("tmp/" + projectName);
 
-        List<ErroCommit> erros = new ArrayList<>();
-
         System.out.println("Iniciando...");
-        System.out.println("Projeto " + projectUrl);
-        List<SalvarDados> salvarDados = new ArrayList<>();
 
-        String command = "git log --all --pretty=format:\"%H|%ae|%ai\"" ;
+        System.out.println("Projeto: " + projectUrl);
+
+        String command = "git log --all --pretty=format:\"%H|%ae|%ai\"";
+
         CLIExecution execute = CLIExecute.execute(command, "tmp/" + projectName);
+
         HashMap<String, String[]> dadosDosCommits = new HashMap<>();
 
         for (String line : execute.getOutput()) {
 
             String[] parts = line.split("\\|");
 
-            dadosDosCommits.put(parts[0], new String[]{parts[1], parts[2]});
-
+            dadosDosCommits.put(parts[0], new String[] { parts[1], parts[2] });
+            System.out.println(parts[0] + " " + parts[1] + " " + parts[2]);
         }
 
         try {
@@ -183,17 +179,11 @@ public class ExecRefactoringMiner240v {
 
                         }
 
-
                     });
 
-                    List<CommentReporterComplete.CommentReportEntry> listCommentReportEntry = CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, hashCommit);
-                    String [] partesData = dadosDosCommits.get(hashCommit)[1].split(" ");
-                    String data = partesData[0] + " " + partesData[1];
-                    SalvarDados sdados = new SalvarDados(hashCommit,data,refactoringList.size(), listCommentReportEntry.size(), dadosDosCommits.get(hashCommit)[0]);
-                    salvarDados.add(sdados);
+                    CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, hashCommit);
 
                 } catch (Exception e) {
-                    erros.add(new ErroCommit(hashCommit, e));
                     e.printStackTrace();
                 }
 
@@ -201,19 +191,14 @@ public class ExecRefactoringMiner240v {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        salvarDadosParaCSV(salvarDados, "dados-teste.csv");
 
-        long tempoFinal = System.currentTimeMillis();
-        long tempoDecorrido = tempoFinal - tempoInicial;
-        Date dataTermino = new Date();
-        int quantidadeDecommitsAnalisados = contarCommitsAnalisados(refactoringMap);
+        }
+
+        // salvarDadosParaCSV(salvarDados, "dados-teste.csv");
 
         System.out.println("Salvando dados...");
 
         salvarPlanilha(refactoringMap, projectName);
-        salvarLog(projectName, dataInicio, dataTermino, tempoDecorrido, true, quantidadeDecommitsAnalisados, "Sucesso!");
-        salvarLogsErros(erros, projectName);
 
         System.out.println("Finalizado!");
     }
@@ -297,12 +282,13 @@ public class ExecRefactoringMiner240v {
 
         try (FileInputStream arquivo = new FileInputStream(caminhoDoArquivo)) {
             Workbook workbook = new XSSFWorkbook(arquivo);
-            Sheet sheet = workbook.getSheetAt(0); // Assumindo que a planilha que você deseja ler está na primeira aba (índice 0)
+            Sheet sheet = workbook.getSheetAt(0); // Assumindo que a planilha que você deseja ler está na primeira aba
+                                                  // (índice 0)
             System.out.println("Projetos Listados:");
             for (Row row : sheet) {
                 String nomeProjeto = row.getCell(0).getStringCellValue();
                 String url = row.getCell(1).getStringCellValue();
-                String[] atributos = {url};
+                String[] atributos = { url };
                 projetos.put(nomeProjeto, atributos);
                 System.out.println(" - " + nomeProjeto + " URL:" + url);
             }
@@ -314,61 +300,6 @@ public class ExecRefactoringMiner240v {
         return projetos;
     }
 
-    public static void salvarLog(String nomeProjeto, Date dataInicio, Date dataTermino, long tempoDecorrido, boolean sucesso, int numeroCommits, String mensage) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-
-        // Criar um objeto de log
-        LogEntry logEntry = new LogEntry(nomeProjeto, dateFormat.format(dataInicio), dateFormat.format(dataTermino), tempoDecorrido, sucesso, numeroCommits, mensage
-        );
-
-        // Converter o objeto em JSON
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String logJson = gson.toJson(logEntry);
-
-        try {
-            // Abrir o arquivo JSON em modo de anexação
-            FileWriter fileWriter = new FileWriter(logFile, true);
-            // Adicionar o log JSON ao arquivo
-            try (BufferedWriter writer = new BufferedWriter(fileWriter)) {
-                // Adicionar o log JSON ao arquivo
-                writer.write(logJson);
-                writer.newLine();
-                // Fechar o arquivo
-            }
-        } catch (IOException e) {
-        }
-    }
-
-    public static void salvarLogErro(ErroCommit erro, String projectName) {
-
-        String fullPath = "data/" + projectName + "-refactoring-miner-logerros.json";
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String logErroJson = gson.toJson(erro);
-
-        try {
-
-            FileWriter fileWriter = new FileWriter(fullPath, true);
-
-            try (BufferedWriter writer = new BufferedWriter(fileWriter)) {
-
-                writer.write(logErroJson);
-                writer.newLine();
-
-            }
-        } catch (IOException e) {
-        }
-
-    }
-
-    public static void salvarLogsErros(List<ErroCommit> erros, String projectName) {
-
-        for (ErroCommit erroCommit : erros) {
-            salvarLogErro(erroCommit, projectName);
-        }
-
-    }
-
     public static <K, V> int contarCommitsAnalisados(Map<K, V> map) {
         Set<K> chavesUnicas = new HashSet<>();
 
@@ -377,22 +308,5 @@ public class ExecRefactoringMiner240v {
         }
 
         return chavesUnicas.size();
-    }
-    public static void salvarDadosParaCSV(List<SalvarDados> dados, String nomeArquivo) {
-        try (FileWriter writer = new FileWriter(nomeArquivo)) {
-            // Escrever cabeçalho
-            writer.append("Hash,Data,QuantidadeRefatoracoes,QuantidadeComentarios,UserEmail\n");
-
-            // Escrever dados
-            for (SalvarDados dado : dados) {
-                writer.append(dado.getHash()).append(",")
-                        .append(dado.getData()).append(",")
-                        .append(String.valueOf(dado.getQntRefatoracoes())).append(",")
-                        .append(String.valueOf(dado.getQntComentarios())).append(",").append(dado.getUserEmail()).append(";\n");;
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
