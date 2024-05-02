@@ -3,8 +3,10 @@ package com.mycompany.testerefactoringminer2.v;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.mycompany.testerefactoringminer2.v.CLI.CLIExecute;
+import com.opencsv.bean.CsvBindByName;
 
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.nio.file.Path;
@@ -13,6 +15,7 @@ import java.nio.file.FileSystems;
 public class CommentReporterComplete {
 
     static String hash = "null";
+    static List<CommentReportEntry> todosOsComentarios = new ArrayList<>();
 
     public static void walkToRepositorySeachComment(String projectPath, String parHash)
             throws Exception {
@@ -31,39 +34,84 @@ public class CommentReporterComplete {
 
     public static class CommentReportEntry {
 
+        @CsvBindByName(column = "1_hash")
+        private String hash;
+
+        @CsvBindByName(column = "2_type")
         private String type;
+
+        @CsvBindByName(column = "3_startLine")
         private int startLine;
+
+        @CsvBindByName(column = "4_endLine")
         private int endLine;
 
+        @CsvBindByName(column = "5_fragmentos")
         private int tamanho;
-
-        static String hashpublic;
-        private String hash;
 
         /**
          * Cria uma entrada de relatório de comentário.
          *
          * @param hash        O hash associado à entrada.
          * @param type        O tipo de entrada.
-         * @param text        O texto associado à entrada.
          * @param startNumber O número da linha de início.
          * @param endNumber   O número da linha de término.
          */
-        CommentReportEntry(String hash, String type, String text, int startNumber, int endNumber) {
+        CommentReportEntry(String hash, String type, int startNumber, int endNumber) {
+
             this.hash = hash;
             this.type = type;
             this.startLine = startNumber;
             this.endLine = endNumber;
             this.tamanho = 1 + this.endLine - this.startLine;
 
-            System.out.println(this);
+            todosOsComentarios.add(this);
+        }
 
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public int getStartLine() {
+            return startLine;
+        }
+
+        public void setStartLine(int startLine) {
+            this.startLine = startLine;
+        }
+
+        public int getEndLine() {
+            return endLine;
+        }
+
+        public void setEndLine(int endLine) {
+            this.endLine = endLine;
+        }
+
+        public int getTamanho() {
+            return tamanho;
+        }
+
+        public void setTamanho(int tamanho) {
+            this.tamanho = tamanho;
+        }
+
+        public String getHash() {
+            return hash;
+        }
+
+        public void setHash(String hash) {
+            this.hash = hash;
         }
 
         // Teste comentario linha
         @Override
         public String toString() {
-            return this.hash + "," + this.type + "," + this.startLine + "," + this.endLine + "," + this.tamanho + ";";
+            return this.hash + "," + this.type + "," + this.startLine + "," + this.endLine + "," + this.tamanho;
         }
     }
 
@@ -80,7 +128,6 @@ public class CommentReporterComplete {
             List<CommentReportEntry> lsc = cu.getAllContainedComments()
                     .stream()
                     .map(p -> new CommentReportEntry(CommentReporterComplete.hash, p.getClass().getSimpleName(),
-                            p.getContent(),
                             p.getRange().map(r -> r.begin.line).orElse(-1),
                             p.getRange().map(r -> r.end.line).orElse(-1)))
                     .collect(Collectors.toList());

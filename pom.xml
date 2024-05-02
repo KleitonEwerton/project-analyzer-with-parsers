@@ -57,6 +57,12 @@
                 <version>5.1.0</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.opencsv</groupId>
+                <artifactId>opencsv</artifactId>
+                <version>4.2</version>
+            </dependency>
+
 
     </dependencies>
     <name>ExecRefactoringMiner2-4-0v</name>
