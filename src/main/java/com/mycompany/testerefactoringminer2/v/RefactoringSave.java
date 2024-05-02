@@ -7,21 +7,29 @@ import com.opencsv.bean.CsvBindByName;
 
 public class RefactoringSave {
 
+    public static List<RefactoringSave> refactoringList = new ArrayList<>();
+    public static int qntRefatoracoes = 0;
+
     @CsvBindByName(column = "1_hash")
     private String hash;
 
-    @CsvBindByName(column = "2_type")
+    @CsvBindByName(column = "2_refactoringType")
     private String type;
 
     @CsvBindByName(column = "3_ocorrido")
     private String ocorrido;
 
-    public static List<RefactoringSave> refactoringList = new ArrayList<>();
-
     public RefactoringSave(String hash, String type, String ocorrido) {
         this.hash = hash;
         this.type = type;
         this.ocorrido = ocorrido;
+
+        RefactoringSave.qntRefatoracoes++;
+    }
+
+    @Override
+    public String toString() {
+        return "RefactoringSave [hash=" + hash + ", ocorrido=" + ocorrido + ", type=" + type + "]";
     }
 
     /**

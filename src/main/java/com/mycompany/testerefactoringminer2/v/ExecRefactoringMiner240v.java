@@ -9,6 +9,7 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
+import org.checkerframework.checker.units.qual.m;
 import org.eclipse.jgit.lib.Repository;
 
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
@@ -28,6 +29,7 @@ public class ExecRefactoringMiner240v {
     public static String dataPasta = "data/";
     public static String logFile = "data/log.json";
     public static long exeMaxTime = 3600000;
+    public static Map<String, String> mapHashEmail = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
 
@@ -88,8 +90,11 @@ public class ExecRefactoringMiner240v {
 
         List<String> commits = printCommits("tmp/" + projectName);
 
+        ExecRefactoringMiner240v.mapHashEmail.clear();
         CommentReporterComplete.todosOsComentarios.clear();
         RefactoringSave.refactoringList.clear();
+        Usuario.usuariosList.clear();
+        SalvarDados.salvarDadosList.clear();
 
         System.out.println("Iniciando...");
 
@@ -99,22 +104,23 @@ public class ExecRefactoringMiner240v {
 
         CLIExecution execute = CLIExecute.execute(command, "tmp/" + projectName);
 
-        HashMap<String, String[]> dadosDosCommits = new HashMap<>();
-
         for (String line : execute.getOutput()) {
 
             String[] parts = line.split("\\|");
+            Usuario.usuariosList.add(new Usuario(parts[0], parts[1], parts[2]));
+            ExecRefactoringMiner240v.mapHashEmail.put(parts[0], parts[1]);
 
-            dadosDosCommits.put(parts[0], new String[] { parts[1], parts[2] });
-            System.out.println(parts[0] + " " + parts[1] + " " + parts[2]);
         }
 
         try {
 
             for (String hashCommit : commits) {
 
-                try {
+                CommentReporterComplete.qntComentarios = 0;
+                CommentReporterComplete.qntSegmentos = 0;
+                RefactoringSave.qntRefatoracoes = 0;
 
+                try {
                     miner.detectAtCommit(repo, hashCommit, new RefactoringHandler() {
                         @Override
                         public void handle(String commitId, List<Refactoring> refactorings) {
@@ -135,6 +141,9 @@ public class ExecRefactoringMiner240v {
 
                     CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, hashCommit);
 
+                    SalvarDados.salvarDadosList.add(new SalvarDados(hashCommit, RefactoringSave.qntRefatoracoes,
+                            CommentReporterComplete.qntComentarios, CommentReporterComplete.qntSegmentos));
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -148,10 +157,28 @@ public class ExecRefactoringMiner240v {
 
         System.out.println("Salvando dados...");
 
-        saveCommentsCSV("comments-" + projectName + ".csv");
-        // saveRefactoringCSV("refactorings-" + projectName + ".csv");
+        saveCommentsCSV("csv/comments-" + projectName + ".csv");
+        saveRefactoringCSV("csv/refactorings-" + projectName + ".csv");
+        saveUserCommitsCSV("csv/commits-" + projectName + ".csv");
+        saveDadosCSV("csv/dados-" + projectName + ".csv");
 
         System.out.println("Finalizado!");
+    }
+
+    public static void saveDadosCSV(String fileName)
+            throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
+
+        Writer writer = Files.newBufferedWriter(Paths.get(fileName));
+
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        StatefulBeanToCsv<SalvarDados> beanToCsv = new StatefulBeanToCsvBuilder(
+                writer).build();
+
+        beanToCsv.write(SalvarDados.salvarDadosList);
+        writer.flush();
+        writer.close();
+        SalvarDados.salvarDadosList.clear();
+
     }
 
     public static void saveCommentsCSV(String fileName)
@@ -183,6 +210,22 @@ public class ExecRefactoringMiner240v {
         writer.flush();
         writer.close();
         RefactoringSave.refactoringList.clear();
+
+    }
+
+    public static void saveUserCommitsCSV(String fileName)
+            throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
+
+        Writer writer = Files.newBufferedWriter(Paths.get(fileName));
+
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        StatefulBeanToCsv<Usuario> beanToCsv = new StatefulBeanToCsvBuilder(
+                writer).build();
+
+        beanToCsv.write(Usuario.usuariosList);
+        writer.flush();
+        writer.close();
+        Usuario.usuariosList.clear();
 
     }
 

@@ -17,6 +17,9 @@ public class CommentReporterComplete {
     static String hash = "null";
     static List<CommentReportEntry> todosOsComentarios = new ArrayList<>();
 
+    static int qntComentarios = 0;
+    static int qntSegmentos = 0;
+
     public static void walkToRepositorySeachComment(String projectPath, String parHash)
             throws Exception {
 
@@ -46,8 +49,8 @@ public class CommentReporterComplete {
         @CsvBindByName(column = "4_endLine")
         private int endLine;
 
-        @CsvBindByName(column = "5_fragmentos")
-        private int tamanho;
+        @CsvBindByName(column = "5_segmentos")
+        private int segmentos;
 
         /**
          * Cria uma entrada de relatório de comentário.
@@ -63,9 +66,12 @@ public class CommentReporterComplete {
             this.type = type;
             this.startLine = startNumber;
             this.endLine = endNumber;
-            this.tamanho = 1 + this.endLine - this.startLine;
+            this.segmentos = 1 + this.endLine - this.startLine;
 
             todosOsComentarios.add(this);
+
+            CommentReporterComplete.qntComentarios++;
+            CommentReporterComplete.qntSegmentos += this.segmentos;
         }
 
         public String getType() {
@@ -92,12 +98,12 @@ public class CommentReporterComplete {
             this.endLine = endLine;
         }
 
-        public int getTamanho() {
-            return tamanho;
+        public int getsegmentos() {
+            return segmentos;
         }
 
-        public void setTamanho(int tamanho) {
-            this.tamanho = tamanho;
+        public void setsegmentos(int segmentos) {
+            this.segmentos = segmentos;
         }
 
         public String getHash() {
@@ -108,10 +114,10 @@ public class CommentReporterComplete {
             this.hash = hash;
         }
 
-        // Teste comentario linha
         @Override
         public String toString() {
-            return this.hash + "," + this.type + "," + this.startLine + "," + this.endLine + "," + this.tamanho;
+            return "CommentReportEntry [endLine=" + endLine + ", hash=" + hash + ", startLine=" + startLine + ", type="
+                    + type + "]";
         }
     }
 
