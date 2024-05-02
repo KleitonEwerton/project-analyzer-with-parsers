@@ -33,11 +33,11 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-        String nomeProjeto = "java-paser-refactoring-and-comments";
-        String url = "https://github.com/KleitonEwerton/java-paser-refactoring-and-comments.git";
+        //String nomeProjeto = "java-paser-refactoring-and-comments";
+        //String url = "https://github.com/KleitonEwerton/java-paser-refactoring-and-comments.git";
 
-        // String nomeProjeto = "auto";
-        // String url = "https://github.com/google/auto.git";
+        String nomeProjeto = "auto";
+        String url = "https://github.com/google/auto.git";
 
         final Thread[] thread = new Thread[1];
 
