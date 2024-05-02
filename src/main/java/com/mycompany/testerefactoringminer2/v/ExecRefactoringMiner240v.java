@@ -9,7 +9,6 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-import org.checkerframework.checker.units.qual.m;
 import org.eclipse.jgit.lib.Repository;
 
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
@@ -69,7 +68,7 @@ public class ExecRefactoringMiner240v {
         thread[0].start();
 
         try {
-            thread[0].join(exeMaxTime); // Aguarda a conclusão da tarefa ou o tempo de execução
+            thread[0].join(exeMaxTime);
             if (isTimedOut[0]) {
 
                 thread[0].interrupt(); // Interrompe a thread se exceder o tempo
