@@ -1,9 +1,17 @@
 package com.mycompany.testerefactoringminer2.v;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Writer;
 
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 public class Usuario {
 
@@ -82,6 +90,22 @@ public class Usuario {
      */
     public void setParentHash(String parentHash) {
         this.parentHash = parentHash;
+    }
+
+    public static void saveUserCommitsCSV(String fileName)
+            throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
+
+        Writer writer = Files.newBufferedWriter(Paths.get(fileName));
+
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        StatefulBeanToCsv<Usuario> beanToCsv = new StatefulBeanToCsvBuilder(
+                writer).build();
+
+        beanToCsv.write(Usuario.usuariosList);
+        writer.flush();
+        writer.close();
+        Usuario.usuariosList.clear();
+
     }
 
 }

@@ -14,6 +14,8 @@ public class Commit {
     public Commit(String hash, Set<String> parentsHash) {
         this.hash = hash;
         this.parentsHash = parentsHash;
+
+        commits.add(this);
     }
 
     public String getHash() {
@@ -24,18 +26,22 @@ public class Commit {
         this.hash = hash;
     }
 
-    public String getParentsHash() {
-        return parentsHash.toString();
+    public String getParentHash() {
+        return parentsHash.stream().findFirst().orElse(null);
     }
 
     public void setParentsHash(Set<String> parentsHash) {
         this.parentsHash = parentsHash;
     }
 
-    public static Optional<String> getFirstParentByHash(String commitHash) {
+    public static Optional<Commit> getCommitByHash(String commitHash) {
         return Commit.commits.stream()
                 .filter(commit -> commit.hash.equals(commitHash))
-                .findFirst()
+                .findFirst();
+    }
+
+    public static Optional<String> getFirstParentByHash(String commitHash) {
+        return getCommitByHash(commitHash)
                 .flatMap(commit -> commit.parentsHash.stream().findFirst());
     }
 

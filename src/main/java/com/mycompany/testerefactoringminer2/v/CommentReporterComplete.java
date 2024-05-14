@@ -4,22 +4,31 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.mycompany.testerefactoringminer2.v.CLI.CLIExecute;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.io.Writer;
 
 public class CommentReporterComplete {
 
     static String atualHash = "null";
     static String parentHash = "null";
+
     static List<CommentReportEntry> todosOsComentarios = new ArrayList<>();
 
-    static int qntComentarios = 0;
-    static int qntSegmentos = 0;
+    public static HashMap<String, Integer> mapHashQntComentarios = new HashMap<>();
+    public static HashMap<String, Integer> mapHashQntSegmentos = new HashMap<>();
 
     public static void walkToRepositorySeachComment(String projectPath, String hash, String parenHash)
             throws Exception {
@@ -34,6 +43,22 @@ public class CommentReporterComplete {
                 .filter(Files::isRegularFile)
                 .filter(path -> path.toString().endsWith(".java"))
                 .forEach(CommentReporterComplete::processJavaFile);
+
+    }
+
+    public static void saveCommentsCSV(String fileName)
+            throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
+
+        Writer writer = Files.newBufferedWriter(Paths.get(fileName));
+
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        StatefulBeanToCsv<CommentReporterComplete.CommentReportEntry> beanToCsv = new StatefulBeanToCsvBuilder(
+                writer).build();
+
+        beanToCsv.write(CommentReporterComplete.todosOsComentarios);
+        writer.flush();
+        writer.close();
+        CommentReporterComplete.todosOsComentarios.clear();
 
     }
 
@@ -59,6 +84,12 @@ public class CommentReporterComplete {
 
         public CommentReportEntry(String hash, String parentsHash, String type, int startNumber, int endNumber) {
 
+            // ! Se precisar de pegar os dados sem levar em conta as documentações geradas
+            // !pelo javadoc
+            if (type.equals("JavadocComment")) {
+                return;
+            }
+
             this.hash = hash;
             this.type = type;
             this.startLine = startNumber;
@@ -67,8 +98,20 @@ public class CommentReporterComplete {
 
             todosOsComentarios.add(this);
 
-            CommentReporterComplete.qntComentarios++;
-            CommentReporterComplete.qntSegmentos += this.segmentos;
+            if (CommentReporterComplete.mapHashQntComentarios.containsKey(this.hash)) {
+                CommentReporterComplete.mapHashQntComentarios.put(this.hash,
+                        CommentReporterComplete.mapHashQntComentarios.get(this.hash) + 1);
+            } else {
+                CommentReporterComplete.mapHashQntComentarios.put(this.hash, 1);
+            }
+
+            if (CommentReporterComplete.mapHashQntSegmentos.containsKey(this.hash)) {
+                CommentReporterComplete.mapHashQntSegmentos.put(this.hash,
+                        CommentReporterComplete.mapHashQntSegmentos.get(this.hash) + this.segmentos);
+            } else {
+                CommentReporterComplete.mapHashQntSegmentos.put(this.hash, this.segmentos);
+            }
+
         }
 
         public String getType() {

@@ -5,11 +5,6 @@ import com.mycompany.testerefactoringminer2.Commit;
 import com.mycompany.testerefactoringminer2.v.CLI.CLIExecute;
 import com.mycompany.testerefactoringminer2.v.CLI.CLIExecution;
 
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
@@ -18,12 +13,14 @@ import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.io.*;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import java.io.IOException;
+
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.HashMap;
 
 public class ExecRefactoringMiner240v {
 
@@ -84,7 +81,10 @@ public class ExecRefactoringMiner240v {
 
         ExecRefactoringMiner240v.mapHashEmail.clear();
         CommentReporterComplete.todosOsComentarios.clear();
+        CommentReporterComplete.mapHashQntComentarios.clear();
+        CommentReporterComplete.mapHashQntSegmentos.clear();
         RefactoringSave.refactoringList.clear();
+        RefactoringSave.mapHashQntRefatoracoes.clear();
         Usuario.usuariosList.clear();
         SalvarDados.salvarDadosList.clear();
         Commit.commits.clear();
@@ -95,7 +95,7 @@ public class ExecRefactoringMiner240v {
 
         Repository repo = gitService.cloneIfNotExists("tmp/" + projectName, projectUrl);
 
-        Set<Commit> commits = printCommits("tmp/" + projectName);
+        getCommits("tmp/" + projectName);
 
         System.out.println("Iniciando...");
 
@@ -108,27 +108,25 @@ public class ExecRefactoringMiner240v {
         for (String line : execute.getOutput()) {
 
             String[] parts = line.split("\\|");
+            Commit commit = Commit.getCommitByHash(parts[0]).get();
             // ! É o unico pai por enquanto, quando mudar a abordagem devera mudar
             Usuario.usuariosList
-                    .add(new Usuario(parts[0], Commit.getFirstParentByHash(parts[0]).get(), parts[1], parts[2]));
+                    .add(new Usuario(commit.getHash(), commit.getParentHash(), parts[1], parts[2]));
             ExecRefactoringMiner240v.mapHashEmail.put(parts[0], parts[1]);
 
         }
 
         try {
 
-            for (Commit commit : commits) {
-
-                CommentReporterComplete.qntComentarios = 0;
-                CommentReporterComplete.qntSegmentos = 0;
-                RefactoringSave.qntRefatoracoes = 0;
+            for (Commit commit : Commit.commits) {
 
                 try {
                     miner.detectAtCommit(repo, commit.getHash(), new RefactoringHandler() {
-                        @Override
-                        public void handle(String commitId, List<Refactoring> refactorings) {
 
-                            System.out.println(commitId + "==" + commit.getHash());
+                        @Override
+                        public void handle(String commitHash, List<Refactoring> refactorings) {
+
+                            // System.out.println(commitHash + "==" + commit.getHash());
 
                             for (Refactoring ref : refactorings) {
 
@@ -137,9 +135,8 @@ public class ExecRefactoringMiner240v {
                                 String referencia = ref.getName() + " "
                                         + ref.toString().replace(",", " ").replace(";", " ");
 
-                                RefactoringSave.refactoringList
-                                        .add(new RefactoringSave(commit.getHash(), commit.getParentsHash(),
-                                                refactoringType, referencia));
+                                new RefactoringSave(commitHash, commit.getParentHash(),
+                                        refactoringType, referencia);
 
                             }
 
@@ -148,10 +145,7 @@ public class ExecRefactoringMiner240v {
                     });
 
                     CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, commit.getHash(),
-                            commit.getParentsHash());
-
-                    SalvarDados.salvarDadosList.add(new SalvarDados(commit.getHash(), RefactoringSave.qntRefatoracoes,
-                            CommentReporterComplete.qntComentarios, CommentReporterComplete.qntSegmentos));
+                            commit.getParentHash());
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -164,84 +158,49 @@ public class ExecRefactoringMiner240v {
 
         }
 
+        for (Commit commit : Commit.commits) {
+            salvarOsDados(commit);
+        }
+
         System.out.println("Salvando dados...");
 
-        saveCommentsCSV("csv/comments-" + projectName + ".csv");
-        saveRefactoringCSV("csv/refactorings-" + projectName + ".csv");
-        saveUserCommitsCSV("csv/commits-" + projectName + ".csv");
-        saveDadosCSV("csv/dados-" + projectName + ".csv");
+        CommentReporterComplete.saveCommentsCSV("csv/comments-" + projectName + ".csv");
+        RefactoringSave.saveRefactoringCSV("csv/refactorings-" + projectName + ".csv");
+        Usuario.saveUserCommitsCSV("csv/commits-" + projectName + ".csv");
+        SalvarDados.saveDadosCSV("csv/dados-" + projectName + ".csv");
 
         System.out.println("Finalizado!");
     }
 
-    public static void saveDadosCSV(String fileName)
-            throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
+    public static void salvarOsDados(Commit commit) {
+        String hash = commit.getHash();
+        String parentHash = commit.getParentHash();
 
-        Writer writer = Files.newBufferedWriter(Paths.get(fileName));
+        Integer qntRefatoracoes = Optional.ofNullable(RefactoringSave.mapHashQntRefatoracoes.get(hash)).orElse(0);
+        Integer qntComentarios = Optional.ofNullable(CommentReporterComplete.mapHashQntComentarios.get(hash)).orElse(0);
+        Integer qntSegmentos = Optional.ofNullable(CommentReporterComplete.mapHashQntSegmentos.get(hash)).orElse(0);
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        StatefulBeanToCsv<SalvarDados> beanToCsv = new StatefulBeanToCsvBuilder(
-                writer).build();
+        Integer qntRefatoracoesParent = Optional.ofNullable(RefactoringSave.mapHashQntRefatoracoes.get(parentHash))
+                .orElse(0);
+        Integer qntComentariosParent = Optional
+                .ofNullable(CommentReporterComplete.mapHashQntComentarios.get(parentHash)).orElse(0);
+        Integer qntSegmentosParent = Optional.ofNullable(CommentReporterComplete.mapHashQntSegmentos.get(parentHash))
+                .orElse(0);
 
-        beanToCsv.write(SalvarDados.salvarDadosList);
-        writer.flush();
-        writer.close();
-        SalvarDados.salvarDadosList.clear();
-
+        new SalvarDados(
+                hash,
+                qntRefatoracoes,
+                qntComentarios,
+                qntSegmentos,
+                parentHash,
+                qntRefatoracoesParent,
+                qntComentariosParent,
+                qntSegmentosParent);
     }
 
-    public static void saveCommentsCSV(String fileName)
-            throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
-
-        Writer writer = Files.newBufferedWriter(Paths.get(fileName));
-
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        StatefulBeanToCsv<CommentReporterComplete.CommentReportEntry> beanToCsv = new StatefulBeanToCsvBuilder(
-                writer).build();
-
-        beanToCsv.write(CommentReporterComplete.todosOsComentarios);
-        writer.flush();
-        writer.close();
-        CommentReporterComplete.todosOsComentarios.clear();
-
-    }
-
-    public static void saveRefactoringCSV(String fileName)
-            throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
-
-        Writer writer = Files.newBufferedWriter(Paths.get(fileName));
-
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        StatefulBeanToCsv<RefactoringSave> beanToCsv = new StatefulBeanToCsvBuilder(
-                writer).build();
-
-        beanToCsv.write(RefactoringSave.refactoringList);
-        writer.flush();
-        writer.close();
-        RefactoringSave.refactoringList.clear();
-
-    }
-
-    public static void saveUserCommitsCSV(String fileName)
-            throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
-
-        Writer writer = Files.newBufferedWriter(Paths.get(fileName));
-
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        StatefulBeanToCsv<Usuario> beanToCsv = new StatefulBeanToCsvBuilder(
-                writer).build();
-
-        beanToCsv.write(Usuario.usuariosList);
-        writer.flush();
-        writer.close();
-        Usuario.usuariosList.clear();
-
-    }
-
-    public static Set<Commit> printCommits(String path) throws IOException {
+    public static void getCommits(String path) throws IOException {
 
         String command = "git log --all --pretty=\"format:'%H''%P'\"";
-        Pattern COMMIT_PATTERN = Pattern.compile(".*'(\\w+)'\\s*'.*?'\\s*'(.*?)'");
 
         CLIExecution execute = CLIExecute.execute(command, path);
 
@@ -250,25 +209,27 @@ public class ExecRefactoringMiner240v {
         }
 
         for (String line : execute.getOutput()) {
-            Matcher matcher = COMMIT_PATTERN.matcher(line);
-            if (matcher.matches()) {
-                String hash = matcher.group(1);
-                String parentsString = matcher.group(2);
-                String[] parents = parentsString.split(" ");
 
-                // ! parents.length == 1
-                if (parents.length == 1) {
-                    Set<String> parentsSet = new HashSet<>();
-                    for (String parent : parents) {
-                        parentsSet.add(parent);
-                    }
-                    Commit.commits.add(new Commit(hash, parentsSet));
-                }
+            int hashBegin = line.indexOf("\'");
+            int hashEnd = line.indexOf("\'", hashBegin + 1);
+            int parentsBegin = line.indexOf("\'", hashEnd + 1);
+            int parentsEnd = line.indexOf("\'", parentsBegin + 1);
+
+            String hash = line.substring(hashBegin + 1, hashEnd);
+            String parents = line.substring(parentsBegin + 1, parentsEnd);
+
+            String parenstsArray[] = parents.split(" ");
+            Set<String> parentsSet = new HashSet<>();
+
+            for (String parent : parenstsArray) {
+                parentsSet.add(parent);
+            }
+
+            // ! ESTAMOS ANALISANDO APENAS COMMITS COM 1 PAI
+            if (parentsSet.size() == 1) {
+                new Commit(hash, parentsSet);
             }
         }
-
-        return Commit.commits;
-
     }
 
 }
