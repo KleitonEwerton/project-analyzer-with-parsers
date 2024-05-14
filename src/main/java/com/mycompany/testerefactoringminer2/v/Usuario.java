@@ -12,21 +12,20 @@ public class Usuario {
     @CsvBindByName(column = "1_hash")
     private String hash;
 
-    @CsvBindByName(column = "2_email")
+    @CsvBindByName(column = "2_parentHash")
+    private String parentHash;
+
+    @CsvBindByName(column = "3_email")
     private String email;
 
-    @CsvBindByName(column = "3_dataHora")
+    @CsvBindByName(column = "4_dataHora")
     private String dataHora;
 
-    public Usuario(String hash, String email, String dataHora) {
+    public Usuario(String hash, String parentHash, String email, String dataHora) {
         this.hash = hash;
+        this.parentHash = parentHash;
         this.email = email;
         this.dataHora = dataHora;
-    }
-
-    @Override
-    public String toString() {
-        return "Usuario [dataHora=" + dataHora + ", email=" + email + ", hash=" + hash + "]";
     }
 
     /**
@@ -69,6 +68,20 @@ public class Usuario {
      */
     public void setDataHora(String dataHora) {
         this.dataHora = dataHora;
+    }
+
+    /**
+     * @return String return the parentHash
+     */
+    public String getParentHash() {
+        return parentHash;
+    }
+
+    /**
+     * @param parentHash the parentHash to set
+     */
+    public void setParentHash(String parentHash) {
+        this.parentHash = parentHash;
     }
 
 }

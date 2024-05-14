@@ -1,6 +1,7 @@
 
 package com.mycompany.testerefactoringminer2.v;
 
+import com.mycompany.testerefactoringminer2.Commit;
 import com.mycompany.testerefactoringminer2.v.CLI.CLIExecute;
 import com.mycompany.testerefactoringminer2.v.CLI.CLIExecution;
 
@@ -10,7 +11,6 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import org.eclipse.jgit.lib.Repository;
-
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.api.Refactoring;
@@ -22,6 +22,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.*;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class ExecRefactoringMiner240v {
 
@@ -32,11 +34,8 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-        //String nomeProjeto = "java-paser-refactoring-and-comments";
-        //String url = "https://github.com/KleitonEwerton/java-paser-refactoring-and-comments.git";
-
-        String nomeProjeto = "auto";
-        String url = "https://github.com/google/auto.git";
+        String nomeProjeto = "java-paser-refactoring-and-comments";
+        String url = "https://github.com/KleitonEwerton/java-paser-refactoring-and-comments.git";
 
         final Thread[] thread = new Thread[1];
 
@@ -74,12 +73,21 @@ public class ExecRefactoringMiner240v {
                 thread[0].interrupt(); // Interrompe a thread se exceder o tempo
             }
         } catch (InterruptedException e) {
+
             e.printStackTrace();
+
         }
 
     }
 
     public static void checar(String projectName, String projectUrl) throws Exception {
+
+        ExecRefactoringMiner240v.mapHashEmail.clear();
+        CommentReporterComplete.todosOsComentarios.clear();
+        RefactoringSave.refactoringList.clear();
+        Usuario.usuariosList.clear();
+        SalvarDados.salvarDadosList.clear();
+        Commit.commits.clear();
 
         GitService gitService = new GitServiceImpl();
 
@@ -87,13 +95,7 @@ public class ExecRefactoringMiner240v {
 
         Repository repo = gitService.cloneIfNotExists("tmp/" + projectName, projectUrl);
 
-        List<String> commits = printCommits("tmp/" + projectName);
-
-        ExecRefactoringMiner240v.mapHashEmail.clear();
-        CommentReporterComplete.todosOsComentarios.clear();
-        RefactoringSave.refactoringList.clear();
-        Usuario.usuariosList.clear();
-        SalvarDados.salvarDadosList.clear();
+        Set<Commit> commits = printCommits("tmp/" + projectName);
 
         System.out.println("Iniciando...");
 
@@ -106,31 +108,38 @@ public class ExecRefactoringMiner240v {
         for (String line : execute.getOutput()) {
 
             String[] parts = line.split("\\|");
-            Usuario.usuariosList.add(new Usuario(parts[0], parts[1], parts[2]));
+            // ! É o unico pai por enquanto, quando mudar a abordagem devera mudar
+            Usuario.usuariosList
+                    .add(new Usuario(parts[0], Commit.getFirstParentByHash(parts[0]).get(), parts[1], parts[2]));
             ExecRefactoringMiner240v.mapHashEmail.put(parts[0], parts[1]);
 
         }
 
         try {
 
-            for (String hashCommit : commits) {
+            for (Commit commit : commits) {
 
                 CommentReporterComplete.qntComentarios = 0;
                 CommentReporterComplete.qntSegmentos = 0;
                 RefactoringSave.qntRefatoracoes = 0;
 
                 try {
-                    miner.detectAtCommit(repo, hashCommit, new RefactoringHandler() {
+                    miner.detectAtCommit(repo, commit.getHash(), new RefactoringHandler() {
                         @Override
                         public void handle(String commitId, List<Refactoring> refactorings) {
+
+                            System.out.println(commitId + "==" + commit.getHash());
 
                             for (Refactoring ref : refactorings) {
 
                                 String refactoringType = ref.getRefactoringType().toString();
+
                                 String referencia = ref.getName() + " "
                                         + ref.toString().replace(",", " ").replace(";", " ");
+
                                 RefactoringSave.refactoringList
-                                        .add(new RefactoringSave(hashCommit, refactoringType, referencia));
+                                        .add(new RefactoringSave(commit.getHash(), commit.getParentsHash(),
+                                                refactoringType, referencia));
 
                             }
 
@@ -138,9 +147,10 @@ public class ExecRefactoringMiner240v {
 
                     });
 
-                    CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, hashCommit);
+                    CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, commit.getHash(),
+                            commit.getParentsHash());
 
-                    SalvarDados.salvarDadosList.add(new SalvarDados(hashCommit, RefactoringSave.qntRefatoracoes,
+                    SalvarDados.salvarDadosList.add(new SalvarDados(commit.getHash(), RefactoringSave.qntRefatoracoes,
                             CommentReporterComplete.qntComentarios, CommentReporterComplete.qntSegmentos));
 
                 } catch (Exception e) {
@@ -228,41 +238,36 @@ public class ExecRefactoringMiner240v {
 
     }
 
-    public static List<String> printCommits(String path) throws IOException {
+    public static Set<Commit> printCommits(String path) throws IOException {
 
         String command = "git log --all --pretty=\"format:'%H''%P'\"";
+        Pattern COMMIT_PATTERN = Pattern.compile(".*'(\\w+)'\\s*'.*?'\\s*'(.*?)'");
 
         CLIExecution execute = CLIExecute.execute(command, path);
-
-        List<String> hashs = new ArrayList<>();
 
         if (!execute.getError().isEmpty()) {
             throw new RuntimeException("The path does not have a Git Repository or Name is Bigger");
         }
 
         for (String line : execute.getOutput()) {
+            Matcher matcher = COMMIT_PATTERN.matcher(line);
+            if (matcher.matches()) {
+                String hash = matcher.group(1);
+                String parentsString = matcher.group(2);
+                String[] parents = parentsString.split(" ");
 
-            int hashBegin = line.indexOf("\'");
-            int hashEnd = line.indexOf("\'", hashBegin + 1);
-            int parentsBegin = line.indexOf("\'", hashEnd + 1);
-            int parentsEnd = line.indexOf("\'", parentsBegin + 1);
-
-            String hash = line.substring(hashBegin + 1, hashEnd);
-            String parents = line.substring(parentsBegin + 1, parentsEnd);
-
-            String parenstsArray[] = parents.split(" ");
-            List<String> parentsList = new ArrayList<>();
-            for (String parent : parenstsArray) {
-                parentsList.add(parent);
-            }
-
-            if (parentsList.size() == 1) {
-                hashs.add(hash);
-
+                // ! parents.length == 1
+                if (parents.length == 1) {
+                    Set<String> parentsSet = new HashSet<>();
+                    for (String parent : parents) {
+                        parentsSet.add(parent);
+                    }
+                    Commit.commits.add(new Commit(hash, parentsSet));
+                }
             }
         }
 
-        return hashs;
+        return Commit.commits;
 
     }
 

@@ -1,3 +1,4 @@
+csv/
 target/
 tmp/
 !.mvn/wrapper/maven-wrapper.jar

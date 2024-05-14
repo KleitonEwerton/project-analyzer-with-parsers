@@ -14,17 +14,19 @@ import java.nio.file.FileSystems;
 
 public class CommentReporterComplete {
 
-    static String hash = "null";
+    static String atualHash = "null";
+    static String parentHash = "null";
     static List<CommentReportEntry> todosOsComentarios = new ArrayList<>();
 
     static int qntComentarios = 0;
     static int qntSegmentos = 0;
 
-    public static void walkToRepositorySeachComment(String projectPath, String parHash)
+    public static void walkToRepositorySeachComment(String projectPath, String hash, String parenHash)
             throws Exception {
 
-        hash = parHash;
-        String command = "git checkout " + parHash;
+        atualHash = hash;
+        parentHash = parenHash;
+        String command = "git checkout " + atualHash;
 
         CLIExecute.execute(command, projectPath);
 
@@ -40,27 +42,22 @@ public class CommentReporterComplete {
         @CsvBindByName(column = "1_hash")
         private String hash;
 
-        @CsvBindByName(column = "2_type")
+        @CsvBindByName(column = "2_parentsHash")
+        private List<String> parentsHash;
+
+        @CsvBindByName(column = "3_type")
         private String type;
 
-        @CsvBindByName(column = "3_startLine")
+        @CsvBindByName(column = "4_startLine")
         private int startLine;
 
-        @CsvBindByName(column = "4_endLine")
+        @CsvBindByName(column = "5_endLine")
         private int endLine;
 
-        @CsvBindByName(column = "5_segmentos")
+        @CsvBindByName(column = "6_segmentos")
         private int segmentos;
 
-        /**
-         * Cria uma entrada de relatório de comentário.
-         *
-         * @param hash        O hash associado à entrada.
-         * @param type        O tipo de entrada.
-         * @param startNumber O número da linha de início.
-         * @param endNumber   O número da linha de término.
-         */
-        CommentReportEntry(String hash, String type, int startNumber, int endNumber) {
+        public CommentReportEntry(String hash, String parentsHash, String type, int startNumber, int endNumber) {
 
             this.hash = hash;
             this.type = type;
@@ -114,10 +111,13 @@ public class CommentReporterComplete {
             this.hash = hash;
         }
 
-        @Override
-        public String toString() {
-            return "CommentReportEntry [endLine=" + endLine + ", hash=" + hash + ", startLine=" + startLine + ", type="
-                    + type + "]";
+        public List<String> getParentsHash() {
+            return this.parentsHash;
+        }
+
+        public void setParentsHash(List<String> parentsHash) {
+            this.parentsHash = parentsHash;
+
         }
     }
 
@@ -128,14 +128,17 @@ public class CommentReporterComplete {
 
         try {
 
-            CompilationUnit cu = StaticJavaParser
+            CompilationUnit staticJavaParser = StaticJavaParser
                     .parse(filePath);
 
-            List<CommentReportEntry> lsc = cu.getAllContainedComments()
+            staticJavaParser.getAllContainedComments()
                     .stream()
-                    .map(p -> new CommentReportEntry(CommentReporterComplete.hash, p.getClass().getSimpleName(),
-                            p.getRange().map(r -> r.begin.line).orElse(-1),
-                            p.getRange().map(r -> r.end.line).orElse(-1)))
+                    .map(p -> new CommentReportEntry(
+                            CommentReporterComplete.atualHash,
+                            CommentReporterComplete.parentHash,
+                            p.getClass().getSimpleName(),
+                            p.getRange().map(r -> r.begin.line).orElse(0),
+                            p.getRange().map(r -> r.end.line).orElse(0)))
                     .collect(Collectors.toList());
 
         } catch (Exception e) {
