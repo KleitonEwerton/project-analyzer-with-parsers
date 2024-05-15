@@ -27,7 +27,7 @@ public class SalvarDados {
     @CsvBindByName(column = "13_PARENT_HASH_QUANTIDADEREFATORACOES")
     private int parentqntRefatoracoes;
 
-    @CsvBindByName(column = "14_DIFERENCA_QUANTIDADECOMENTARIOS")
+    @CsvBindByName(column = "14_DIFERENCA_QUANTIDADEREFATORACOE")
     private int diferencaQntRefatoracoes;
 
     @CsvBindByName(column = "15_HASH_QUANTIDADECOMENTARIOS")

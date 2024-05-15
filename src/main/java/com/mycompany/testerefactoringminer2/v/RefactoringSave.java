@@ -20,7 +20,7 @@ public class RefactoringSave {
 
     public static HashMap<String, Integer> mapHashQntRefatoracoes = new HashMap<>();
 
-    @CsvBindByName(column = "1_hash")
+    @CsvBindByName(column = "10_HASH")
     private String hash;
 
     @CsvBindByName(column = "2_parentHash")

@@ -31,8 +31,12 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-        String nomeProjeto = "java-paser-refactoring-and-comments";
-        String url = "https://github.com/KleitonEwerton/java-paser-refactoring-and-comments.git";
+        // String nomeProjeto = "java-paser-refactoring-and-comments";
+        // String url =
+        // "https://github.com/KleitonEwerton/java-paser-refactoring-and-comments.git";
+
+        String nomeProjeto = "auto";
+        String url = "https://github.com/google/auto.git";
 
         final Thread[] thread = new Thread[1];
 
@@ -81,6 +85,7 @@ public class ExecRefactoringMiner240v {
 
         ExecRefactoringMiner240v.mapHashEmail.clear();
         CommentReporterComplete.todosOsComentarios.clear();
+        CommentReporterComplete.todosHashErro.clear();
         CommentReporterComplete.mapHashQntComentarios.clear();
         CommentReporterComplete.mapHashQntSegmentos.clear();
         RefactoringSave.refactoringList.clear();
@@ -108,11 +113,15 @@ public class ExecRefactoringMiner240v {
         for (String line : execute.getOutput()) {
 
             String[] parts = line.split("\\|");
-            Commit commit = Commit.getCommitByHash(parts[0]).get();
-            // ! É o unico pai por enquanto, quando mudar a abordagem devera mudar
-            Usuario.usuariosList
-                    .add(new Usuario(commit.getHash(), commit.getParentHash(), parts[1], parts[2]));
-            ExecRefactoringMiner240v.mapHashEmail.put(parts[0], parts[1]);
+            try {
+                Commit commit = Commit.getCommitByHash(parts[0]).get();
+                Usuario.usuariosList
+                        .add(new Usuario(commit.getHash(), commit.getParentHash(), parts[1], parts[2]));
+                ExecRefactoringMiner240v.mapHashEmail.put(parts[0], parts[1]);
+
+            } catch (Exception e) {
+                // !AQUI SÂO OS Q TIVER MAIS DE 1 PAI
+            }
 
         }
 
@@ -149,6 +158,7 @@ public class ExecRefactoringMiner240v {
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    CommentReporterComplete.todosHashErro.add(commit.getHash());
                 }
 
             }
@@ -157,6 +167,9 @@ public class ExecRefactoringMiner240v {
             e.printStackTrace();
 
         }
+
+        // remove os commits que estao na lista de erro
+        Commit.commits.removeIf(commit -> CommentReporterComplete.todosHashErro.contains(commit.getHash()));
 
         for (Commit commit : Commit.commits) {
             salvarOsDados(commit);

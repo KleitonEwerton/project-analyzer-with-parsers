@@ -19,6 +19,8 @@ import java.nio.file.Paths;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.io.Writer;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CommentReporterComplete {
 
@@ -26,6 +28,8 @@ public class CommentReporterComplete {
     static String parentHash = "null";
 
     static List<CommentReportEntry> todosOsComentarios = new ArrayList<>();
+
+    static Set<String> todosHashErro = new HashSet<>();
 
     public static HashMap<String, Integer> mapHashQntComentarios = new HashMap<>();
     public static HashMap<String, Integer> mapHashQntSegmentos = new HashMap<>();
@@ -186,6 +190,7 @@ public class CommentReporterComplete {
 
         } catch (Exception e) {
             e.printStackTrace();
+            todosHashErro.add(CommentReporterComplete.atualHash);
         }
     }
 
