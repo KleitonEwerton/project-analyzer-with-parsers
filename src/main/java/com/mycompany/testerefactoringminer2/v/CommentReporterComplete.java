@@ -189,8 +189,11 @@ public class CommentReporterComplete {
                     .collect(Collectors.toList());
 
         } catch (Exception e) {
-            e.printStackTrace();
-            todosHashErro.add(CommentReporterComplete.atualHash);
+            // ! AQUI PODE HAVER ERRO SE O ARQVUIO TIVER O CODIGO QUEBRADO OU VERSAO ANTIGA
+            // DO JAVA
+            // e.printStackTrace();
+            // System.out.println("ERROR: " + filePath.toString() + " - " +
+            // CommentReporterComplete.atualHash);
         }
     }
 

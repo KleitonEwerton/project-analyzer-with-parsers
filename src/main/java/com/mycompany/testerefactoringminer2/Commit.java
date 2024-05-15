@@ -40,9 +40,4 @@ public class Commit {
                 .findFirst();
     }
 
-    public static Optional<String> getFirstParentByHash(String commitHash) {
-        return getCommitByHash(commitHash)
-                .flatMap(commit -> commit.parentsHash.stream().findFirst());
-    }
-
 }

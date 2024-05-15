@@ -238,10 +238,12 @@ public class ExecRefactoringMiner240v {
                 parentsSet.add(parent);
             }
 
-            // ! ESTAMOS ANALISANDO APENAS COMMITS COM 1 PAI
-            if (parentsSet.size() == 1) {
+            // ! ESTAMOS ANALISANDO APENAS COMMITS COM 1 PAI, ELE ADICIONA TODOS, ma o GET
+            // SO PEGA 1
+            if (parentsSet.size() >= 1) {
                 new Commit(hash, parentsSet);
             }
+
         }
     }
 
