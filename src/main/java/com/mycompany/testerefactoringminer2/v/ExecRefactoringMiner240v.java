@@ -35,8 +35,11 @@ public class ExecRefactoringMiner240v {
         // String url =
         // "https://github.com/KleitonEwerton/java-paser-refactoring-and-comments.git";
 
-        String nomeProjeto = "auto";
-        String url = "https://github.com/google/auto.git";
+        String nomeProjeto = "examples-for-refactoring-testing";
+        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+
+        // String nomeProjeto = "auto";
+        // String url = "https://github.com/google/auto.git";
 
         final Thread[] thread = new Thread[1];
 
@@ -170,6 +173,8 @@ public class ExecRefactoringMiner240v {
 
         // remove os commits que estao na lista de erro
         Commit.commits.removeIf(commit -> CommentReporterComplete.todosHashErro.contains(commit.getHash()));
+        // remove os commits que estao na lista de erro com base no parents
+        Commit.commits.removeIf(commit -> CommentReporterComplete.todosHashErro.contains(commit.getParentHash()));
 
         for (Commit commit : Commit.commits) {
             salvarOsDados(commit);
@@ -186,6 +191,10 @@ public class ExecRefactoringMiner240v {
     }
 
     public static void salvarOsDados(Commit commit) {
+        System.out.println(commit.getSizeParents());
+        if (commit.getSizeParents() != 1)
+            return;
+
         String hash = commit.getHash();
         String parentHash = commit.getParentHash();
 
@@ -238,11 +247,8 @@ public class ExecRefactoringMiner240v {
                 parentsSet.add(parent);
             }
 
-            // ! ESTAMOS ANALISANDO APENAS COMMITS COM 1 PAI, ELE ADICIONA TODOS, ma o GET
-            // SO PEGA 1
-            if (parentsSet.size() >= 1) {
-                new Commit(hash, parentsSet);
-            }
+            // ! ESTAMOS ANALISANDO APENAS COMMITS COM 1 PAI, AQUI EXISTE OUTRAS VARIACOES
+            new Commit(hash, parentsSet);
 
         }
     }

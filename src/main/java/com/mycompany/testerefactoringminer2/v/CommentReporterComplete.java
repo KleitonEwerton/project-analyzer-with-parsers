@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.checkerframework.checker.units.qual.C;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.IOException;
@@ -191,9 +194,12 @@ public class CommentReporterComplete {
         } catch (Exception e) {
             // ! AQUI PODE HAVER ERRO SE O ARQVUIO TIVER O CODIGO QUEBRADO OU VERSAO ANTIGA
             // DO JAVA
-            // e.printStackTrace();
-            // System.out.println("ERROR: " + filePath.toString() + " - " +
-            // CommentReporterComplete.atualHash);
+
+            System.out.println("\n\nERROR: " + filePath.toString() + " - " +
+                    CommentReporterComplete.atualHash);
+            e.printStackTrace();
+            CommentReporterComplete.todosHashErro.add(CommentReporterComplete.atualHash);
+
         }
     }
 

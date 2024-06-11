@@ -30,6 +30,10 @@ public class Commit {
         return parentsHash.stream().findFirst().orElse(null);
     }
 
+    public int getSizeParents() {
+        return this.parentsHash.size();
+    }
+
     public void setParentsHash(Set<String> parentsHash) {
         this.parentsHash = parentsHash;
     }
