@@ -31,10 +31,6 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-        // String nomeProjeto = "java-paser-refactoring-and-comments";
-        // String url =
-        // "https://github.com/KleitonEwerton/java-paser-refactoring-and-comments.git";
-
         String nomeProjeto = "examples-for-refactoring-testing";
         String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
 
@@ -123,7 +119,7 @@ public class ExecRefactoringMiner240v {
                 ExecRefactoringMiner240v.mapHashEmail.put(parts[0], parts[1]);
 
             } catch (Exception e) {
-                // !AQUI SÂO OS Q TIVER MAIS DE 1 PAI
+
             }
 
         }
@@ -138,26 +134,11 @@ public class ExecRefactoringMiner240v {
                         @Override
                         public void handle(String commitHash, List<Refactoring> refactorings) {
 
-                            // System.out.println(commitHash + "==" + commit.getHash());
-
-                            for (Refactoring ref : refactorings) {
-
-                                String refactoringType = ref.getRefactoringType().toString();
-
-                                String referencia = ref.getName() + " "
-                                        + ref.toString().replace(",", " ").replace(";", " ");
-
-                                new RefactoringSave(commitHash, commit.getParentHash(),
-                                        refactoringType, referencia);
-
-                            }
+                            salveRefactiongByRefactionList(refactorings, commitHash, commit);
 
                         }
 
                     });
-
-                    CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, commit.getHash(),
-                            commit.getParentHash());
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -165,6 +146,8 @@ public class ExecRefactoringMiner240v {
                 }
 
             }
+
+            getAndSaveAllComments(projectName);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -190,8 +173,39 @@ public class ExecRefactoringMiner240v {
         System.out.println("Finalizado!");
     }
 
+    public static void salveRefactiongByRefactionList(List<Refactoring> refactorings, String commitHash,
+            Commit commit) {
+        for (Refactoring ref : refactorings) {
+
+            String refactoringType = ref.getRefactoringType().toString();
+
+            String referencia = ref.getName() + " "
+                    + ref.toString().replace(",", " ").replace(";", " ");
+
+            new RefactoringSave(commitHash, commit.getParentHash(),
+                    refactoringType, referencia);
+
+        }
+    }
+
+    public static void getAndSaveAllComments(String projectName) {
+        for (Commit commit : Commit.commits) {
+
+            try {
+
+                CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, commit.getHash(),
+                        commit.getParentHash());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
     public static void salvarOsDados(Commit commit) {
-        System.out.println(commit.getSizeParents());
+
+        // ! Não salva quem tem mais de 1 pai
         if (commit.getSizeParents() != 1)
             return;
 
