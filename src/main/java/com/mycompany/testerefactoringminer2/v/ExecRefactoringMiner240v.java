@@ -16,6 +16,7 @@ import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Set;
@@ -33,11 +34,12 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-        String nomeProjeto = "examples-for-refactoring-testing";
-        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+        // String nomeProjeto = "examples-for-refactoring-testing";
+        // String url =
+        // "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
 
-        // String nomeProjeto = "auto";
-        // String url = "https://github.com/google/auto.git";
+        String nomeProjeto = "auto";
+        String url = "https://github.com/google/auto.git";
 
         final Thread[] thread = new Thread[1];
 
@@ -205,6 +207,12 @@ public class ExecRefactoringMiner240v {
                 CLIExecute.execute(command, "tmp/" + projectName);
 
                 CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, commit);
+
+                // ! Limpa a lista para reduzir a memoria. Se necessario custo N por commit
+                // commit.getFilesPath().clear();
+                // or
+                // commit.setFilesPath(new ArrayList<>());
+                System.out.println(commit.getFilesPath().size());
 
             } catch (Exception e) {
                 e.printStackTrace();

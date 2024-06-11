@@ -15,6 +15,8 @@ public class Commit {
     private String hash;
     private Set<String> parentsHash;
 
+    private Commit parent;
+
     private List<Path> filesPath;
 
     public Commit(String hash, Set<String> parentsHash) {
@@ -69,6 +71,14 @@ public class Commit {
      */
     public void setFilesPath(List<Path> filesPath) {
         this.filesPath = filesPath;
+    }
+
+    public Commit getParent() {
+        return this.parent;
+    }
+
+    public void setParent(Commit parent) {
+        this.parent = parent;
     }
 
 }
