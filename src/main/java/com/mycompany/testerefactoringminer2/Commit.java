@@ -1,6 +1,10 @@
 package com.mycompany.testerefactoringminer2;
 
 import java.util.Set;
+import java.util.List;
+
+import java.nio.file.Path;
+
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -10,6 +14,8 @@ public class Commit {
 
     private String hash;
     private Set<String> parentsHash;
+
+    private List<Path> filesPath;
 
     public Commit(String hash, Set<String> parentsHash) {
         this.hash = hash;
@@ -42,6 +48,27 @@ public class Commit {
         return Commit.commits.stream()
                 .filter(commit -> commit.hash.equals(commitHash))
                 .findFirst();
+    }
+
+    /**
+     * @return Set<String> return the parentsHash
+     */
+    public Set<String> getParentsHash() {
+        return parentsHash;
+    }
+
+    /**
+     * @return Set<Path> return the filesPath
+     */
+    public List<Path> getFilesPath() {
+        return filesPath;
+    }
+
+    /**
+     * @param filesPath the filesPath to set
+     */
+    public void setFilesPath(List<Path> filesPath) {
+        this.filesPath = filesPath;
     }
 
 }

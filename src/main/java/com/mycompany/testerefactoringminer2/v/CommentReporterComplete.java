@@ -2,6 +2,7 @@ package com.mycompany.testerefactoringminer2.v;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.mycompany.testerefactoringminer2.Commit;
 import com.mycompany.testerefactoringminer2.v.CLI.CLIExecute;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.StatefulBeanToCsv;
@@ -14,8 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.checkerframework.checker.units.qual.C;
+import java.util.stream.Stream;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,20 +37,34 @@ public class CommentReporterComplete {
     public static HashMap<String, Integer> mapHashQntComentarios = new HashMap<>();
     public static HashMap<String, Integer> mapHashQntSegmentos = new HashMap<>();
 
-    public static void walkToRepositorySeachComment(String projectPath, String hash, String parenHash)
+    public static void walkToRepositorySeachComment(String projectPath, Commit commit)
             throws Exception {
 
-        atualHash = hash;
-        parentHash = parenHash;
-        String command = "git checkout " + atualHash;
+        for (Path path : commit.getFilesPath()) {
+            processJavaFile(path);
+        }
+
+    }
+
+    public static List<Path> collectJavaFiles(String projectPath, Commit commit) throws IOException {
+
+        List<Path> javaFiles = new ArrayList<>();
+
+        String command = "git checkout " + commit.getHash();
 
         CLIExecute.execute(command, projectPath);
 
-        Files.walk(FileSystems.getDefault().getPath(projectPath))
-                .filter(Files::isRegularFile)
-                .filter(path -> path.toString().endsWith(".java"))
-                .forEach(CommentReporterComplete::processJavaFile);
+        try (Stream<Path> paths = Files.walk(FileSystems.getDefault().getPath(projectPath))) {
+            javaFiles = paths
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith(".java"))
+                    .collect(Collectors.toList());
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return javaFiles;
     }
 
     public static void saveCommentsCSV(String fileName)
@@ -92,7 +106,6 @@ public class CommentReporterComplete {
         public CommentReportEntry(String hash, String parentsHash, String type, int startNumber, int endNumber) {
 
             // ! Se precisar de pegar os dados sem levar em conta as documentações geradas
-            // !pelo javadoc
             if (type.equals("JavadocComment")) {
                 return;
             }

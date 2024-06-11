@@ -4,6 +4,8 @@ package com.mycompany.testerefactoringminer2.v;
 import com.mycompany.testerefactoringminer2.Commit;
 import com.mycompany.testerefactoringminer2.v.CLI.CLIExecute;
 import com.mycompany.testerefactoringminer2.v.CLI.CLIExecution;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
@@ -70,7 +72,7 @@ public class ExecRefactoringMiner240v {
             thread[0].join(exeMaxTime);
             if (isTimedOut[0]) {
 
-                thread[0].interrupt(); // Interrompe a thread se exceder o tempo
+                thread[0].interrupt();
             }
         } catch (InterruptedException e) {
 
@@ -126,6 +128,13 @@ public class ExecRefactoringMiner240v {
 
         try {
 
+            System.out.println("Extraindo e todos os arquivos em cada versão do projeto!");
+            getAndSaveAllFiles(projectName);
+
+            System.out.println("Analisando todos os comentarios em cada versão do projeto!");
+            getAndSaveAllComments(projectName);
+
+            System.out.println("Analisando todos as refatorações em cada versão do projeto!");
             for (Commit commit : Commit.commits) {
 
                 try {
@@ -133,32 +142,79 @@ public class ExecRefactoringMiner240v {
 
                         @Override
                         public void handle(String commitHash, List<Refactoring> refactorings) {
-
-                            salveRefactiongByRefactionList(refactorings, commitHash, commit);
-
+                            salveRefactiongByRefactionList(refactorings, commit);
                         }
 
                     });
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    CommentReporterComplete.todosHashErro.add(commit.getHash());
                 }
 
             }
 
-            getAndSaveAllComments(projectName);
-
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        chamadaDoSalvaDados(projectName);
+    }
+
+    public static void salveRefactiongByRefactionList(List<Refactoring> refactorings, Commit commit) {
+        for (Refactoring ref : refactorings) {
+
+            String refactoringType = ref.getRefactoringType().toString();
+
+            String referencia = ref.getName() + " "
+                    + ref.toString().replace(",", " ").replace(";", " ");
+
+            new RefactoringSave(commit.getHash(), commit.getParentHash(),
+                    refactoringType, referencia);
+
+        }
+    }
+
+    public static void getAndSaveAllFiles(String projectName) {
+
+        for (Commit commit : Commit.commits) {
+
+            try {
+
+                String command = "git checkout " + commit.getHash();
+                CLIExecute.execute(command, "tmp/" + projectName);
+
+                commit.setFilesPath(CommentReporterComplete.collectJavaFiles("tmp/" + projectName, commit));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         }
 
-        // remove os commits que estao na lista de erro
-        Commit.commits.removeIf(commit -> CommentReporterComplete.todosHashErro.contains(commit.getHash()));
-        // remove os commits que estao na lista de erro com base no parents
-        Commit.commits.removeIf(commit -> CommentReporterComplete.todosHashErro.contains(commit.getParentHash()));
+    }
 
+    public static void getAndSaveAllComments(String projectName) {
+        for (Commit commit : Commit.commits) {
+
+            try {
+
+                CommentReporterComplete.atualHash = commit.getHash();
+                CommentReporterComplete.parentHash = commit.getParentHash();
+
+                String command = "git checkout " + commit.getHash();
+                CLIExecute.execute(command, "tmp/" + projectName);
+
+                CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, commit);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public static void chamadaDoSalvaDados(String projectName)
+            throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
         for (Commit commit : Commit.commits) {
             salvarOsDados(commit);
         }
@@ -173,40 +229,10 @@ public class ExecRefactoringMiner240v {
         System.out.println("Finalizado!");
     }
 
-    public static void salveRefactiongByRefactionList(List<Refactoring> refactorings, String commitHash,
-            Commit commit) {
-        for (Refactoring ref : refactorings) {
-
-            String refactoringType = ref.getRefactoringType().toString();
-
-            String referencia = ref.getName() + " "
-                    + ref.toString().replace(",", " ").replace(";", " ");
-
-            new RefactoringSave(commitHash, commit.getParentHash(),
-                    refactoringType, referencia);
-
-        }
-    }
-
-    public static void getAndSaveAllComments(String projectName) {
-        for (Commit commit : Commit.commits) {
-
-            try {
-
-                CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, commit.getHash(),
-                        commit.getParentHash());
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
     public static void salvarOsDados(Commit commit) {
 
         // ! Não salva quem tem mais de 1 pai
-        if (commit.getSizeParents() != 1)
+        if (commit.getSizeParents() != 1 || commit.getHash().equals("") || commit.getParentHash().equals(""))
             return;
 
         String hash = commit.getHash();
