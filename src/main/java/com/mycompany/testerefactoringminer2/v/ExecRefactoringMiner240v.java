@@ -28,7 +28,7 @@ public class ExecRefactoringMiner240v {
 
     public static String dataPasta = "data/";
     public static String logFile = "data/log.json";
-    public static long exeMaxTime = 3600000;
+    public static long exeMaxTime = 360000000;
     public static Map<String, String> mapHashEmail = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
@@ -128,6 +128,9 @@ public class ExecRefactoringMiner240v {
 
         try {
 
+            System.out.println("Analisando todos os arquivos em cada versão do projeto!");
+            getAndSaveAllFiles(projectName);
+
             System.out.println("Analisando todos os comentarios em cada versão do projeto!");
             getAndSaveAllComments(projectName);
 
@@ -182,8 +185,26 @@ public class ExecRefactoringMiner240v {
                 String command = "git checkout " + commit.getHash();
                 CLIExecute.execute(command, "tmp/" + projectName);
 
-                commit.setFilesPath(CommentReporterComplete.collectJavaFiles("tmp/" + projectName, commit));
+                System.out.println("check comments - tmp/" + projectName + "/" + commit.getHash());
                 CommentReporterComplete.walkToRepositorySeachComment(commit.getFilesPath());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public static void getAndSaveAllFiles(String projectName) {
+        for (Commit commit : Commit.commits) {
+
+            try {
+
+                String command = "git checkout " + commit.getHash();
+                CLIExecute.execute(command, "tmp/" + projectName);
+
+                System.out.println("check files - tmp/" + projectName + "/" + commit.getHash());
+                commit.setFilesPath(CommentReporterComplete.collectJavaFiles("tmp/" + projectName, commit));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -214,6 +235,7 @@ public class ExecRefactoringMiner240v {
         if (commit.getSizeParents() != 1 || commit.getHash().equals("") || commit.getParentHash().equals(""))
             return;
 
+        System.out.println(commit.getParent().getFilesPath().size() + " - " + commit.getParent().getHash());
         String hash = commit.getHash();
         String parentHash = commit.getParentHash();
 
@@ -270,6 +292,13 @@ public class ExecRefactoringMiner240v {
             new Commit(hash, parentsSet);
 
         }
+
+        for (Commit commit : Commit.commits) {
+            Commit parent = Commit.getCommitByHash(commit.getParentHash()).orElse(null);
+            if (parent != null)
+                commit.setParent(parent);
+        }
+
     }
 
 }

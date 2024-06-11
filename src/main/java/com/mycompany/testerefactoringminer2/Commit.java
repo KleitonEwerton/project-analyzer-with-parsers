@@ -47,9 +47,11 @@ public class Commit {
     }
 
     public static Optional<Commit> getCommitByHash(String commitHash) {
-        return Commit.commits.stream()
+
+        return Optional.ofNullable(Commit.commits.stream()
                 .filter(commit -> commit.hash.equals(commitHash))
-                .findFirst();
+                .findFirst()
+                .orElse(null));
     }
 
     /**
