@@ -179,14 +179,13 @@ public class ExecRefactoringMiner240v {
 
             try {
 
-                CommentReporterComplete.atualHash = commit.getHash();
-                CommentReporterComplete.parentHash = commit.getParentHash();
+                CommentReporterComplete.atualCommit = commit;
 
                 String command = "git checkout " + commit.getHash();
                 CLIExecute.execute(command, "tmp/" + projectName);
 
                 System.out.println("check comments - tmp/" + projectName + "/" + commit.getHash());
-                CommentReporterComplete.walkToRepositorySeachComment(commit.getFilesPath());
+                CommentReporterComplete.walkToRepositorySeachComment(commit.getFilesPath(), commit);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -235,7 +234,6 @@ public class ExecRefactoringMiner240v {
         if (commit.getSizeParents() != 1 || commit.getHash().equals("") || commit.getParentHash().equals(""))
             return;
 
-        System.out.println(commit.getParent().getFilesPath().size() + " - " + commit.getParent().getHash());
         String hash = commit.getHash();
         String parentHash = commit.getParentHash();
 
@@ -295,6 +293,7 @@ public class ExecRefactoringMiner240v {
 
         for (Commit commit : Commit.commits) {
             Commit parent = Commit.getCommitByHash(commit.getParentHash()).orElse(null);
+
             if (parent != null)
                 commit.setParent(parent);
         }

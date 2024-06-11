@@ -26,8 +26,7 @@ import java.util.Set;
 
 public class CommentReporterComplete {
 
-    static String atualHash = "null";
-    static String parentHash = "null";
+    static Commit atualCommit = null;
 
     static List<CommentReportEntry> todosOsComentarios = new ArrayList<>();
 
@@ -36,11 +35,13 @@ public class CommentReporterComplete {
     public static HashMap<String, Integer> mapHashQntComentarios = new HashMap<>();
     public static HashMap<String, Integer> mapHashQntSegmentos = new HashMap<>();
 
-    public static void walkToRepositorySeachComment(List<Path> filesPath)
+    public static void walkToRepositorySeachComment(List<Path> filesPath, Commit commit)
             throws Exception {
 
         for (Path path : filesPath) {
+
             processJavaFile(path);
+
         }
 
     }
@@ -98,14 +99,20 @@ public class CommentReporterComplete {
         @CsvBindByName(column = "6_segmentos")
         private int segmentos;
 
-        public CommentReportEntry(String hash, String parentsHash, String type, int startNumber, int endNumber) {
+        private Path filePath;
+
+        private Commit commit;
+
+        public CommentReportEntry(Commit commit, Path filePath, String type, int startNumber,
+                int endNumber) {
 
             // ! Se precisar de pegar os dados sem levar em conta as documentações geradas
             if (type.equals("JavadocComment")) {
                 return;
             }
-
-            this.hash = hash;
+            this.commit = commit;
+            this.hash = commit.getHash();
+            this.filePath = filePath;
             this.type = type;
             this.startLine = startNumber;
             this.endLine = endNumber;
@@ -131,6 +138,14 @@ public class CommentReporterComplete {
 
         public String getType() {
             return type;
+        }
+
+        public void setCommit(Commit commit) {
+            this.commit = commit;
+        }
+
+        public Commit getCommit() {
+            return commit;
         }
 
         public void setType(String type) {
@@ -177,6 +192,14 @@ public class CommentReporterComplete {
             this.parentsHash = parentsHash;
 
         }
+
+        public Path getFilePath() {
+            return filePath;
+        }
+
+        public void setFilePath(Path filePath) {
+            this.filePath = filePath;
+        }
     }
 
     /*
@@ -192,8 +215,8 @@ public class CommentReporterComplete {
             staticJavaParser.getAllContainedComments()
                     .stream()
                     .map(p -> new CommentReportEntry(
-                            CommentReporterComplete.atualHash,
-                            CommentReporterComplete.parentHash,
+                            CommentReporterComplete.atualCommit,
+                            filePath,
                             p.getClass().getSimpleName(),
                             p.getRange().map(r -> r.begin.line).orElse(0),
                             p.getRange().map(r -> r.end.line).orElse(0)))
