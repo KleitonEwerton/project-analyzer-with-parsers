@@ -16,7 +16,6 @@ import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Set;
@@ -34,12 +33,11 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-        // String nomeProjeto = "examples-for-refactoring-testing";
-        // String url =
-        // "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+        String nomeProjeto = "examples-for-refactoring-testing";
+        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
 
-        String nomeProjeto = "auto";
-        String url = "https://github.com/google/auto.git";
+        // String nomeProjeto = "auto";
+        // String url = "https://github.com/google/auto.git";
 
         final Thread[] thread = new Thread[1];
 
@@ -130,9 +128,6 @@ public class ExecRefactoringMiner240v {
 
         try {
 
-            System.out.println("Extraindo e todos os arquivos em cada versão do projeto!");
-            getAndSaveAllFiles(projectName);
-
             System.out.println("Analisando todos os comentarios em cada versão do projeto!");
             getAndSaveAllComments(projectName);
 
@@ -176,25 +171,6 @@ public class ExecRefactoringMiner240v {
         }
     }
 
-    public static void getAndSaveAllFiles(String projectName) {
-
-        for (Commit commit : Commit.commits) {
-
-            try {
-
-                String command = "git checkout " + commit.getHash();
-                CLIExecute.execute(command, "tmp/" + projectName);
-
-                commit.setFilesPath(CommentReporterComplete.collectJavaFiles("tmp/" + projectName, commit));
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-
-    }
-
     public static void getAndSaveAllComments(String projectName) {
         for (Commit commit : Commit.commits) {
 
@@ -206,13 +182,8 @@ public class ExecRefactoringMiner240v {
                 String command = "git checkout " + commit.getHash();
                 CLIExecute.execute(command, "tmp/" + projectName);
 
-                CommentReporterComplete.walkToRepositorySeachComment("tmp/" + projectName, commit);
-
-                // ! Limpa a lista para reduzir a memoria. Se necessario custo N por commit
-                // commit.getFilesPath().clear();
-                // or
-                // commit.setFilesPath(new ArrayList<>());
-                System.out.println(commit.getFilesPath().size());
+                commit.setFilesPath(CommentReporterComplete.collectJavaFiles("tmp/" + projectName, commit));
+                CommentReporterComplete.walkToRepositorySeachComment(commit.getFilesPath());
 
             } catch (Exception e) {
                 e.printStackTrace();

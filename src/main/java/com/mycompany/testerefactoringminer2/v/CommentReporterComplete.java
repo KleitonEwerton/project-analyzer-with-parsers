@@ -3,7 +3,6 @@ package com.mycompany.testerefactoringminer2.v;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.mycompany.testerefactoringminer2.Commit;
-import com.mycompany.testerefactoringminer2.v.CLI.CLIExecute;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -37,10 +36,10 @@ public class CommentReporterComplete {
     public static HashMap<String, Integer> mapHashQntComentarios = new HashMap<>();
     public static HashMap<String, Integer> mapHashQntSegmentos = new HashMap<>();
 
-    public static void walkToRepositorySeachComment(String projectPath, Commit commit)
+    public static void walkToRepositorySeachComment(List<Path> filesPath)
             throws Exception {
 
-        for (Path path : commit.getFilesPath()) {
+        for (Path path : filesPath) {
             processJavaFile(path);
         }
 
@@ -49,10 +48,6 @@ public class CommentReporterComplete {
     public static List<Path> collectJavaFiles(String projectPath, Commit commit) throws IOException {
 
         List<Path> javaFiles = new ArrayList<>();
-
-        String command = "git checkout " + commit.getHash();
-
-        CLIExecute.execute(command, projectPath);
 
         try (Stream<Path> paths = Files.walk(FileSystems.getDefault().getPath(projectPath))) {
             javaFiles = paths
@@ -206,13 +201,6 @@ public class CommentReporterComplete {
 
         } catch (Exception e) {
             // ! AQUI PODE HAVER ERRO SE O ARQVUIO TIVER O CODIGO QUEBRADO OU VERSAO ANTIGA
-            // DO JAVA
-
-            System.out.println("\n\nERROR: " + filePath.toString() + " - " +
-                    CommentReporterComplete.atualHash);
-            e.printStackTrace();
-            CommentReporterComplete.todosHashErro.add(CommentReporterComplete.atualHash);
-
         }
     }
 
