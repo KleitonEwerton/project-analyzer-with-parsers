@@ -47,6 +47,12 @@ public class SalvarDados {
     @CsvBindByName(column = "20_DIFERENCA_QUANTIDADESEGMENTOS")
     private int diferencaQntSegmentos;
 
+    @CsvBindByName(column = "21_HASH_QUANTIDADECOMENTARIOSTOTAIS")
+    private int qntComentariosTotais;
+
+    @CsvBindByName(column = "22_HASH_QUANTIDADESEGMENTOSTOTAIS")
+    private int qntSegmentosTotais;
+
     private String userEmail;
     private String userParentEmail;
 
@@ -54,7 +60,7 @@ public class SalvarDados {
 
     public SalvarDados(String hash, int qntRefatoracoes, int qntComentarios, int qntSegmentos, String parentHash,
             int parentqntRefatoracoes,
-            int parentqntComentarios, int parentqntSegmentos) {
+            int parentqntComentarios, int parentqntSegmentos, int qntComentariosTotais, int qntSegmentosTotais) {
 
         this.hash = hash;
         this.qntComentarios = qntComentarios;
@@ -67,7 +73,8 @@ public class SalvarDados {
 
         this.userEmail = ExecRefactoringMiner240v.mapHashEmail.get(hash);
         this.userParentEmail = ExecRefactoringMiner240v.mapHashEmail.get(parentHash);
-
+        this.qntComentariosTotais = qntComentariosTotais;
+        this.qntSegmentosTotais = qntSegmentosTotais;
         calcularDiferencas();
 
         salvarDadosList.add(this);
@@ -240,4 +247,54 @@ public class SalvarDados {
         SalvarDados.salvarDadosList.clear();
 
     }
+
+    /**
+     * @param diferencaQntRefatoracoes the diferencaQntRefatoracoes to set
+     */
+    public void setDiferencaQntRefatoracoes(int diferencaQntRefatoracoes) {
+        this.diferencaQntRefatoracoes = diferencaQntRefatoracoes;
+    }
+
+    /**
+     * @param diferencaQntComentarios the diferencaQntComentarios to set
+     */
+    public void setDiferencaQntComentarios(int diferencaQntComentarios) {
+        this.diferencaQntComentarios = diferencaQntComentarios;
+    }
+
+    /**
+     * @param diferencaQntSegmentos the diferencaQntSegmentos to set
+     */
+    public void setDiferencaQntSegmentos(int diferencaQntSegmentos) {
+        this.diferencaQntSegmentos = diferencaQntSegmentos;
+    }
+
+    /**
+     * @return int return the qntComentariosTotais
+     */
+    public int getQntComentariosTotais() {
+        return qntComentariosTotais;
+    }
+
+    /**
+     * @param qntComentariosTotais the qntComentariosTotais to set
+     */
+    public void setQntComentariosTotais(int qntComentariosTotais) {
+        this.qntComentariosTotais = qntComentariosTotais;
+    }
+
+    /**
+     * @return int return the qntSegmentosTotais
+     */
+    public int getQntSegmentosTotais() {
+        return qntSegmentosTotais;
+    }
+
+    /**
+     * @param qntSegmentosTotais the qntSegmentosTotais to set
+     */
+    public void setQntSegmentosTotais(int qntSegmentosTotais) {
+        this.qntSegmentosTotais = qntSegmentosTotais;
+    }
+
 }

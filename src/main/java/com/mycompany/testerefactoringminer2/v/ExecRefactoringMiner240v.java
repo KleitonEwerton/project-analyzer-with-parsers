@@ -86,11 +86,12 @@ public class ExecRefactoringMiner240v {
 
         ExecRefactoringMiner240v.mapHashEmail.clear();
         CommentReporterComplete.todosOsComentarios.clear();
-        CommentReporterComplete.todosHashErro.clear();
-        CommentReporterComplete.mapHashQntComentarios.clear();
-        CommentReporterComplete.mapHashQntSegmentos.clear();
+        CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.clear();
+        CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.clear();
+        CommentReporterComplete.qntComentarios.clear();
+        CommentReporterComplete.qntSegmentos.clear();
         RefactoringSave.refactoringList.clear();
-        RefactoringSave.mapHashQntRefatoracoes.clear();
+        RefactoringSave.qntRefatoracoes.clear();
         Usuario.usuariosList.clear();
         SalvarDados.salvarDadosList.clear();
         Commit.commits.clear();
@@ -237,15 +238,23 @@ public class ExecRefactoringMiner240v {
         String hash = commit.getHash();
         String parentHash = commit.getParentHash();
 
-        Integer qntRefatoracoes = Optional.ofNullable(RefactoringSave.mapHashQntRefatoracoes.get(hash)).orElse(0);
-        Integer qntComentarios = Optional.ofNullable(CommentReporterComplete.mapHashQntComentarios.get(hash)).orElse(0);
-        Integer qntSegmentos = Optional.ofNullable(CommentReporterComplete.mapHashQntSegmentos.get(hash)).orElse(0);
+        Integer qntRefatoracoes = Optional.ofNullable(RefactoringSave.qntRefatoracoes.get(hash)).orElse(0);
+        Integer qntComentarios = Optional
+                .ofNullable(CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.get(hash)).orElse(0);
+        Integer qntSegmentos = Optional
+                .ofNullable(CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.get(hash)).orElse(0);
 
-        Integer qntRefatoracoesParent = Optional.ofNullable(RefactoringSave.mapHashQntRefatoracoes.get(parentHash))
+        Integer qntComentariosTotais = Optional
+                .ofNullable(CommentReporterComplete.qntComentarios.get(hash)).orElse(0);
+
+        Integer qntSegmentosTotais = Optional
+                .ofNullable(CommentReporterComplete.qntSegmentos.get(hash)).orElse(0);
+
+        Integer qntRefatoracoesParent = Optional.ofNullable(RefactoringSave.qntRefatoracoes.get(parentHash))
                 .orElse(0);
         Integer qntComentariosParent = Optional
-                .ofNullable(CommentReporterComplete.mapHashQntComentarios.get(parentHash)).orElse(0);
-        Integer qntSegmentosParent = Optional.ofNullable(CommentReporterComplete.mapHashQntSegmentos.get(parentHash))
+                .ofNullable(CommentReporterComplete.qntComentarios.get(parentHash)).orElse(0);
+        Integer qntSegmentosParent = Optional.ofNullable(CommentReporterComplete.qntSegmentos.get(parentHash))
                 .orElse(0);
 
         new SalvarDados(
@@ -256,7 +265,9 @@ public class ExecRefactoringMiner240v {
                 parentHash,
                 qntRefatoracoesParent,
                 qntComentariosParent,
-                qntSegmentosParent);
+                qntSegmentosParent,
+                qntComentariosTotais,
+                qntSegmentosTotais);
     }
 
     public static void getCommits(String path) throws IOException {

@@ -21,19 +21,17 @@ import java.nio.file.Paths;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
 
 public class CommentReporterComplete {
 
     static Commit atualCommit = null;
 
-    static List<CommentReportEntry> todosOsComentarios = new ArrayList<>();
+    static List<CommentsTodosDoCommit> todosOsComentarios = new ArrayList<>();
 
-    static Set<String> todosHashErro = new HashSet<>();
-
-    public static HashMap<String, Integer> mapHashQntComentarios = new HashMap<>();
-    public static HashMap<String, Integer> mapHashQntSegmentos = new HashMap<>();
+    public static HashMap<String, Integer> qntComentarios = new HashMap<>();
+    public static HashMap<String, Integer> qntSegmentos = new HashMap<>();
+    public static HashMap<String, Integer> qntComentariosApenasArquivosExistenteNoPai = new HashMap<>();
+    public static HashMap<String, Integer> qntSegmentosApenasArquivosExistenteNoPai = new HashMap<>();
 
     public static void walkToRepositorySeachComment(List<Path> filesPath, Commit commit)
             throws Exception {
@@ -69,7 +67,7 @@ public class CommentReporterComplete {
         Writer writer = Files.newBufferedWriter(Paths.get(fileName));
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        StatefulBeanToCsv<CommentReporterComplete.CommentReportEntry> beanToCsv = new StatefulBeanToCsvBuilder(
+        StatefulBeanToCsv<CommentReporterComplete.CommentsTodosDoCommit> beanToCsv = new StatefulBeanToCsvBuilder(
                 writer).build();
 
         beanToCsv.write(CommentReporterComplete.todosOsComentarios);
@@ -79,7 +77,7 @@ public class CommentReporterComplete {
 
     }
 
-    public static class CommentReportEntry {
+    public static class CommentsTodosDoCommit {
 
         @CsvBindByName(column = "1_hash")
         private String hash;
@@ -103,13 +101,17 @@ public class CommentReporterComplete {
 
         private Commit commit;
 
-        public CommentReportEntry(Commit commit, Path filePath, String type, int startNumber,
+        public CommentsTodosDoCommit(Commit commit, Path filePath, String type, int startNumber,
                 int endNumber) {
 
             // ! Se precisar de pegar os dados sem levar em conta as documentações geradas
             if (type.equals("JavadocComment")) {
                 return;
             }
+
+            // Apenas para os arquivos que existem no pai
+            new CommentsApenasArquivosExistenteNoPai(commit, filePath, type, startNumber, endNumber);
+
             this.commit = commit;
             this.hash = commit.getHash();
             this.filePath = filePath;
@@ -120,18 +122,18 @@ public class CommentReporterComplete {
 
             todosOsComentarios.add(this);
 
-            if (CommentReporterComplete.mapHashQntComentarios.containsKey(this.hash)) {
-                CommentReporterComplete.mapHashQntComentarios.put(this.hash,
-                        CommentReporterComplete.mapHashQntComentarios.get(this.hash) + 1);
+            if (CommentReporterComplete.qntComentarios.containsKey(this.hash)) {
+                CommentReporterComplete.qntComentarios.put(this.hash,
+                        CommentReporterComplete.qntComentarios.get(this.hash) + 1);
             } else {
-                CommentReporterComplete.mapHashQntComentarios.put(this.hash, 1);
+                CommentReporterComplete.qntComentarios.put(this.hash, 1);
             }
 
-            if (CommentReporterComplete.mapHashQntSegmentos.containsKey(this.hash)) {
-                CommentReporterComplete.mapHashQntSegmentos.put(this.hash,
-                        CommentReporterComplete.mapHashQntSegmentos.get(this.hash) + this.segmentos);
+            if (CommentReporterComplete.qntSegmentos.containsKey(this.hash)) {
+                CommentReporterComplete.qntSegmentos.put(this.hash,
+                        CommentReporterComplete.qntSegmentos.get(this.hash) + this.segmentos);
             } else {
-                CommentReporterComplete.mapHashQntSegmentos.put(this.hash, this.segmentos);
+                CommentReporterComplete.qntSegmentos.put(this.hash, this.segmentos);
             }
 
         }
@@ -202,9 +204,116 @@ public class CommentReporterComplete {
         }
     }
 
-    /*
-     * Teste de comentario de bloco
-     */
+    // ! Não analise os arquivo adicionado nessa versão, pois eles não existem no
+    // pai
+    public static class CommentsApenasArquivosExistenteNoPai {
+        private String hash;
+        private List<String> parentsHash;
+        private String type;
+        private int startLine;
+        private int endLine;
+        private int segmentos;
+        private Path filePath;
+        private Commit commit;
+
+        public CommentsApenasArquivosExistenteNoPai(Commit commit, Path filePath, String type, int startNumber,
+                int endNumber) {
+
+            if (!commit.getParent().getFilesPath().contains(filePath)) {
+                return;
+            }
+
+            this.commit = commit;
+            this.hash = commit.getHash();
+            this.filePath = filePath;
+            this.type = type;
+            this.startLine = startNumber;
+            this.endLine = endNumber;
+            this.segmentos = 1 + this.endLine - this.startLine;
+
+            if (CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.containsKey(this.hash)) {
+                CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.put(this.hash,
+                        CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.get(this.hash) + 1);
+            } else {
+                CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.put(this.hash, 1);
+            }
+
+            if (CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.containsKey(this.hash)) {
+                CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.put(this.hash,
+                        CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.get(this.hash)
+                                + this.segmentos);
+            } else {
+                CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.put(this.hash, this.segmentos);
+            }
+
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setCommit(Commit commit) {
+            this.commit = commit;
+        }
+
+        public Commit getCommit() {
+            return commit;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public int getStartLine() {
+            return startLine;
+        }
+
+        public void setStartLine(int startLine) {
+            this.startLine = startLine;
+        }
+
+        public int getEndLine() {
+            return endLine;
+        }
+
+        public void setEndLine(int endLine) {
+            this.endLine = endLine;
+        }
+
+        public int getsegmentos() {
+            return segmentos;
+        }
+
+        public void setsegmentos(int segmentos) {
+            this.segmentos = segmentos;
+        }
+
+        public String getHash() {
+            return hash;
+        }
+
+        public void setHash(String hash) {
+            this.hash = hash;
+        }
+
+        public List<String> getParentsHash() {
+            return this.parentsHash;
+        }
+
+        public void setParentsHash(List<String> parentsHash) {
+            this.parentsHash = parentsHash;
+
+        }
+
+        public Path getFilePath() {
+            return filePath;
+        }
+
+        public void setFilePath(Path filePath) {
+            this.filePath = filePath;
+        }
+    }
+
     public static void processJavaFile(Path filePath) {
 
         try {
@@ -214,7 +323,7 @@ public class CommentReporterComplete {
 
             staticJavaParser.getAllContainedComments()
                     .stream()
-                    .map(p -> new CommentReportEntry(
+                    .map(p -> new CommentsTodosDoCommit(
                             CommentReporterComplete.atualCommit,
                             filePath,
                             p.getClass().getSimpleName(),

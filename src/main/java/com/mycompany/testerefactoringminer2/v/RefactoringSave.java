@@ -18,7 +18,7 @@ public class RefactoringSave {
 
     public static List<RefactoringSave> refactoringList = new ArrayList<>();
 
-    public static HashMap<String, Integer> mapHashQntRefatoracoes = new HashMap<>();
+    public static HashMap<String, Integer> qntRefatoracoes = new HashMap<>();
 
     @CsvBindByName(column = "10_HASH")
     private String hash;
@@ -39,10 +39,10 @@ public class RefactoringSave {
         this.type = type;
         this.ocorrido = ocorrido;
 
-        if (mapHashQntRefatoracoes.containsKey(hash)) {
-            mapHashQntRefatoracoes.put(hash, mapHashQntRefatoracoes.get(hash) + 1);
+        if (qntRefatoracoes.containsKey(hash)) {
+            qntRefatoracoes.put(hash, qntRefatoracoes.get(hash) + 1);
         } else {
-            mapHashQntRefatoracoes.put(hash, 1);
+            qntRefatoracoes.put(hash, 1);
         }
 
         refactoringList.add(this);
