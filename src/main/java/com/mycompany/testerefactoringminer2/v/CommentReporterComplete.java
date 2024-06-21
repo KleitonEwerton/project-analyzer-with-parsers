@@ -79,35 +79,46 @@ public class CommentReporterComplete {
 
     public static class CommentsTodosDoCommit {
 
-        @CsvBindByName(column = "1_hash")
+        @CsvBindByName(column = "11_hash")
         private String hash;
 
-        @CsvBindByName(column = "2_parentsHash")
         private List<String> parentsHash;
 
-        @CsvBindByName(column = "3_type")
+        @CsvBindByName(column = "13_type")
         private String type;
 
-        @CsvBindByName(column = "4_startLine")
+        @CsvBindByName(column = "14_startLine")
         private int startLine;
 
-        @CsvBindByName(column = "5_endLine")
+        @CsvBindByName(column = "15_endLine")
         private int endLine;
 
-        @CsvBindByName(column = "6_segmentos")
+        @CsvBindByName(column = "16_segmentos")
         private int segmentos;
 
         private Path filePath;
 
         private Commit commit;
 
+        @CsvBindByName(column = "17_classPath")
+        private String classPath;
+
+        @CsvBindByName(column = "18_isBlockComment")
+        private int isBlockComment;
+
+        @CsvBindByName(column = "19_isLineComment")
+        private int isLineComment;
+
+        @CsvBindByName(column = "20_isJavaDocComment")
+        private int isJavaDocComment;
+
         public CommentsTodosDoCommit(Commit commit, Path filePath, String type, int startNumber,
-                int endNumber) {
+                int endNumber, int isBlockComment, int isLineComment, int isJavaDocComment, String classPath) {
 
             // ! Se precisar de pegar os dados sem levar em conta as documentações geradas
-            if (type.equals("JavadocComment")) {
-                return;
-            }
+            // if (type.equals("JavadocComment")) {
+            // return;
+            // }
 
             // Apenas para os arquivos que existem no pai
             new CommentsApenasArquivosExistenteNoPai(commit, filePath, type, startNumber, endNumber);
@@ -119,6 +130,15 @@ public class CommentReporterComplete {
             this.startLine = startNumber;
             this.endLine = endNumber;
             this.segmentos = 1 + this.endLine - this.startLine;
+            this.isBlockComment = isBlockComment;
+            this.isLineComment = isLineComment;
+            this.isJavaDocComment = isJavaDocComment;
+
+            classPath = classPath.replace("\\", "/");
+
+            // remove as duas primeiras string separadas por /
+            classPath = classPath.substring(classPath.indexOf("/") + 1);
+            this.classPath = classPath.substring(classPath.indexOf("/") + 1);
 
             todosOsComentarios.add(this);
 
@@ -202,6 +222,39 @@ public class CommentReporterComplete {
         public void setFilePath(Path filePath) {
             this.filePath = filePath;
         }
+
+        public String getClassPath() {
+            return classPath;
+        }
+
+        public void setClassPath(String classPath) {
+            this.classPath = classPath;
+        }
+
+        public int getIsBlockComment() {
+            return isBlockComment;
+        }
+
+        public void setIsBlockComment(int isBlockComment) {
+            this.isBlockComment = isBlockComment;
+        }
+
+        public int getIsLineComment() {
+            return isLineComment;
+        }
+
+        public void setIsLineComment(int isLineComment) {
+            this.isLineComment = isLineComment;
+        }
+
+        public int getIsJavaDocComment() {
+            return isJavaDocComment;
+        }
+
+        public void setIsJavaDocComment(int isJavaDocComment) {
+            this.isJavaDocComment = isJavaDocComment;
+        }
+
     }
 
     // ! Não analise os arquivo adicionado nessa versão, pois eles não existem no
@@ -328,7 +381,11 @@ public class CommentReporterComplete {
                             filePath,
                             p.getClass().getSimpleName(),
                             p.getRange().map(r -> r.begin.line).orElse(0),
-                            p.getRange().map(r -> r.end.line).orElse(0)))
+                            p.getRange().map(r -> r.end.line).orElse(0),
+                            p.isBlockComment() ? 1 : 0,
+                            p.isLineComment() ? 1 : 0,
+                            p.isJavadocComment() ? 1 : 0,
+                            filePath.toString()))
                     .collect(Collectors.toList());
 
         } catch (Exception e) {

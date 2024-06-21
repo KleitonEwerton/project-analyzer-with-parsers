@@ -20,24 +20,33 @@ public class RefactoringSave {
 
     public static HashMap<String, Integer> qntRefatoracoes = new HashMap<>();
 
-    @CsvBindByName(column = "10_HASH")
+    @CsvBindByName(column = "11_HASH")
     private String hash;
 
-    @CsvBindByName(column = "2_parentHash")
+    @CsvBindByName(column = "12_parentHash")
     private String parentHash;
 
-    @CsvBindByName(column = "3_refactoringType")
+    @CsvBindByName(column = "13_refactoringType")
     private String type;
 
-    @CsvBindByName(column = "4_ocorrido")
+    @CsvBindByName(column = "14_ocorrido")
     private String ocorrido;
 
-    public RefactoringSave(String hash, String parentHash, String type, String ocorrido) {
+    @CsvBindByName(column = "15_oldPathClass")
+    private String oldPathClass;
+
+    @CsvBindByName(column = "16_newPathClass")
+    private String newPathClass;
+
+    public RefactoringSave(String hash, String parentHash, String type, String ocorrido, String oldPathClass,
+            String newPathClass) {
 
         this.hash = hash;
         this.parentHash = parentHash;
         this.type = type;
         this.ocorrido = ocorrido;
+        this.newPathClass = newPathClass;
+        this.oldPathClass = oldPathClass;
 
         if (qntRefatoracoes.containsKey(hash)) {
             qntRefatoracoes.put(hash, qntRefatoracoes.get(hash) + 1);
@@ -119,4 +128,33 @@ public class RefactoringSave {
         RefactoringSave.refactoringList.clear();
 
     }
+
+    /**
+     * @return String return the oldPathClass
+     */
+    public String getOldPathClass() {
+        return oldPathClass;
+    }
+
+    /**
+     * @param oldPathClass the oldPathClass to set
+     */
+    public void setOldPathClass(String oldPathClass) {
+        this.oldPathClass = oldPathClass;
+    }
+
+    /**
+     * @return String return the newPathClass
+     */
+    public String getNewPathClass() {
+        return newPathClass;
+    }
+
+    /**
+     * @param newPathClass the newPathClass to set
+     */
+    public void setNewPathClass(String newPathClass) {
+        this.newPathClass = newPathClass;
+    }
+
 }

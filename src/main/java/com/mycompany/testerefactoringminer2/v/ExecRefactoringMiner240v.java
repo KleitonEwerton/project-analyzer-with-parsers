@@ -169,8 +169,12 @@ public class ExecRefactoringMiner240v {
             String referencia = ref.getName() + " "
                     + ref.toString().replace(",", " ").replace(";", " ");
 
+            String oldPathClass = ref.getInvolvedClassesBeforeRefactoring().toString().split(",")[0];
+            String newPathClass = ref.getInvolvedClassesAfterRefactoring().toString().split(",")[0];
+
             new RefactoringSave(commit.getHash(), commit.getParentHash(),
-                    refactoringType, referencia);
+                    refactoringType, referencia, oldPathClass.substring(2, oldPathClass.length()),
+                    newPathClass.substring(2, newPathClass.length()));
 
         }
     }
@@ -215,6 +219,13 @@ public class ExecRefactoringMiner240v {
 
     public static void chamadaDoSalvaDados(String projectName)
             throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
+
+        // Passa por toda RefactoringSave e CommentsTodosDoCommit salvando um map com os
+        // dados de hash iguais
+        for (RefactoringSave refactoringSave : RefactoringSave.refactoringList) {
+
+        }
+
         for (Commit commit : Commit.commits) {
             salvarOsDados(commit);
         }
