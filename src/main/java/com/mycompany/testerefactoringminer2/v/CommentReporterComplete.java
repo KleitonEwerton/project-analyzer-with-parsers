@@ -112,6 +112,9 @@ public class CommentReporterComplete {
         @CsvBindByName(column = "20_isJavaDocComment")
         private int isJavaDocComment;
 
+        @CsvBindByName(column = "21_hash_classPath")
+        private String hash_classPath;
+
         public CommentsTodosDoCommit(Commit commit, Path filePath, String type, int startNumber,
                 int endNumber, int isBlockComment, int isLineComment, int isJavaDocComment, String classPath) {
 
@@ -135,10 +138,10 @@ public class CommentReporterComplete {
             this.isJavaDocComment = isJavaDocComment;
 
             classPath = classPath.replace("\\", "/");
-
-            // remove as duas primeiras string separadas por /
             classPath = classPath.substring(classPath.indexOf("/") + 1);
             this.classPath = classPath.substring(classPath.indexOf("/") + 1);
+
+            this.hash_classPath = this.hash + "/" + this.classPath;
 
             todosOsComentarios.add(this);
 
@@ -253,6 +256,14 @@ public class CommentReporterComplete {
 
         public void setIsJavaDocComment(int isJavaDocComment) {
             this.isJavaDocComment = isJavaDocComment;
+        }
+
+        public String getHash_classPath() {
+            return hash_classPath;
+        }
+
+        public void setHash_classPath(String hash_classPath) {
+            this.hash_classPath = hash_classPath;
         }
 
     }

@@ -47,12 +47,8 @@ public class SalvarDados {
     @CsvBindByName(column = "20_DIFERENCA_QUANTIDADESEGMENTOS")
     private int diferencaQntSegmentos;
 
-    @CsvBindByName(column = "21_HASH_QUANTIDADECOMENTARIOSTOTAIS")
     private int qntComentariosTotais;
-
-    @CsvBindByName(column = "22_HASH_QUANTIDADESEGMENTOSTOTAIS")
     private int qntSegmentosTotais;
-
     private String userEmail;
     private String userParentEmail;
 

@@ -38,6 +38,9 @@ public class RefactoringSave {
     @CsvBindByName(column = "16_newPathClass")
     private String newPathClass;
 
+    @CsvBindByName(column = "17_hash_oldPathClass")
+    private String hash_oldPathClass;
+
     public RefactoringSave(String hash, String parentHash, String type, String ocorrido, String oldPathClass,
             String newPathClass) {
 
@@ -47,6 +50,8 @@ public class RefactoringSave {
         this.ocorrido = ocorrido;
         this.newPathClass = newPathClass;
         this.oldPathClass = oldPathClass;
+
+        this.hash_oldPathClass = hash + "/" + oldPathClass;
 
         if (qntRefatoracoes.containsKey(hash)) {
             qntRefatoracoes.put(hash, qntRefatoracoes.get(hash) + 1);
@@ -155,6 +160,34 @@ public class RefactoringSave {
      */
     public void setNewPathClass(String newPathClass) {
         this.newPathClass = newPathClass;
+    }
+
+    /**
+     * @return String return the HASH_oldPathClass
+     */
+    public String getHASH_oldPathClass() {
+        return hash_oldPathClass;
+    }
+
+    /**
+     * @param HASH_oldPathClass the HASH_oldPathClass to set
+     */
+    public void setHASH_oldPathClass(String HASH_oldPathClass) {
+        this.hash_oldPathClass = HASH_oldPathClass;
+    }
+
+    /**
+     * @return String return the hash_oldPathClass
+     */
+    public String getHash_oldPathClass() {
+        return hash_oldPathClass;
+    }
+
+    /**
+     * @param hash_oldPathClass the hash_oldPathClass to set
+     */
+    public void setHash_oldPathClass(String hash_oldPathClass) {
+        this.hash_oldPathClass = hash_oldPathClass;
     }
 
 }
