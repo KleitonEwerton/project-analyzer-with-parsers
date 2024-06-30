@@ -1,4 +1,4 @@
-package com.mycompany.testerefactoringminer2;
+package com.mycompany.testerefactoringminer2.version;
 
 import java.util.Set;
 import java.util.List;

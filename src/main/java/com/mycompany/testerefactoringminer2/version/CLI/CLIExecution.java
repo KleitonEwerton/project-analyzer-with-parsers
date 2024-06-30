@@ -1,4 +1,4 @@
-package com.mycompany.testerefactoringminer2.v.CLI;
+package com.mycompany.testerefactoringminer2.version.CLI;
 
 import java.util.ArrayList;
 import java.util.List;

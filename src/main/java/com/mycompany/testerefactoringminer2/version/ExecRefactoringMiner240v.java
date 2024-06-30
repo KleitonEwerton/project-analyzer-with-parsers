@@ -1,10 +1,8 @@
 
-package com.mycompany.testerefactoringminer2.v;
+package com.mycompany.testerefactoringminer2.version;
 
-import com.mycompany.testerefactoringminer2.Commit;
-import com.mycompany.testerefactoringminer2.v.CommentReporterComplete.CommentsTodosDoCommit;
-import com.mycompany.testerefactoringminer2.v.CLI.CLIExecute;
-import com.mycompany.testerefactoringminer2.v.CLI.CLIExecution;
+import com.mycompany.testerefactoringminer2.version.CLI.CLIExecute;
+import com.mycompany.testerefactoringminer2.version.CLI.CLIExecution;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
@@ -22,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.HashMap;
 
 public class ExecRefactoringMiner240v {
@@ -85,7 +82,6 @@ public class ExecRefactoringMiner240v {
 
     public static void checar(String projectName, String projectUrl) throws Exception {
 
-        SalvarDadosByClass.listaSalvarDadosByClass.clear();
         ExecRefactoringMiner240v.mapHashEmail.clear();
         CommentReporterComplete.todosOsComentarios.clear();
         CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.clear();
@@ -95,7 +91,6 @@ public class ExecRefactoringMiner240v {
         RefactoringSave.refactoringList.clear();
         RefactoringSave.qntRefatoracoes.clear();
         Usuario.usuariosList.clear();
-        SalvarDados.salvarDadosList.clear();
         Commit.commits.clear();
 
         GitService gitService = new GitServiceImpl();
@@ -222,60 +217,13 @@ public class ExecRefactoringMiner240v {
     public static void chamadaDoSalvaDados(String projectName)
             throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
 
-        for (Commit commit : Commit.commits) {
-            salvarOsDados(commit);
-        }
-
         System.out.println("Salvando dados...");
 
-        salvarDadosClassPath();
         CommentReporterComplete.saveCommentsCSV("csv/comments-" + projectName + ".csv");
         RefactoringSave.saveRefactoringCSV("csv/refactorings-" + projectName + ".csv");
         Usuario.saveUserCommitsCSV("csv/commits-" + projectName + ".csv");
-        SalvarDados.saveDadosCSV("csv/dados-" + projectName + ".csv");
 
         System.out.println("Finalizado!");
-    }
-
-    public static void salvarOsDados(Commit commit) {
-
-        // ! Não salva quem tem mais de 1 pai
-        if (commit.getSizeParents() != 1 || commit.getHash().equals("") || commit.getParentHash().equals(""))
-            return;
-
-        String hash = commit.getHash();
-        String parentHash = commit.getParentHash();
-
-        Integer qntRefatoracoes = Optional.ofNullable(RefactoringSave.qntRefatoracoes.get(hash)).orElse(0);
-        Integer qntComentarios = Optional
-                .ofNullable(CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.get(hash)).orElse(0);
-        Integer qntSegmentos = Optional
-                .ofNullable(CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.get(hash)).orElse(0);
-
-        Integer qntComentariosTotais = Optional
-                .ofNullable(CommentReporterComplete.qntComentarios.get(hash)).orElse(0);
-
-        Integer qntSegmentosTotais = Optional
-                .ofNullable(CommentReporterComplete.qntSegmentos.get(hash)).orElse(0);
-
-        Integer qntRefatoracoesParent = Optional.ofNullable(RefactoringSave.qntRefatoracoes.get(parentHash))
-                .orElse(0);
-        Integer qntComentariosParent = Optional
-                .ofNullable(CommentReporterComplete.qntComentarios.get(parentHash)).orElse(0);
-        Integer qntSegmentosParent = Optional.ofNullable(CommentReporterComplete.qntSegmentos.get(parentHash))
-                .orElse(0);
-
-        new SalvarDados(
-                hash,
-                qntRefatoracoes,
-                qntComentarios,
-                qntSegmentos,
-                parentHash,
-                qntRefatoracoesParent,
-                qntComentariosParent,
-                qntSegmentosParent,
-                qntComentariosTotais,
-                qntSegmentosTotais);
     }
 
     public static void getCommits(String path) throws IOException {
@@ -319,52 +267,4 @@ public class ExecRefactoringMiner240v {
 
     }
 
-    public static void salvarDadosClassPath()
-            throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
-        Map<String, SalvarDadosByClass> groupedData = new HashMap<>();
-
-        for (CommentsTodosDoCommit comment : CommentReporterComplete.todosOsComentarios) {
-            String key = comment.getHash_classPath();
-            SalvarDadosByClass dados = groupedData.getOrDefault(key, new SalvarDadosByClass());
-            dados.setHash(comment.getHash());
-            dados.setHash_classPath(comment.getHash_classPath());
-            dados.setQntComentarios(dados.getQntComentarios() + 1);
-            dados.setQntSegmentos(dados.getQntSegmentos() + comment.getsegmentos());
-            groupedData.put(key, dados);
-        }
-
-        for (RefactoringSave refactor : RefactoringSave.refactoringList) {
-            String key = refactor.getHASH_oldPathClass();
-            SalvarDadosByClass dados = groupedData.getOrDefault(key, new SalvarDadosByClass());
-            dados.setHash(refactor.getHash());
-            dados.setParentHash(refactor.getParentHash());
-            dados.setHash_classPath(refactor.getHASH_oldPathClass());
-            dados.setQntRefatoracoes(dados.getQntRefatoracoes() + 1);
-            groupedData.put(key, dados);
-        }
-
-        // Calcular as diferenças e salvar na lista final
-        for (SalvarDadosByClass dados : groupedData.values()) {
-            String parentKey = dados.getParentHash();
-
-            if (parentKey != null && groupedData.containsKey(parentKey)) {
-                SalvarDadosByClass parentData = groupedData.get(parentKey);
-                dados.setParentqntComentarios(parentData.getParentqntComentarios());
-                dados.setParentqntComentarios(parentData.getParentqntSegmentos());
-                dados.setDiferencaQntComentarios(dados.getQntComentarios() - parentData.getQntComentarios());
-                dados.setDiferencaQntSegmentos(dados.getQntSegmentos() - parentData.getQntSegmentos());
-
-            } else {
-                dados.setParentqntComentarios(0);
-                dados.setParentqntComentarios(0);
-                dados.setDiferencaQntComentarios(dados.getQntComentarios());
-                dados.setDiferencaQntSegmentos(dados.getQntSegmentos());
-            }
-
-            SalvarDadosByClass.listaSalvarDadosByClass.add(dados);
-        }
-
-        SalvarDadosByClass.saveDadosByClassCSV("csv/dadosByClass.csv");
-
-    }
 }

@@ -1,4 +1,4 @@
-package com.mycompany.testerefactoringminer2.v.CLI;
+package com.mycompany.testerefactoringminer2.version.CLI;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,7 +12,7 @@ public class CLIExecute {
         CLIExecution execution = new CLIExecution();
 
         Runtime runtime = Runtime.getRuntime();
-        
+
         Process exec = runtime.exec(command, null,
                 new File(directory));
 

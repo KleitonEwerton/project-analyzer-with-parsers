@@ -1,4 +1,4 @@
-package com.mycompany.testerefactoringminer2.v;
+package com.mycompany.testerefactoringminer2.version;
 
 import java.io.IOException;
 import java.nio.file.Files;

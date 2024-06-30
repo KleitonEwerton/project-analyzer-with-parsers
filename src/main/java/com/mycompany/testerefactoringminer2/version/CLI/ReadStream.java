@@ -1,4 +1,4 @@
-package com.mycompany.testerefactoringminer2.v.CLI;
+package com.mycompany.testerefactoringminer2.version.CLI;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -21,6 +21,7 @@ public class ReadStream implements Runnable {
     public void setOutput(List<String> output) {
         this.output = output;
     }
+
     InputStream is;
     Thread thread;
     private List<String> output;

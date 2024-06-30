@@ -1,8 +1,7 @@
-package com.mycompany.testerefactoringminer2.v;
+package com.mycompany.testerefactoringminer2.version;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import com.mycompany.testerefactoringminer2.Commit;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -82,52 +81,54 @@ public class CommentReporterComplete {
         @CsvBindByName(column = "11_hash")
         private String hash;
 
-        private List<String> parentsHash;
+        @CsvBindByName(column = "12_parentsHash")
+        private String parentsHash;
 
-        @CsvBindByName(column = "13_type")
+        @CsvBindByName(column = "13_hash_classPath")
+        private String hash_classPath;
+
+        @CsvBindByName(column = "14_parentHash_classPath")
+        private String parentHash_classPath;
+
+        @CsvBindByName(column = "15_type")
         private String type;
 
-        @CsvBindByName(column = "14_startLine")
+        @CsvBindByName(column = "16_startLine")
         private int startLine;
 
-        @CsvBindByName(column = "15_endLine")
+        @CsvBindByName(column = "17_endLine")
         private int endLine;
 
-        @CsvBindByName(column = "16_segmentos")
+        @CsvBindByName(column = "18_segmentos")
         private int segmentos;
+
+        @CsvBindByName(column = "19_classPath")
+        private String classPath;
+
+        @CsvBindByName(column = "20_isBlockComment")
+        private int isBlockComment;
+
+        @CsvBindByName(column = "21_isLineComment")
+        private int isLineComment;
+
+        @CsvBindByName(column = "22_isJavaDocComment")
+        private int isJavaDocComment;
+
+        @CsvBindByName(column = "23_isOrphanCommenta")
+        private int isOrphanCommenta;
 
         private Path filePath;
 
         private Commit commit;
 
-        @CsvBindByName(column = "17_classPath")
-        private String classPath;
-
-        @CsvBindByName(column = "18_isBlockComment")
-        private int isBlockComment;
-
-        @CsvBindByName(column = "19_isLineComment")
-        private int isLineComment;
-
-        @CsvBindByName(column = "20_isJavaDocComment")
-        private int isJavaDocComment;
-
-        @CsvBindByName(column = "21_hash_classPath")
-        private String hash_classPath;
-
         public CommentsTodosDoCommit(Commit commit, Path filePath, String type, int startNumber,
-                int endNumber, int isBlockComment, int isLineComment, int isJavaDocComment, String classPath) {
-
-            // ! Se precisar de pegar os dados sem levar em conta as documentações geradas
-            // if (type.equals("JavadocComment")) {
-            // return;
-            // }
-
-            // Apenas para os arquivos que existem no pai
-            new CommentsApenasArquivosExistenteNoPai(commit, filePath, type, startNumber, endNumber);
+                int endNumber, int isBlockComment, int isLineComment, int isJavaDocComment, int isOrphanComment,
+                String classPath) {
 
             this.commit = commit;
             this.hash = commit.getHash();
+            this.parentsHash = commit.getParentHash();
+
             this.filePath = filePath;
             this.type = type;
             this.startLine = startNumber;
@@ -136,13 +137,14 @@ public class CommentReporterComplete {
             this.isBlockComment = isBlockComment;
             this.isLineComment = isLineComment;
             this.isJavaDocComment = isJavaDocComment;
+            this.isOrphanCommenta = isOrphanComment;
 
             classPath = classPath.replace("\\", "/");
             classPath = classPath.substring(classPath.indexOf("/") + 1);
             this.classPath = classPath.substring(classPath.indexOf("/") + 1);
 
             this.hash_classPath = this.hash + "/" + this.classPath;
-
+            this.parentHash_classPath = this.commit.getParentHash() + "/" + this.classPath;
             todosOsComentarios.add(this);
 
             if (CommentReporterComplete.qntComentarios.containsKey(this.hash)) {
@@ -209,11 +211,11 @@ public class CommentReporterComplete {
             this.hash = hash;
         }
 
-        public List<String> getParentsHash() {
+        public String getParentsHash() {
             return this.parentsHash;
         }
 
-        public void setParentsHash(List<String> parentsHash) {
+        public void setParentsHash(String parentsHash) {
             this.parentsHash = parentsHash;
 
         }
@@ -266,116 +268,22 @@ public class CommentReporterComplete {
             this.hash_classPath = hash_classPath;
         }
 
-    }
-
-    // ! Não analise os arquivo adicionado nessa versão, pois eles não existem no
-    // pai
-    public static class CommentsApenasArquivosExistenteNoPai {
-        private String hash;
-        private List<String> parentsHash;
-        private String type;
-        private int startLine;
-        private int endLine;
-        private int segmentos;
-        private Path filePath;
-        private Commit commit;
-
-        public CommentsApenasArquivosExistenteNoPai(Commit commit, Path filePath, String type, int startNumber,
-                int endNumber) {
-
-            if (!commit.getParent().getFilesPath().contains(filePath)) {
-                return;
-            }
-
-            this.commit = commit;
-            this.hash = commit.getHash();
-            this.filePath = filePath;
-            this.type = type;
-            this.startLine = startNumber;
-            this.endLine = endNumber;
-            this.segmentos = 1 + this.endLine - this.startLine;
-
-            if (CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.containsKey(this.hash)) {
-                CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.put(this.hash,
-                        CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.get(this.hash) + 1);
-            } else {
-                CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.put(this.hash, 1);
-            }
-
-            if (CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.containsKey(this.hash)) {
-                CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.put(this.hash,
-                        CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.get(this.hash)
-                                + this.segmentos);
-            } else {
-                CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.put(this.hash, this.segmentos);
-            }
-
+        public int getIsOrphanCommenta() {
+            return isOrphanCommenta;
         }
 
-        public String getType() {
-            return type;
+        public void setIsOrphanCommenta(int isOrphanCommenta) {
+            this.isOrphanCommenta = isOrphanCommenta;
         }
 
-        public void setCommit(Commit commit) {
-            this.commit = commit;
+        public String getParentHash_classPath() {
+            return parentHash_classPath;
         }
 
-        public Commit getCommit() {
-            return commit;
+        public void setParentHash_classPath(String parentHash_classPath) {
+            this.parentHash_classPath = parentHash_classPath;
         }
 
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public int getStartLine() {
-            return startLine;
-        }
-
-        public void setStartLine(int startLine) {
-            this.startLine = startLine;
-        }
-
-        public int getEndLine() {
-            return endLine;
-        }
-
-        public void setEndLine(int endLine) {
-            this.endLine = endLine;
-        }
-
-        public int getsegmentos() {
-            return segmentos;
-        }
-
-        public void setsegmentos(int segmentos) {
-            this.segmentos = segmentos;
-        }
-
-        public String getHash() {
-            return hash;
-        }
-
-        public void setHash(String hash) {
-            this.hash = hash;
-        }
-
-        public List<String> getParentsHash() {
-            return this.parentsHash;
-        }
-
-        public void setParentsHash(List<String> parentsHash) {
-            this.parentsHash = parentsHash;
-
-        }
-
-        public Path getFilePath() {
-            return filePath;
-        }
-
-        public void setFilePath(Path filePath) {
-            this.filePath = filePath;
-        }
     }
 
     public static void processJavaFile(Path filePath) {
@@ -396,6 +304,7 @@ public class CommentReporterComplete {
                             p.isBlockComment() ? 1 : 0,
                             p.isLineComment() ? 1 : 0,
                             p.isJavadocComment() ? 1 : 0,
+                            p.isOrphan() ? 1 : 0,
                             filePath.toString()))
                     .collect(Collectors.toList());
 
