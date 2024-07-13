@@ -31,11 +31,15 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-        String nomeProjeto = "examples-for-refactoring-testing";
-        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+        // String nomeProjeto = "examples-for-refactoring-testing";
+        // String url =
+        // "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
 
         // String nomeProjeto = "auto";
         // String url = "https://github.com/google/auto.git";
+
+        String nomeProjeto = "flink-cdc";
+        String url = "https://github.com/apache/flink-cdc.git";
 
         final Thread[] thread = new Thread[1];
 
@@ -84,13 +88,9 @@ public class ExecRefactoringMiner240v {
 
         ExecRefactoringMiner240v.mapHashEmail.clear();
         CommentReporterComplete.todosOsComentarios.clear();
-        CommentReporterComplete.qntComentariosApenasArquivosExistenteNoPai.clear();
         CommentReporterComplete.qntSegmentosApenasArquivosExistenteNoPai.clear();
-        CommentReporterComplete.qntComentarios.clear();
-        CommentReporterComplete.qntSegmentos.clear();
         RefactoringSave.refactoringList.clear();
         RefactoringSave.qntRefatoracoes.clear();
-        Usuario.usuariosList.clear();
         Commit.commits.clear();
 
         GitService gitService = new GitServiceImpl();
@@ -99,30 +99,11 @@ public class ExecRefactoringMiner240v {
 
         Repository repo = gitService.cloneIfNotExists("tmp/" + projectName, projectUrl);
 
-        getCommits("tmp/" + projectName);
-
         System.out.println("Iniciando...");
 
         System.out.println("Projeto: " + projectUrl);
 
-        String command = "git log --all --pretty=format:\"%H|%ae|%ai\"";
-
-        CLIExecution execute = CLIExecute.execute(command, "tmp/" + projectName);
-
-        for (String line : execute.getOutput()) {
-
-            String[] parts = line.split("\\|");
-            try {
-                Commit commit = Commit.getCommitByHash(parts[0]).get();
-                Usuario.usuariosList
-                        .add(new Usuario(commit.getHash(), commit.getParentHash(), parts[1], parts[2]));
-                ExecRefactoringMiner240v.mapHashEmail.put(parts[0], parts[1]);
-
-            } catch (Exception e) {
-
-            }
-
-        }
+        getCommits("tmp/" + projectName);
 
         try {
 
@@ -185,9 +166,8 @@ public class ExecRefactoringMiner240v {
 
                 String command = "git checkout " + commit.getHash();
                 CLIExecute.execute(command, "tmp/" + projectName);
-
                 System.out.println("check comments - tmp/" + projectName + "/" + commit.getHash());
-                CommentReporterComplete.walkToRepositorySeachComment(commit.getFilesPath(), commit);
+                CommentReporterComplete.walkToRepositorySeachComment(commit);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -201,10 +181,10 @@ public class ExecRefactoringMiner240v {
 
             try {
 
-                String command = "git checkout " + commit.getHash();
-                CLIExecute.execute(command, "tmp/" + projectName);
-
                 System.out.println("check files - tmp/" + projectName + "/" + commit.getHash());
+                String command = "git checkout " + commit.getHash();
+                CLIExecute.executeCheckout(command, "tmp/" + projectName);
+
                 commit.setFilesPath(CommentReporterComplete.collectJavaFiles("tmp/" + projectName, commit));
 
             } catch (Exception e) {
@@ -221,7 +201,6 @@ public class ExecRefactoringMiner240v {
 
         CommentReporterComplete.saveCommentsCSV("csv/comments-" + projectName + ".csv");
         RefactoringSave.saveRefactoringCSV("csv/refactorings-" + projectName + ".csv");
-        Usuario.saveUserCommitsCSV("csv/commits-" + projectName + ".csv");
 
         System.out.println("Finalizado!");
     }

@@ -34,6 +34,38 @@ public class CLIExecute {
         return execution;
     }
 
+    public static CLIExecution executeCheckout(String command, String directory) throws IOException {
+
+        CLIExecution execution = new CLIExecution();
+
+        Runtime runtime = Runtime.getRuntime();
+
+        Process exec = runtime.exec(command, null,
+                new File(directory));
+
+        String s;
+
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(exec.getInputStream()));
+        BufferedReader stdError = new BufferedReader(new InputStreamReader(exec.getErrorStream()));
+
+        System.out.println("command1: " + command);
+
+        // read the output from the command
+        while (stdInput.ready() && (s = stdInput.readLine()) != null) {
+            execution.addOutput(s);
+        }
+
+        System.out.println("command2: " + command);
+
+        while ((s = stdError.readLine()) != null) {
+            execution.addError(s);
+        }
+
+        System.out.println("command3: " + command);
+
+        return execution;
+    }
+
     public static CLIExecution execute(String[] command, String directory) throws IOException {
 
         CLIExecution execution = new CLIExecution();

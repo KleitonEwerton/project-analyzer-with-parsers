@@ -11,7 +11,9 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,18 +26,17 @@ import java.io.Writer;
 public class CommentReporterComplete {
 
     static Commit atualCommit = null;
+    static int contador = 0;
+    static int contador2 = 0;
 
     static List<CommentsTodosDoCommit> todosOsComentarios = new ArrayList<>();
 
-    public static HashMap<String, Integer> qntComentarios = new HashMap<>();
-    public static HashMap<String, Integer> qntSegmentos = new HashMap<>();
-    public static HashMap<String, Integer> qntComentariosApenasArquivosExistenteNoPai = new HashMap<>();
     public static HashMap<String, Integer> qntSegmentosApenasArquivosExistenteNoPai = new HashMap<>();
 
-    public static void walkToRepositorySeachComment(List<Path> filesPath, Commit commit)
+    public static void walkToRepositorySeachComment(Commit commit)
             throws Exception {
 
-        for (Path path : filesPath) {
+        for (Path path : commit.getFilesPath()) {
 
             processJavaFile(path);
 
@@ -43,15 +44,14 @@ public class CommentReporterComplete {
 
     }
 
-    public static List<Path> collectJavaFiles(String projectPath, Commit commit) throws IOException {
+    public static Set<Path> collectJavaFiles(String projectPath, Commit commit) throws IOException {
 
-        List<Path> javaFiles = new ArrayList<>();
+        Set<Path> javaFiles = new HashSet<>();
 
         try (Stream<Path> paths = Files.walk(FileSystems.getDefault().getPath(projectPath))) {
-            javaFiles = paths
-                    .filter(Files::isRegularFile)
-                    .filter(path -> path.toString().endsWith(".java"))
-                    .collect(Collectors.toList());
+            javaFiles = paths.filter(Files::isRegularFile)
+                    .filter(p -> p.toString().endsWith(".java"))
+                    .collect(Collectors.toSet());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -125,10 +125,11 @@ public class CommentReporterComplete {
                 int endNumber, int isBlockComment, int isLineComment, int isJavaDocComment, int isOrphanComment,
                 String classPath) {
 
+            System.out.println(commit.getHash() + " " + filePath);
+
             this.commit = commit;
             this.hash = commit.getHash();
             this.parentsHash = commit.getParentHash();
-
             this.filePath = filePath;
             this.type = type;
             this.startLine = startNumber;
@@ -141,25 +142,12 @@ public class CommentReporterComplete {
 
             classPath = classPath.replace("\\", "/");
             classPath = classPath.substring(classPath.indexOf("/") + 1);
-            this.classPath = classPath.substring(classPath.indexOf("/") + 1);
 
+            this.classPath = classPath.substring(classPath.indexOf("/") + 1);
             this.hash_classPath = this.hash + "/" + this.classPath;
             this.parentHash_classPath = this.commit.getParentHash() + "/" + this.classPath;
+
             todosOsComentarios.add(this);
-
-            if (CommentReporterComplete.qntComentarios.containsKey(this.hash)) {
-                CommentReporterComplete.qntComentarios.put(this.hash,
-                        CommentReporterComplete.qntComentarios.get(this.hash) + 1);
-            } else {
-                CommentReporterComplete.qntComentarios.put(this.hash, 1);
-            }
-
-            if (CommentReporterComplete.qntSegmentos.containsKey(this.hash)) {
-                CommentReporterComplete.qntSegmentos.put(this.hash,
-                        CommentReporterComplete.qntSegmentos.get(this.hash) + this.segmentos);
-            } else {
-                CommentReporterComplete.qntSegmentos.put(this.hash, this.segmentos);
-            }
 
         }
 
@@ -284,6 +272,16 @@ public class CommentReporterComplete {
             this.parentHash_classPath = parentHash_classPath;
         }
 
+        @Override
+        public String toString() {
+            return "CommentsTodosDoCommit{" +
+
+                    ", hash_classPath='" + hash_classPath + '\'' +
+                    ", parentHash_classPath='" + parentHash_classPath + '\'' +
+
+                    '}';
+        }
+
     }
 
     public static void processJavaFile(Path filePath) {
@@ -306,7 +304,7 @@ public class CommentReporterComplete {
                             p.isJavadocComment() ? 1 : 0,
                             p.isOrphan() ? 1 : 0,
                             filePath.toString()))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
 
         } catch (Exception e) {
             // ! AQUI PODE HAVER ERRO SE O ARQVUIO TIVER O CODIGO QUEBRADO OU VERSAO ANTIGA
