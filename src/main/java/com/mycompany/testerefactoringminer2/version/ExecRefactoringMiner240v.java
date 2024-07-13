@@ -31,15 +31,14 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-        // String nomeProjeto = "examples-for-refactoring-testing";
-        // String url =
-        // "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+        String nomeProjeto = "examples-for-refactoring-testing";
+        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
 
         // String nomeProjeto = "auto";
         // String url = "https://github.com/google/auto.git";
 
-        String nomeProjeto = "flink-cdc";
-        String url = "https://github.com/apache/flink-cdc.git";
+        // String nomeProjeto = "flink-cdc";
+        // String url = "https://github.com/apache/flink-cdc.git";
 
         final Thread[] thread = new Thread[1];
 
@@ -107,9 +106,6 @@ public class ExecRefactoringMiner240v {
 
         try {
 
-            System.out.println("Analisando todos os arquivos em cada versão do projeto!");
-            getAndSaveAllFiles(projectName);
-
             System.out.println("Analisando todos os comentarios em cada versão do projeto!");
             getAndSaveAllComments(projectName);
 
@@ -164,28 +160,9 @@ public class ExecRefactoringMiner240v {
             try {
 
                 System.out.println("check comments - tmp/" + projectName + "/" + commit.getHash());
-                CommentReporterComplete.atualCommit = commit;
                 String command = "git checkout " + commit.getHash();
                 CLIExecute.executeCheckout(command, "tmp/" + projectName);
-                CommentReporterComplete.walkToRepositorySeachComment(commit);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    public static void getAndSaveAllFiles(String projectName) {
-        for (Commit commit : Commit.commits) {
-
-            try {
-
-                System.out.println("check files - tmp/" + projectName + "/" + commit.getHash());
-                String command = "git checkout " + commit.getHash();
-                CLIExecute.executeCheckout(command, "tmp/" + projectName);
-
-                commit.setFilesPath(CommentReporterComplete.collectJavaFiles("tmp/" + projectName, commit));
+                CommentReporterComplete.walkToRepositorySeachComment(commit, projectName);
 
             } catch (Exception e) {
                 e.printStackTrace();

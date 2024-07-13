@@ -20,11 +20,17 @@ public class RefactoringSave {
 
     public static HashMap<String, Integer> qntRefatoracoes = new HashMap<>();
 
-    @CsvBindByName(column = "11_HASH")
     private String hash;
 
-    @CsvBindByName(column = "12_parentHash")
     private String parentHash;
+
+    private String pathClass;
+
+    @CsvBindByName(column = "11_HASH_CLASSPATH")
+    private String hash_pathClass;
+
+    @CsvBindByName(column = "12_movedToPathClass")
+    private String movedToPathClass;
 
     @CsvBindByName(column = "13_refactoringType")
     private String type;
@@ -32,26 +38,17 @@ public class RefactoringSave {
     @CsvBindByName(column = "14_ocorrido")
     private String ocorrido;
 
-    @CsvBindByName(column = "15_oldPathClass")
-    private String oldPathClass;
-
-    @CsvBindByName(column = "16_newPathClass")
-    private String newPathClass;
-
-    @CsvBindByName(column = "17_hash_oldPathClass")
-    private String hash_oldPathClass;
-
-    public RefactoringSave(String hash, String parentHash, String type, String ocorrido, String oldPathClass,
-            String newPathClass) {
+    public RefactoringSave(String hash, String parentHash, String type, String ocorrido, String pathClass,
+            String movedToPathClass) {
 
         this.hash = hash;
         this.parentHash = parentHash;
         this.type = type;
         this.ocorrido = ocorrido;
-        this.newPathClass = newPathClass;
-        this.oldPathClass = oldPathClass;
+        this.movedToPathClass = movedToPathClass;
+        this.pathClass = pathClass;
 
-        this.hash_oldPathClass = hash + "/" + oldPathClass;
+        this.hash_pathClass = hash + "/" + pathClass;
 
         if (qntRefatoracoes.containsKey(hash)) {
             qntRefatoracoes.put(hash, qntRefatoracoes.get(hash) + 1);
@@ -118,6 +115,48 @@ public class RefactoringSave {
         this.parentHash = parentHash;
     }
 
+    /**
+     * @param hash_pathClass the hash_pathClass to set
+     */
+    public void setHash_pathClass(String hash_pathClass) {
+        this.hash_pathClass = hash_pathClass;
+    }
+
+    /**
+     * @return String return the pathClass
+     */
+    public String getPathClass() {
+        return pathClass;
+    }
+
+    /**
+     * @param pathClass the pathClass to set
+     */
+    public void setPathClass(String pathClass) {
+        this.pathClass = pathClass;
+    }
+
+    /**
+     * @return String return the movedToPathClass
+     */
+    public String getMovedToPathClass() {
+        return movedToPathClass;
+    }
+
+    /**
+     * @param movedToPathClass the movedToPathClass to set
+     */
+    public void setMovedToPathClass(String movedToPathClass) {
+        this.movedToPathClass = movedToPathClass;
+    }
+
+    /**
+     * @return String return the hash_pathClass
+     */
+    public String getHash_pathClass() {
+        return hash_pathClass;
+    }
+
     public static void saveRefactoringCSV(String fileName)
             throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 
@@ -132,62 +171,6 @@ public class RefactoringSave {
         writer.close();
         RefactoringSave.refactoringList.clear();
 
-    }
-
-    /**
-     * @return String return the oldPathClass
-     */
-    public String getOldPathClass() {
-        return oldPathClass;
-    }
-
-    /**
-     * @param oldPathClass the oldPathClass to set
-     */
-    public void setOldPathClass(String oldPathClass) {
-        this.oldPathClass = oldPathClass;
-    }
-
-    /**
-     * @return String return the newPathClass
-     */
-    public String getNewPathClass() {
-        return newPathClass;
-    }
-
-    /**
-     * @param newPathClass the newPathClass to set
-     */
-    public void setNewPathClass(String newPathClass) {
-        this.newPathClass = newPathClass;
-    }
-
-    /**
-     * @return String return the HASH_oldPathClass
-     */
-    public String getHASH_oldPathClass() {
-        return hash_oldPathClass;
-    }
-
-    /**
-     * @param HASH_oldPathClass the HASH_oldPathClass to set
-     */
-    public void setHASH_oldPathClass(String HASH_oldPathClass) {
-        this.hash_oldPathClass = HASH_oldPathClass;
-    }
-
-    /**
-     * @return String return the hash_oldPathClass
-     */
-    public String getHash_oldPathClass() {
-        return hash_oldPathClass;
-    }
-
-    /**
-     * @param hash_oldPathClass the hash_oldPathClass to set
-     */
-    public void setHash_oldPathClass(String hash_oldPathClass) {
-        this.hash_oldPathClass = hash_oldPathClass;
     }
 
 }

@@ -2,6 +2,7 @@ package com.mycompany.testerefactoringminer2.version;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.mycompany.testerefactoringminer2.version.CLI.CLIExecute;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -25,7 +26,6 @@ import java.io.Writer;
 
 public class CommentReporterComplete {
 
-    static Commit atualCommit = null;
     static int contador = 0;
     static int contador2 = 0;
 
@@ -33,18 +33,17 @@ public class CommentReporterComplete {
 
     public static HashMap<String, Integer> qntSegmentosApenasArquivosExistenteNoPai = new HashMap<>();
 
-    public static void walkToRepositorySeachComment(Commit commit)
+    public static void walkToRepositorySeachComment(Commit commit, String projectName)
             throws Exception {
 
-        for (Path path : commit.getFilesPath()) {
+        String command = "git checkout " + commit.getHash();
+        CLIExecute.executeCheckout(command, "tmp/" + projectName);
 
-            processJavaFile(path);
-
-        }
+        collectJavaFiles("tmp/" + projectName).forEach(p -> processJavaFile(p, commit));
 
     }
 
-    public static Set<Path> collectJavaFiles(String projectPath, Commit commit) throws IOException {
+    public static Set<Path> collectJavaFiles(String projectPath) throws IOException {
 
         Set<Path> javaFiles = new HashSet<>();
 
@@ -78,54 +77,47 @@ public class CommentReporterComplete {
 
     public static class CommentsTodosDoCommit {
 
-        @CsvBindByName(column = "11_hash")
         private String hash;
-
-        @CsvBindByName(column = "12_parentsHash")
         private String parentsHash;
 
-        @CsvBindByName(column = "13_hash_classPath")
+        @CsvBindByName(column = "11_hash_classPath")
         private String hash_classPath;
 
-        @CsvBindByName(column = "14_parentHash_classPath")
+        @CsvBindByName(column = "12_parentHash_classPath")
         private String parentHash_classPath;
 
-        @CsvBindByName(column = "15_type")
+        @CsvBindByName(column = "13_type")
         private String type;
 
-        @CsvBindByName(column = "16_startLine")
+        @CsvBindByName(column = "14_startLine")
         private int startLine;
 
-        @CsvBindByName(column = "17_endLine")
+        @CsvBindByName(column = "15_endLine")
         private int endLine;
 
-        @CsvBindByName(column = "18_segmentos")
+        @CsvBindByName(column = "16_segmentos")
         private int segmentos;
 
-        @CsvBindByName(column = "19_classPath")
         private String classPath;
 
-        @CsvBindByName(column = "20_isBlockComment")
+        @CsvBindByName(column = "18_isBlockComment")
         private int isBlockComment;
 
-        @CsvBindByName(column = "21_isLineComment")
+        @CsvBindByName(column = "19_isLineComment")
         private int isLineComment;
 
-        @CsvBindByName(column = "22_isJavaDocComment")
+        @CsvBindByName(column = "20_isJavaDocComment")
         private int isJavaDocComment;
 
-        @CsvBindByName(column = "23_isOrphanCommenta")
+        @CsvBindByName(column = "21_isOrphanCommenta")
         private int isOrphanCommenta;
 
         private Path filePath;
-
         private Commit commit;
 
         public CommentsTodosDoCommit(Commit commit, Path filePath, String type, int startNumber,
                 int endNumber, int isBlockComment, int isLineComment, int isJavaDocComment, int isOrphanComment,
                 String classPath) {
-
-            System.out.println(commit.getHash() + " " + filePath);
 
             this.commit = commit;
             this.hash = commit.getHash();
@@ -271,20 +263,9 @@ public class CommentReporterComplete {
         public void setParentHash_classPath(String parentHash_classPath) {
             this.parentHash_classPath = parentHash_classPath;
         }
-
-        @Override
-        public String toString() {
-            return "CommentsTodosDoCommit{" +
-
-                    ", hash_classPath='" + hash_classPath + '\'' +
-                    ", parentHash_classPath='" + parentHash_classPath + '\'' +
-
-                    '}';
-        }
-
     }
 
-    public static void processJavaFile(Path filePath) {
+    public static void processJavaFile(Path filePath, Commit commit) {
 
         try {
 
@@ -294,7 +275,7 @@ public class CommentReporterComplete {
             staticJavaParser.getAllContainedComments()
                     .stream()
                     .map(p -> new CommentsTodosDoCommit(
-                            CommentReporterComplete.atualCommit,
+                            commit,
                             filePath,
                             p.getClass().getSimpleName(),
                             p.getRange().map(r -> r.begin.line).orElse(0),
