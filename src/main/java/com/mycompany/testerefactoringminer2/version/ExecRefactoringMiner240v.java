@@ -158,15 +158,15 @@ public class ExecRefactoringMiner240v {
     }
 
     public static void getAndSaveAllComments(String projectName) {
+
         for (Commit commit : Commit.commits) {
 
             try {
 
-                CommentReporterComplete.atualCommit = commit;
-
-                String command = "git checkout " + commit.getHash();
-                CLIExecute.execute(command, "tmp/" + projectName);
                 System.out.println("check comments - tmp/" + projectName + "/" + commit.getHash());
+                CommentReporterComplete.atualCommit = commit;
+                String command = "git checkout " + commit.getHash();
+                CLIExecute.executeCheckout(command, "tmp/" + projectName);
                 CommentReporterComplete.walkToRepositorySeachComment(commit);
 
             } catch (Exception e) {

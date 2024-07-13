@@ -34,34 +34,43 @@ public class CLIExecute {
         return execution;
     }
 
-    public static CLIExecution executeCheckout(String command, String directory) throws IOException {
-
+    public static CLIExecution executeCheckout(String command, String directory)
+            throws IOException, InterruptedException {
         CLIExecution execution = new CLIExecution();
 
         Runtime runtime = Runtime.getRuntime();
-
-        Process exec = runtime.exec(command, null,
-                new File(directory));
-
-        String s;
+        Process exec = runtime.exec(command, null, new File(directory));
 
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(exec.getInputStream()));
         BufferedReader stdError = new BufferedReader(new InputStreamReader(exec.getErrorStream()));
 
-        System.out.println("command1: " + command);
+        Thread outputThread = new Thread(() -> {
+            try {
+                String s;
+                while ((s = stdInput.readLine()) != null) {
+                    execution.addOutput(s);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
-        // read the output from the command
-        while (stdInput.ready() && (s = stdInput.readLine()) != null) {
-            execution.addOutput(s);
-        }
+        Thread errorThread = new Thread(() -> {
+            try {
+                String s;
+                while ((s = stdError.readLine()) != null) {
+                    execution.addError(s);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
-        System.out.println("command2: " + command);
+        outputThread.start();
+        errorThread.start();
 
-        while ((s = stdError.readLine()) != null) {
-            execution.addError(s);
-        }
-
-        System.out.println("command3: " + command);
+        outputThread.join();
+        errorThread.join();
 
         return execution;
     }
