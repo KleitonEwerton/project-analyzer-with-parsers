@@ -15,7 +15,9 @@ import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
 import java.io.IOException;
-
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
@@ -39,6 +41,12 @@ public class ExecRefactoringMiner240v {
 
         // String nomeProjeto = "flink-cdc";
         // String url = "https://github.com/apache/flink-cdc.git";
+
+        // String nomeProjeto = "Sa-Token";
+        // String url = "https://github.com/dromara/Sa-Token.git";
+
+        // String nomeProjeto = "Sa-Token";
+        // String url = "https://github.com/dromara/Sa-Token.git";
 
         final Thread[] thread = new Thread[1];
 
@@ -109,30 +117,21 @@ public class ExecRefactoringMiner240v {
             System.out.println("Analisando todos os comentarios em cada versão do projeto!");
             getAndSaveAllComments(projectName);
 
+            System.out.println("Salvando comentarios em CSV!");
+            CommentReporterComplete.saveCommentsCSV("csv/comments-" + projectName + ".csv");
+
             System.out.println("Analisando todos as refatorações em cada versão do projeto!");
-            for (Commit commit : Commit.commits) {
+            getAndSalveAllRefactoring(projectName, miner, repo);
 
-                try {
-                    miner.detectAtCommit(repo, commit.getHash(), new RefactoringHandler() {
-
-                        @Override
-                        public void handle(String commitHash, List<Refactoring> refactorings) {
-                            salveRefactiongByRefactionList(refactorings, commit);
-                        }
-
-                    });
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
+            System.out.println("Salvando dados Refatoração ...");
+            RefactoringSave.saveRefactoringCSV("csv/refactorings-" + projectName + ".csv");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        chamadaDoSalvaDados(projectName);
+        System.out.println("Finalizado!");
+
     }
 
     public static void salveRefactiongByRefactionList(List<Refactoring> refactorings, Commit commit) {
@@ -155,6 +154,8 @@ public class ExecRefactoringMiner240v {
 
     public static void getAndSaveAllComments(String projectName) {
 
+        checkAndDeleteCSVIfExists("csv/comments-" + projectName + ".csv");
+
         for (Commit commit : Commit.commits) {
 
             try {
@@ -162,6 +163,7 @@ public class ExecRefactoringMiner240v {
                 System.out.println("check comments - tmp/" + projectName + "/" + commit.getHash());
                 String command = "git checkout " + commit.getHash();
                 CLIExecute.executeCheckout(command, "tmp/" + projectName);
+
                 CommentReporterComplete.walkToRepositorySeachComment(commit, projectName);
 
             } catch (Exception e) {
@@ -171,15 +173,41 @@ public class ExecRefactoringMiner240v {
         }
     }
 
-    public static void chamadaDoSalvaDados(String projectName)
-            throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
+    public static void checkAndDeleteCSVIfExists(String fileName) {
 
-        System.out.println("Salvando dados...");
+        Path path = Paths.get(fileName);
 
-        CommentReporterComplete.saveCommentsCSV("csv/comments-" + projectName + ".csv");
-        RefactoringSave.saveRefactoringCSV("csv/refactorings-" + projectName + ".csv");
+        if (Files.exists(path)) {
+            try {
+                Files.delete(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-        System.out.println("Finalizado!");
+    }
+
+    public static void getAndSalveAllRefactoring(String projectName, GitHistoryRefactoringMiner miner,
+            Repository repo) {
+
+        for (Commit commit : Commit.commits) {
+
+            try {
+                miner.detectAtCommit(repo, commit.getHash(), new RefactoringHandler() {
+
+                    @Override
+                    public void handle(String commitHash, List<Refactoring> refactorings) {
+                        salveRefactiongByRefactionList(refactorings, commit);
+                    }
+
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
     }
 
     public static void getCommits(String path) throws IOException {
