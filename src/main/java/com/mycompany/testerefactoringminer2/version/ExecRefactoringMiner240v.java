@@ -45,8 +45,8 @@ public class ExecRefactoringMiner240v {
         // String nomeProjeto = "Sa-Token";
         // String url = "https://github.com/dromara/Sa-Token.git";
 
-        // String nomeProjeto = "Sa-Token";
-        // String url = "https://github.com/dromara/Sa-Token.git";
+        // String nomeProjeto = "gson";
+        // String url = "https://github.com/google/gson.git";
 
         final Thread[] thread = new Thread[1];
 
