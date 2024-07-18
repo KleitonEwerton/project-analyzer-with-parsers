@@ -1,15 +1,11 @@
 package com.mycompany.testerefactoringminer2.version;
 
-import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.mycompany.testerefactoringminer2.version.CLI.CLIExecute;
-import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,11 +14,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.io.Writer;
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.mycompany.testerefactoringminer2.version.CLI.CLIExecute;
+import com.mycompany.testerefactoringminer2.version.CLI.CLIExecution;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 public class CommentReporterComplete {
 
@@ -37,7 +37,13 @@ public class CommentReporterComplete {
             throws Exception {
 
         String command = "git checkout " + commit.getHash();
-        CLIExecute.executeCheckout(command, "tmp/" + projectName);
+
+        CLIExecution execute = CLIExecute.executeCheckout(command, "tmp/" + projectName);
+
+        if (execute.toString().contains("error")) {
+            System.out.println("\n\nERRO AQUi\n\n");
+            return;
+        }
 
         collectJavaFiles("tmp/" + projectName).forEach(p -> processJavaFile(p, commit));
 
@@ -50,6 +56,7 @@ public class CommentReporterComplete {
         try (Stream<Path> paths = Files.walk(FileSystems.getDefault().getPath(projectPath))) {
             javaFiles = paths.filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".java"))
+                    .filter(p -> !isHidden(p))
                     .collect(Collectors.toSet());
 
         } catch (IOException e) {
@@ -57,6 +64,15 @@ public class CommentReporterComplete {
         }
 
         return javaFiles;
+    }
+
+    private static boolean isHidden(Path path) {
+        try {
+            return Files.isHidden(path) || path.getParent().toFile().isHidden();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static void saveCommentsCSV(String fileName)
@@ -77,7 +93,9 @@ public class CommentReporterComplete {
 
     public static class CommentsTodosDoCommit {
 
+        @CsvBindByName(column = "10_hash")
         private String hash;
+
         private String parentsHash;
 
         @CsvBindByName(column = "11_hash_classPath")

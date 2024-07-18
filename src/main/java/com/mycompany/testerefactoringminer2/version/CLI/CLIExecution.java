@@ -9,6 +9,7 @@ public class CLIExecution {
     private List<String> error;
 
     public CLIExecution() {
+
         this.output = new ArrayList<>();
         this.error = new ArrayList<>();
     }

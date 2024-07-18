@@ -3,8 +3,6 @@ package com.mycompany.testerefactoringminer2.version;
 
 import com.mycompany.testerefactoringminer2.version.CLI.CLIExecute;
 import com.mycompany.testerefactoringminer2.version.CLI.CLIExecution;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
@@ -33,11 +31,12 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-        String nomeProjeto = "examples-for-refactoring-testing";
-        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+        // String nomeProjeto = "examples-for-refactoring-testing";
+        // String url =
+        // "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
 
-        // String nomeProjeto = "auto";
-        // String url = "https://github.com/google/auto.git";
+        String nomeProjeto = "auto";
+        String url = "https://github.com/google/auto.git";
 
         // String nomeProjeto = "flink-cdc";
         // String url = "https://github.com/apache/flink-cdc.git";
@@ -120,6 +119,8 @@ public class ExecRefactoringMiner240v {
             System.out.println("Salvando comentarios em CSV!");
             CommentReporterComplete.saveCommentsCSV("csv/comments-" + projectName + ".csv");
 
+            ErroCheckout.saveErrosCSV("csv/erros-" + projectName + ".csv");
+
             System.out.println("Analisando todos as refatorações em cada versão do projeto!");
             getAndSalveAllRefactoring(projectName, miner, repo);
 
@@ -161,8 +162,6 @@ public class ExecRefactoringMiner240v {
             try {
 
                 System.out.println("check comments - tmp/" + projectName + "/" + commit.getHash());
-                String command = "git checkout " + commit.getHash();
-                CLIExecute.executeCheckout(command, "tmp/" + projectName);
 
                 CommentReporterComplete.walkToRepositorySeachComment(commit, projectName);
 
