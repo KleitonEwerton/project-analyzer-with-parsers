@@ -40,8 +40,9 @@ public class CommentReporterComplete {
 
         CLIExecution execute = CLIExecute.executeCheckout(command, "tmp/" + projectName);
 
-        if (execute.toString().contains("error")) {
-            System.out.println("\n\nERRO AQUi\n\n");
+        if (execute.toString().contains("error:")) {
+            System.out.println("ERROR\n" + command);
+            new ErroCheckout(commit.getHash(), projectName, command + "\n" + execute.toString());
             return;
         }
 
