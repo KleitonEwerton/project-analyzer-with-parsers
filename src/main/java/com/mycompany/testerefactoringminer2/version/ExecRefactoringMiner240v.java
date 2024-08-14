@@ -47,6 +47,12 @@ public class ExecRefactoringMiner240v {
         // String nomeProjeto = "gson";
         // String url = "https://github.com/google/gson.git";
 
+        // String nomeProjeto = "Apktool";
+        // String url = "https://github.com/iBotPeaches/Apktool.git";
+
+        // String nomeProjeto = "zuul";
+        // String url = "https://github.com/Netflix/zuul.git";
+
         final Thread[] thread = new Thread[1];
 
         final boolean[] isTimedOut = { false };
