@@ -20,22 +20,21 @@ public class RefactoringSave {
 
     public static HashMap<String, Integer> qntRefatoracoes = new HashMap<>();
 
-    private String hash;
-
     private String parentHash;
 
     private String pathClass;
 
+    @CsvBindByName(column = "10_HASH")
+    private String hash;
+
     @CsvBindByName(column = "11_HASH_CLASSPATH")
     private String hash_pathClass;
 
-    @CsvBindByName(column = "12_movedToPathClass")
     private String movedToPathClass;
 
     @CsvBindByName(column = "13_refactoringType")
     private String type;
 
-    @CsvBindByName(column = "14_ocorrido")
     private String ocorrido;
 
     public RefactoringSave(String hash, String parentHash, String type, String ocorrido, String pathClass,

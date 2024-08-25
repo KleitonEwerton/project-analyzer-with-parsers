@@ -31,12 +31,11 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-        // String nomeProjeto = "examples-for-refactoring-testing";
-        // String url =
-        // "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+        String nomeProjeto = "examples-for-refactoring-testing";
+        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
 
-        String nomeProjeto = "auto";
-        String url = "https://github.com/google/auto.git";
+        // String nomeProjeto = "auto";
+        // String url = "https://github.com/google/auto.git";
 
         // String nomeProjeto = "flink-cdc";
         // String url = "https://github.com/apache/flink-cdc.git";
@@ -132,6 +131,9 @@ public class ExecRefactoringMiner240v {
 
             System.out.println("Salvando dados Refatoração ...");
             RefactoringSave.saveRefactoringCSV("csv/refactorings-" + projectName + ".csv");
+
+            System.out.println("Salvando dados Commits ...");
+            Commit.saveCommitCSV("csv/commits-" + projectName + ".csv");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -242,7 +244,6 @@ public class ExecRefactoringMiner240v {
                 parentsSet.add(parent);
             }
 
-            // ! ESTAMOS ANALISANDO APENAS COMMITS COM 1 PAI, AQUI EXISTE OUTRAS VARIACOES
             new Commit(hash, parentsSet);
 
         }

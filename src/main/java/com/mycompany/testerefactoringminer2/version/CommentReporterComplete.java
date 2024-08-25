@@ -97,21 +97,17 @@ public class CommentReporterComplete {
         @CsvBindByName(column = "10_hash")
         private String hash;
 
+        @CsvBindByName(column = "11_parentsHash")
         private String parentsHash;
 
-        @CsvBindByName(column = "11_hash_classPath")
+        @CsvBindByName(column = "12_hash_classPath")
         private String hash_classPath;
 
-        @CsvBindByName(column = "12_parentHash_classPath")
+        @CsvBindByName(column = "13_parentHash_classPath")
         private String parentHash_classPath;
 
-        @CsvBindByName(column = "13_type")
         private String type;
-
-        @CsvBindByName(column = "14_startLine")
         private int startLine;
-
-        @CsvBindByName(column = "15_endLine")
         private int endLine;
 
         @CsvBindByName(column = "16_segmentos")
@@ -128,10 +124,10 @@ public class CommentReporterComplete {
         @CsvBindByName(column = "20_isJavaDocComment")
         private int isJavaDocComment;
 
-        @CsvBindByName(column = "21_isOrphanCommenta")
         private int isOrphanCommenta;
 
         private Path filePath;
+
         private Commit commit;
 
         public CommentsTodosDoCommit(Commit commit, Path filePath, String type, int startNumber,
