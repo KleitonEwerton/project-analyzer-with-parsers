@@ -12,4 +12,6 @@ public class Refactoring {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    private long commitId;
+
 }
