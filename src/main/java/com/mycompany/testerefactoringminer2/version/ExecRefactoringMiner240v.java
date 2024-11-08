@@ -31,26 +31,15 @@ public class ExecRefactoringMiner240v {
 
     public static void main(String[] args) throws Exception {
 
-        String nomeProjeto = "examples-for-refactoring-testing";
-        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+        // String nomeProjeto = "examples-for-refactoring-testing";
+        // String url =
+        // "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
 
         // String nomeProjeto = "auto";
         // String url = "https://github.com/google/auto.git";
 
-        // String nomeProjeto = "flink-cdc";
-        // String url = "https://github.com/apache/flink-cdc.git";
-
-        // String nomeProjeto = "Sa-Token";
-        // String url = "https://github.com/dromara/Sa-Token.git";
-
-        // String nomeProjeto = "gson";
-        // String url = "https://github.com/google/gson.git";
-
-        // String nomeProjeto = "Apktool";
-        // String url = "https://github.com/iBotPeaches/Apktool.git";
-
-        // String nomeProjeto = "zuul";
-        // String url = "https://github.com/Netflix/zuul.git";
+        String nomeProjeto = "zuul";
+        String url = "https://github.com/Netflix/zuul.git";
 
         final Thread[] thread = new Thread[1];
 
