@@ -1,4 +1,4 @@
-package com.projectanalyzer.projectanalyzer;
+package com.projectanalyzer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
