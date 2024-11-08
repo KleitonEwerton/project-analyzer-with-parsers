@@ -1,4 +1,4 @@
-package com.projectanalyzer.entity.commits;
+package com.projectanalyzer.entities.commit;
 
 import java.util.Set;
 

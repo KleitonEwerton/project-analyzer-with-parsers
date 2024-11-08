@@ -1,6 +1,6 @@
-package com.projectanalyzer.types.comments;
+package com.projectanalyzer.types.comment;
 
-public enum TypeComments {
+public enum TypeComment {
 
     /**
      * Comment about a method

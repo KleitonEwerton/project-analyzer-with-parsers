@@ -1,6 +1,6 @@
-package com.projectanalyzer.entity.comments;
+package com.projectanalyzer.entities.comment;
 
-import com.projectanalyzer.types.comments.TypeComments;
+import com.projectanalyzer.types.comment.TypeComment;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,11 +17,14 @@ public class Comment {
     @Column(name = "commit_id", nullable = false)
     private long commitId;
 
+    @Column(name = "content", nullable = false)
+    private String content;
+
     @Column(name = "file_path", nullable = false)
     private String filePath;
 
     @Column(name = "type_comment", nullable = false)
-    private TypeComments typeComment;
+    private TypeComment typeComment;
 
     @Column(name = "start_line", nullable = false)
     private int startLine;
@@ -61,6 +64,20 @@ public class Comment {
     }
 
     /**
+     * @return String return the content
+     */
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * @param content the content to set
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /**
      * @return String return the filePath
      */
     public String getFilePath() {
@@ -77,14 +94,14 @@ public class Comment {
     /**
      * @return TypeComments return the typeComment
      */
-    public TypeComments getTypeComment() {
+    public TypeComment getTypeComment() {
         return typeComment;
     }
 
     /**
      * @param typeComment the typeComment to set
      */
-    public void setTypeComment(TypeComments typeComment) {
+    public void setTypeComment(TypeComment typeComment) {
         this.typeComment = typeComment;
     }
 
