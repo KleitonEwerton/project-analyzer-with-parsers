@@ -12,23 +12,23 @@ import com.minerprojects.badsmelldetector.ExecutionConfig;
 import com.minerprojects.badsmelldetector.cmd.CMD;
 import com.minerprojects.badsmelldetector.cmd.CMDOutput;
 import com.minerprojects.badsmelldetector.violation.ViolationPMD2;
-import com.minerprojects.badsmelldetector.xml.SaxLongMethod;
+import com.minerprojects.badsmelldetector.xml.SaxTooManyMethods;
 
-public class LongMethod extends BadSmellPMD2 {
+public class TooManyMethods extends BadSmellPMD {
 
     @Override
     public String toString() {
-        return "LongMethod{" + super.toString() + '}';
+        return "TooManyMethods{" + super.toString() + '}';
     }
 
-    public LongMethod() {
+    public TooManyMethods() {
     }
 
-    public LongMethod(ViolationPMD2 violationPMD2) {
+    public TooManyMethods(ViolationPMD2 violationPMD2) {
         super(violationPMD2);
     }
 
-    public static List<LongMethod> extractLongMethod(String projectDirectory, String version) {
+    public static List<TooManyMethods> extractTooManyMethods(String projectDirectory, String version) {
 
         String os = System.getProperty("os.name");
         String[] command = null;
@@ -42,7 +42,7 @@ public class LongMethod extends BadSmellPMD2 {
                     "-d",
                     projectDirectory,
                     "-R",
-                    "category/java/design.xml/NcssMethodCount",
+                    "category/java/design.xml/TooManyMethods",
                     "-f",
                     "xml" };
         } else {
@@ -53,10 +53,11 @@ public class LongMethod extends BadSmellPMD2 {
                     "-d",
                     projectDirectory,
                     "-R",
-                    "category/java/design.xml/NcssMethodCount",
+                    "category/java/design.xml/TooManyMethods",
                     "-f",
                     "xml" };
         }
+
         CMDOutput cmdArray = CMD.cmdArray(ExecutionConfig.PMD_PATH, command);
 
         String concat = new String();
@@ -64,12 +65,16 @@ public class LongMethod extends BadSmellPMD2 {
             concat += string + "\n";
         }
 
-        SaxLongMethod sax = new SaxLongMethod();
-        List<LongMethod> longMethods = sax.fazerParsing(concat).stream().map(l -> {
+        SaxTooManyMethods sax = new SaxTooManyMethods();
+        List<TooManyMethods> tooManyMethodss = sax.fazerParsing(concat).stream().map(l -> {
             l.setVersion(version);
             return l;
         }).collect(Collectors.toList());
 
-        return longMethods;
+        tooManyMethodss.forEach(t -> {
+            System.out.println(t);
+        });
+
+        return tooManyMethodss;
     }
 }

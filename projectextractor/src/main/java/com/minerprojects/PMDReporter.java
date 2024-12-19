@@ -5,10 +5,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.minerprojects.CLI.CLIExecute;
-import com.minerprojects.CLI.CLIExecution;
 import com.minerprojects.badsmelldetector.ExecutionConfig;
 import com.minerprojects.badsmelldetector.pmd.LongMethod;
+import com.minerprojects.badsmelldetector.pmd.TooManyMethods;
 
 public class PMDReporter {
     private static final Logger logger = Logger.getLogger(MinerProjects.class.getName());
@@ -37,9 +36,13 @@ public class PMDReporter {
         String command = "git checkout " + commit.getHash();
         Path directory = Paths.get(ExecutionConfig.PROJECT_PATH);
 
-        List<LongMethod> longMethods = LongMethod.extractLongMethod(
+        List<TooManyMethods> TooManyMethodss = TooManyMethods.extractTooManyMethods(
                 directory.toString(),
                 commit.getHash());
+
+        // List<LongMethod> longMethods = LongMethod.extractLongMethod(
+        // directory.toString(),
+        // commit.getHash());
 
     }
 
