@@ -70,6 +70,11 @@ public class LongMethod extends BadSmellPMD2 {
             return l;
         }).collect(Collectors.toList());
 
+        longMethods.forEach(l -> {
+            System.out.println(l);
+
+        });
+
         return longMethods;
     }
 }

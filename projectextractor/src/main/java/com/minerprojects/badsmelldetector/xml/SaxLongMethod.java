@@ -19,15 +19,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.minerprojects.badsmelldetector.pmd.LongMethod;
 
-/**
- * classe SaxLongMethod: processa o documento XML de países com o uso da API
- * SaxLongMethod, recuperando as informações de cada país e as imprimindo na
- * tela (usando uma linha para cada país).
- *
- * A classe "SaxLongMethod" é derivada da classe "DefaultHandler" da biblioteca
- * org.xml.sax.helpers.DefaultHandler. Isso faz com que "SaxLongMethod" “ganhe”
- * automaticamente um processador SaxLongMethod com o comportamento default.
- */
 public class SaxLongMethod extends DefaultHandler {
 
     private String tagAtual;
