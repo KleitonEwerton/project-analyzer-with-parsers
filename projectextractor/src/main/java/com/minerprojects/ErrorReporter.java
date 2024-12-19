@@ -1,16 +1,8 @@
 package com.minerprojects;
 
-import java.nio.file.Paths;
 import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.Writer;
 
 public class ErrorReporter {
 
