@@ -1,4 +1,4 @@
-package com.mycompany.testerefactoringminer2.version.CLI;
+package com.minerprojects.CLI;
 
 import java.io.BufferedReader;
 import java.io.File;

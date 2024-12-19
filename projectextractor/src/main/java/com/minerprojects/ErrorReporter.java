@@ -1,4 +1,4 @@
-package com.mycompany.testerefactoringminer2.version;
+package com.minerprojects;
 
 import java.nio.file.Paths;
 import com.opencsv.bean.CsvBindByName;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.Writer;
 
-public class ErroCheckout {
+public class ErrorReporter {
 
     @CsvBindByName(column = "10_HASH")
     private String hash;
@@ -23,9 +23,9 @@ public class ErroCheckout {
     @CsvBindByName(column = "MSG_ERRO")
     private String erroMSG;
 
-    public static List<ErroCheckout> errosCheckout = new ArrayList<>();
+    public static List<ErrorReporter> errosCheckout = new ArrayList<>();
 
-    public ErroCheckout(String hash, String parentHash, String erroMSG) {
+    public ErrorReporter(String hash, String parentHash, String erroMSG) {
         this.hash = hash;
         this.parentHash = parentHash;
         this.erroMSG = erroMSG;
@@ -72,22 +72,6 @@ public class ErroCheckout {
      */
     public void setErroMSG(String erroMSG) {
         this.erroMSG = erroMSG;
-    }
-
-    public static void saveErrosCSV(String fileName)
-            throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
-
-        Writer writer = Files.newBufferedWriter(Paths.get(fileName));
-
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        StatefulBeanToCsv<ErroCheckout> beanToCsv = new StatefulBeanToCsvBuilder(
-                writer).build();
-
-        beanToCsv.write(ErroCheckout.errosCheckout);
-        writer.flush();
-        writer.close();
-        ErroCheckout.errosCheckout.clear();
-
     }
 
 }
