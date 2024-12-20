@@ -11,25 +11,25 @@ import java.util.stream.Collectors;
 import com.minerprojects.badsmelldetector.ExecutionConfig;
 import com.minerprojects.badsmelldetector.cmd.CMD;
 import com.minerprojects.badsmelldetector.cmd.CMDOutput;
-import com.minerprojects.badsmelldetector.violation.ViolationPMD;
-import com.minerprojects.badsmelldetector.xml.SaxGodClass;
+import com.minerprojects.badsmelldetector.violation.ViolationPMD2;
+import com.minerprojects.badsmelldetector.xml.SaxTooManyFields;
 
-public class GodClass extends BadSmellPMD {
+public class TooManyFields extends BadSmellPMD2 {
 
     @Override
     public String toString() {
-        return "GodClass{" + super.toString() + '}';
+        return "TooManyFields{" + super.toString() + '}';
     }
 
-    public GodClass() {
+    public TooManyFields() {
     }
 
-    public GodClass(ViolationPMD violationPMD) {
-        super(violationPMD);
+    public TooManyFields(ViolationPMD2 violationPMD2) {
+        super(violationPMD2);
     }
 
-    public static List<GodClass> extractGodClass(String projectDirectory, String version) {
-        System.out.println("Extracting GodClass" + projectDirectory + ":" + version);
+    public static List<TooManyFields> extractTooManyFields(String projectDirectory, String version) {
+
         String os = System.getProperty("os.name");
         String[] command = null;
 
@@ -42,7 +42,7 @@ public class GodClass extends BadSmellPMD {
                     "-d",
                     projectDirectory,
                     "-R",
-                    "category/java/design.xml/GodClass",
+                    "category/java/design.xml/TooManyFields",
                     "-f",
                     "xml" };
         } else {
@@ -53,10 +53,11 @@ public class GodClass extends BadSmellPMD {
                     "-d",
                     projectDirectory,
                     "-R",
-                    "category/java/design.xml/GodClass",
+                    "category/java/design.xml/TooManyFields",
                     "-f",
                     "xml" };
         }
+
         CMDOutput cmdArray = CMD.cmdArray(ExecutionConfig.PMD_PATH, command);
 
         String concat = new String();
@@ -64,12 +65,16 @@ public class GodClass extends BadSmellPMD {
             concat += string + "\n";
         }
 
-        SaxGodClass sax = new SaxGodClass();
-        List<GodClass> godsClass = sax.fazerParsing(concat).stream().map(data -> {
-            data.setVersion(version);
-            return data;
+        SaxTooManyFields sax = new SaxTooManyFields();
+        List<TooManyFields> tooManyFieldss = sax.fazerParsing(concat).stream().map(l -> {
+            l.setVersion(version);
+            return l;
         }).collect(Collectors.toList());
 
-        return godsClass;
+        tooManyFieldss.forEach(t -> {
+            System.out.println(t);
+        });
+
+        return tooManyFieldss;
     }
 }

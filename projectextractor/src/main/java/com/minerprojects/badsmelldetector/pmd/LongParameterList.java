@@ -38,6 +38,7 @@ public class LongParameterList extends BadSmellPMD2 {
                     "cmd",
                     "/c",
                     "pmd.bat",
+                    "check",
                     "-d",
                     projectDirectory,
                     "-R",

@@ -11,25 +11,25 @@ import java.util.stream.Collectors;
 import com.minerprojects.badsmelldetector.ExecutionConfig;
 import com.minerprojects.badsmelldetector.cmd.CMD;
 import com.minerprojects.badsmelldetector.cmd.CMDOutput;
-import com.minerprojects.badsmelldetector.violation.ViolationPMD;
-import com.minerprojects.badsmelldetector.xml.SaxGodClass;
+import com.minerprojects.badsmelldetector.violation.ViolationPMD2;
+import com.minerprojects.badsmelldetector.xml.SaxCyclomaticComplexity;
 
-public class GodClass extends BadSmellPMD {
+public class CyclomaticComplexity extends BadSmellPMD2 {
 
     @Override
     public String toString() {
-        return "GodClass{" + super.toString() + '}';
+        return "CyclomaticComplexity{" + super.toString() + '}';
     }
 
-    public GodClass() {
+    public CyclomaticComplexity() {
     }
 
-    public GodClass(ViolationPMD violationPMD) {
-        super(violationPMD);
+    public CyclomaticComplexity(ViolationPMD2 violationPMD2) {
+        super(violationPMD2);
     }
 
-    public static List<GodClass> extractGodClass(String projectDirectory, String version) {
-        System.out.println("Extracting GodClass" + projectDirectory + ":" + version);
+    public static List<CyclomaticComplexity> extractCyclomaticComplexity(String projectDirectory, String version) {
+
         String os = System.getProperty("os.name");
         String[] command = null;
 
@@ -42,21 +42,23 @@ public class GodClass extends BadSmellPMD {
                     "-d",
                     projectDirectory,
                     "-R",
-                    "category/java/design.xml/GodClass",
+                    "category/java/design.xml/CyclomaticComplexity",
                     "-f",
                     "xml" };
         } else {
             command = new String[] {
                     "sh",
                     "run.sh",
+
                     "pmd",
                     "-d",
                     projectDirectory,
                     "-R",
-                    "category/java/design.xml/GodClass",
+                    "category/java/design.xml/CyclomaticComplexity",
                     "-f",
                     "xml" };
         }
+
         CMDOutput cmdArray = CMD.cmdArray(ExecutionConfig.PMD_PATH, command);
 
         String concat = new String();
@@ -64,12 +66,16 @@ public class GodClass extends BadSmellPMD {
             concat += string + "\n";
         }
 
-        SaxGodClass sax = new SaxGodClass();
-        List<GodClass> godsClass = sax.fazerParsing(concat).stream().map(data -> {
-            data.setVersion(version);
-            return data;
+        SaxCyclomaticComplexity sax = new SaxCyclomaticComplexity();
+        List<CyclomaticComplexity> CyclomaticComplexitys = sax.fazerParsing(concat).stream().map(l -> {
+            l.setVersion(version);
+            return l;
         }).collect(Collectors.toList());
 
-        return godsClass;
+        CyclomaticComplexitys.forEach(t -> {
+            System.out.println(t);
+        });
+
+        return CyclomaticComplexitys;
     }
 }

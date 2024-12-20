@@ -31,6 +31,7 @@ public class DataClass extends BadSmellPMD {
                     "cmd",
                     "/c",
                     "pmd.bat",
+                    "check",
                     "-d",
                     projectDirectory,
                     "-R",

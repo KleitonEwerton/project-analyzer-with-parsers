@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import com.minerprojects.badsmelldetector.ExecutionConfig;
 import com.minerprojects.badsmelldetector.cmd.CMD;
 import com.minerprojects.badsmelldetector.cmd.CMDOutput;
-import com.minerprojects.badsmelldetector.violation.ViolationPMD2;
+import com.minerprojects.badsmelldetector.violation.ViolationPMD;
 import com.minerprojects.badsmelldetector.xml.SaxTooManyMethods;
 
 public class TooManyMethods extends BadSmellPMD {
@@ -24,8 +24,8 @@ public class TooManyMethods extends BadSmellPMD {
     public TooManyMethods() {
     }
 
-    public TooManyMethods(ViolationPMD2 violationPMD2) {
-        super(violationPMD2);
+    public TooManyMethods(ViolationPMD violationPMD) {
+        super(violationPMD);
     }
 
     public static List<TooManyMethods> extractTooManyMethods(String projectDirectory, String version) {

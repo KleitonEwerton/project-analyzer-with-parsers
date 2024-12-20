@@ -6,8 +6,14 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.minerprojects.badsmelldetector.ExecutionConfig;
+import com.minerprojects.badsmelldetector.cmd.CMD;
+import com.minerprojects.badsmelldetector.pmd.CyclomaticComplexity;
+import com.minerprojects.badsmelldetector.pmd.DataClass;
 import com.minerprojects.badsmelldetector.pmd.LongMethod;
+import com.minerprojects.badsmelldetector.pmd.LongParameterList;
+import com.minerprojects.badsmelldetector.pmd.TooManyFields;
 import com.minerprojects.badsmelldetector.pmd.TooManyMethods;
+import com.minerprojects.badsmelldetector.pmd.GodClass;
 
 public class PMDReporter {
     private static final Logger logger = Logger.getLogger(MinerProjects.class.getName());
@@ -34,15 +40,40 @@ public class PMDReporter {
     public static void getPMD(CommitReporter commit, String projectName) throws Exception {
 
         String command = "git checkout " + commit.getHash();
+
+        CMD.cmd("tmp/" + projectName, command);
+
+        CMD.cmd("tmp/" + projectName, "git branch", true);
+
         Path directory = Paths.get(ExecutionConfig.PROJECT_PATH);
 
-        List<TooManyMethods> TooManyMethodss = TooManyMethods.extractTooManyMethods(
+        List<CyclomaticComplexity> allCyclomaticComplexity = CyclomaticComplexity.extractCyclomaticComplexity(
                 directory.toString(),
                 commit.getHash());
 
-        // List<LongMethod> longMethods = LongMethod.extractLongMethod(
-        // directory.toString(),
-        // commit.getHash());
+        List<DataClass> allDataClasss = DataClass.extractDataClass(
+                directory.toString(),
+                commit.getHash());
+
+        List<GodClass> allGodClasss = GodClass.extractGodClass(
+                directory.toString(),
+                commit.getHash());
+
+        List<LongMethod> allLongMethods = LongMethod.extractLongMethod(
+                directory.toString(),
+                commit.getHash());
+
+        List<LongParameterList> allLongParameterList = LongParameterList.extractLongParameterList(
+                directory.toString(),
+                commit.getHash());
+
+        List<TooManyFields> allTooManyFields = TooManyFields.extractTooManyFields(
+                directory.toString(),
+                commit.getHash());
+
+        List<TooManyMethods> allTooManyMethodss = TooManyMethods.extractTooManyMethods(
+                directory.toString(),
+                commit.getHash());
 
     }
 
