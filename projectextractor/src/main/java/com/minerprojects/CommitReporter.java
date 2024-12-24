@@ -1,9 +1,9 @@
 package com.minerprojects;
 
 import java.util.Set;
-
+import java.util.HashMap;
 import java.util.HashSet;
-
+import java.util.Map;
 import java.util.Optional;
 
 public class CommitReporter {
@@ -14,11 +14,13 @@ public class CommitReporter {
     private String hash;
     private CommitReporter parent;
     private Set<String> parentsHash;
+    private Map<String, String> filesMAD = new HashMap();
 
-    public CommitReporter(String projectName, String hash, Set<String> parentsHash) {
+    public CommitReporter(String projectName, String hash, Set<String> parentsHash, Map<String, String> filesMAD) {
         this.projectName = projectName;
         this.hash = hash;
         this.parentsHash = parentsHash;
+        this.filesMAD = filesMAD;
         commits.add(this);
     }
 
@@ -28,6 +30,15 @@ public class CommitReporter {
 
     public void setHash(String hash) {
         this.hash = hash;
+    }
+
+    public Map<String, String> getFilesMAD() {
+        return filesMAD;
+    }
+
+    public void setParentHashes(Set<String> parentsHash) {
+        this.parentsHash = parentsHash;
+
     }
 
     public String getParentHash() {
@@ -42,6 +53,10 @@ public class CommitReporter {
 
         return null;
 
+    }
+
+    public Set<String> getParentHashes() {
+        return this.parentsHash;
     }
 
     public int getSizeParents() {

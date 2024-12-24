@@ -9,10 +9,15 @@ import com.minerprojects.CLI.CLIExecute;
 import com.minerprojects.CLI.CLIExecution;
 import com.minerprojects.badsmelldetector.ExecutionConfig;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class MinerProjects {
 
@@ -46,6 +51,8 @@ public class MinerProjects {
         ExecutionConfig.PROJECT_PATH = "C:\\Users\\kleit\\OneDrive\\Documentos\\tcc\\java-paser-refactoring-and-comments\\projectextractor\\tmp\\"
                 + projectName;
 
+        System.out.println("GET COMMITS AND MODIFIED, ADDED AND DELETED FILES: " + ExecutionConfig.PROJECT_PATH);
+
         getCommits(projectName);
 
         try {
@@ -68,8 +75,7 @@ public class MinerProjects {
     }
 
     public static void getCommits(String projectName) throws IOException {
-
-        String command = "git log --all --pretty=\"format:'%H''%P'\"";
+        String command = "git log --all --pretty=\"hash:'%H'parents:'%P'\" --name-status";
         String path = "tmp/" + projectName;
 
         CLIExecution execute = CLIExecute.execute(command, path);
@@ -78,35 +84,49 @@ public class MinerProjects {
             throw new RuntimeException("The path does not have a Git Repository or Name is Bigger");
         }
 
+        Map<String, CommitReporter> commitsMap = new HashMap<>();
+        CommitReporter currentCommit = null;
+
         for (String line : execute.getOutput()) {
+            if (line.startsWith("hash:")) {
+                // Processa uma nova entrada de commit
+                int hashBegin = line.indexOf("'") + 1;
+                int hashEnd = line.indexOf("'", hashBegin);
+                int parentsBegin = line.indexOf("'", hashEnd + 1) + 1;
+                int parentsEnd = line.indexOf("'", parentsBegin);
 
-            int hashBegin = line.indexOf("\'");
-            int hashEnd = line.indexOf("\'", hashBegin + 1);
-            int parentsBegin = line.indexOf("\'", hashEnd + 1);
-            int parentsEnd = line.indexOf("\'", parentsBegin + 1);
+                String hash = line.substring(hashBegin, hashEnd);
+                String parents = line.substring(parentsBegin, parentsEnd);
 
-            String hash = line.substring(hashBegin + 1, hashEnd);
-            String parents = line.substring(parentsBegin + 1, parentsEnd);
-
-            String[] parenstsArray = parents.split(" ");
-
-            Set<String> parentsSet = new HashSet<>();
-
-            for (String parent : parenstsArray) {
-                parentsSet.add(parent);
+                Set<String> parentsSet = new HashSet<>(Arrays.asList(parents.split(" ")));
+                currentCommit = new CommitReporter(projectName, hash, parentsSet, new HashMap<>());
+                commitsMap.put(hash, currentCommit);
+            } else if (currentCommit != null
+                    && (line.startsWith("M") || line.startsWith("A") || line.startsWith("D"))) {
+                // Processa arquivos modificados, adicionados ou deletados
+                String[] parts = line.split("\t", 2);
+                if (parts.length == 2) {
+                    String status = parts[0].trim();
+                    String filePath = parts[1].trim();
+                    currentCommit.getFilesMAD().put(filePath, status);
+                }
             }
-
-            new CommitReporter(projectName, hash, parentsSet);
-
         }
 
-        for (CommitReporter commit : CommitReporter.commits) {
-            CommitReporter parent = CommitReporter.getCommitByHash(commit.getParentHash()).orElse(null);
-
-            if (parent != null)
-                commit.setParent(parent);
+        // Configura as relações pai-filho entre os commits
+        for (CommitReporter commit : commitsMap.values()) {
+            for (String parentHash : commit.getParentHashes()) {
+                CommitReporter parent = commitsMap.get(parentHash);
+                if (parent != null) {
+                    commit.setParent(parent);
+                }
+            }
         }
 
+        // Exibe os commits para depuração
+        for (CommitReporter commit : commitsMap.values()) {
+            System.out.println("Commit: " + commit.getHash() + " " + commit.getFilesMAD().size());
+        }
     }
 
 }
