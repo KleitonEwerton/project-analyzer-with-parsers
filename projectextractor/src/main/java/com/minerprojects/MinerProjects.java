@@ -101,6 +101,7 @@ public class MinerProjects {
                 Set<String> parentsSet = new HashSet<>(Arrays.asList(parents.split(" ")));
                 currentCommit = new CommitReporter(projectName, hash, parentsSet, new HashMap<>());
                 commitsMap.put(hash, currentCommit);
+
             } else if (currentCommit != null
                     && (line.startsWith("M") || line.startsWith("A") || line.startsWith("D"))) {
                 // Processa arquivos modificados, adicionados ou deletados
