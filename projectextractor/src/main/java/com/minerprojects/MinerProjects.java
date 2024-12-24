@@ -64,7 +64,7 @@ public class MinerProjects {
             // RefactoringReporter.getAllRefactoring(miner, repo);
 
             logger.info("Analisando todos os PMD em cada versão do projeto!");
-            PMDReporter.getAllPMD(projectName);
+            // PMDReporter.getAllPMD(projectName);
 
         } catch (Exception e) {
             e.printStackTrace();
