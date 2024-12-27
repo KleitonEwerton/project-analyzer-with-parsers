@@ -25,9 +25,7 @@ public class MinerProjects {
     public static void main(String[] args) throws Exception {
 
         String nomeProjeto = "examples-for-refactoring-testing";
-
         String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
-
         checar(nomeProjeto, url);
 
     }
@@ -124,10 +122,6 @@ public class MinerProjects {
             }
         }
 
-        // Exibe os commits para depuração
-        for (CommitReporter commit : commitsMap.values()) {
-            System.out.println("Commit: " + commit.getHash() + " " + commit.getFilesMAD().size());
-        }
     }
 
 }

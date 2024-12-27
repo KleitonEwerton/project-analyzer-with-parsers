@@ -57,11 +57,12 @@ public class CommentReporter {
 
         this.segmentos = 1 + this.endLine - this.startLine;
 
-        if (isParent) {
+        if (isParent == true) {
 
             DataComment.updateDadosByhashParentClassPath(this);
 
         } else {
+
             DataComment.updateDadosByhashClassPath(this);
 
         }
@@ -195,12 +196,14 @@ public class CommentReporter {
         CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
 
         if (execute.toString().contains("error:")) {
+
             if (logger.isLoggable(java.util.logging.Level.INFO)) {
 
                 logger.info(String.format("ERROR%n%s", command));
 
             }
             new ErrorReporter(commit.getHash(), projectName, command + "\n" + execute.toString());
+
             return;
         }
 
@@ -235,12 +238,18 @@ public class CommentReporter {
 
         commit.getFilesMAD().forEach((k, v) -> {
 
-            if (v.equals("M") || v.equals("A")) {
+            if ((v.equals("M") || v.equals("A")) && k.endsWith(".java")) {
                 javaFiles.add(FileSystems.getDefault()
                         .getPath("tmp" + File.separator + commit.getProjectName() + File.separator +
                                 k));
-                DataComment.dataComments.add(new DataComment(commit.getHash() + File.separator + k,
-                        commit.getParentHash() + File.separator + k));
+
+                System.out.println("tmp" + File.separator + commit.getProjectName() + File.separator +
+                        k);
+                new DataComment(
+                        commit.getHash() + File.separator + "tmp" + File.separator + commit.getProjectName()
+                                + File.separator + k,
+                        commit.getParentHash() + File.separator + "tmp" + File.separator + commit.getProjectName()
+                                + File.separator + k);
             }
 
         });
@@ -255,7 +264,7 @@ public class CommentReporter {
 
         commit.getFilesMAD().forEach((k, v) -> {
 
-            if (v.equals("M") || v.equals("A")) {
+            if ((v.equals("M") || v.equals("A")) && k.endsWith(".java")) {
                 javaFiles.add(FileSystems.getDefault()
                         .getPath("tmp" + File.separator + commit.getProjectName() + File.separator +
                                 k));
@@ -267,7 +276,7 @@ public class CommentReporter {
 
     }
 
-    public static void processJavaFile(Path filePath, CommitReporter commit, Boolean isParent) {
+    public static void processJavaFile(Path filePath, CommitReporter commit, boolean isParent) {
 
         try {
 
@@ -287,7 +296,7 @@ public class CommentReporter {
                     .collect(Collectors.toSet());
 
         } catch (Exception e) {
-            // ! AQUI PODE HAVER ERRO SE O ARQVUIO TIVER O CODIGO QUEBRADO OU VERSAO ANTIGA
+            System.out.println(e);
         }
     }
 
@@ -299,14 +308,17 @@ public class CommentReporter {
 
                 if (logger.isLoggable(java.util.logging.Level.INFO)) {
                     logger.info(
-                            String.format("check comments - tmp%s%s%s", projectName, File.separator, commit.getHash()));
+                            String.format("check comments - tmp%s%s%s%s", commit.getHash(), File.separator, projectName,
+                                    File.separator));
                 }
 
+                DataComment.dataComments.clear();
+
                 CommentReporter.walkToRepositorySeachComment(commit, projectName);
+
                 CommentReporter.walkParentToRepositorySeachComment(commit, projectName);
 
                 DataComment.dataComments.forEach(c -> {
-
                     System.out.println(c.toString());
                 });
 

@@ -1,13 +1,13 @@
 package com.minerprojects.Data;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.minerprojects.CommentReporter;
 
 public class DataComment {
 
-    public static Set<DataComment> dataComments = new HashSet();
+    public static List<DataComment> dataComments = new ArrayList<>();
 
     private String hashClassPath;
     private String parentHashClassPath;
@@ -40,26 +40,27 @@ public class DataComment {
 
         this.qntSegmentos = 0;
         this.qntParentSegmentos = 0;
+
+        dataComments.add(this);
     }
 
     public static void updateDadosByhashClassPath(CommentReporter comment) {
-        System.out.println("DataComment.updateDadosByhashClassPath");
-        System.out.println("comment: " + comment.getHashClassPath());
 
-        dataComments.stream().filter(c -> c.getHashClassPath().equals(comment.getHashClassPath())).forEach(c -> {
+        dataComments.stream().filter(c -> c.getHashClassPath().equals(comment.getHashClassPath()))
+                .forEach(c -> {
 
-            c.qntCommentReporterType1 += comment.getType() == 1 ? 1 : 0;
-            c.qntCommentReporterType2 += comment.getType() == 2 ? 1 : 0;
-            c.qntCommentReporterType3 += comment.getType() == 3 ? 1 : 0;
-            c.qntSegmentos += comment.getSegmentos();
+                    c.qntCommentReporterType1 += comment.getType() == 1 ? 1 : 0;
+                    c.qntCommentReporterType2 += comment.getType() == 2 ? 1 : 0;
+                    c.qntCommentReporterType3 += comment.getType() == 3 ? 1 : 0;
+                    c.qntSegmentos += comment.getSegmentos();
 
-        });
+                });
 
     }
 
     public static void updateDadosByhashParentClassPath(CommentReporter comment) {
 
-        dataComments.stream().filter(c -> c.getParentHashClassPath().equals(comment.getHashClassPath())).forEach(c -> {
+        dataComments.stream().filter(c -> c.getHashClassPath().equals(comment.getHashClassPath())).forEach(c -> {
 
             c.qntInParentCommentReporterType1 += comment.getType() == 1 ? 1 : 0;
             c.qntInParentCommentReporterType2 += comment.getType() == 2 ? 1 : 0;

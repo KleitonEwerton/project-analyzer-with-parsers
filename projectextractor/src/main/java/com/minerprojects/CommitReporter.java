@@ -22,6 +22,7 @@ public class CommitReporter {
         this.parentsHash = parentsHash;
         this.filesMAD = filesMAD;
         commits.add(this);
+
     }
 
     public String getHash() {
