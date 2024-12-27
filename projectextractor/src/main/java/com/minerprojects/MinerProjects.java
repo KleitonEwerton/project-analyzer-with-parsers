@@ -9,9 +9,8 @@ import com.minerprojects.CLI.CLIExecute;
 import com.minerprojects.CLI.CLIExecution;
 import com.minerprojects.badsmelldetector.ExecutionConfig;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.Arrays;
@@ -25,8 +24,9 @@ public class MinerProjects {
 
     public static void main(String[] args) throws Exception {
 
-        String nomeProjeto = "auto";
-        String url = "https://github.com/google/auto.git";
+        String nomeProjeto = "examples-for-refactoring-testing";
+
+        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
 
         checar(nomeProjeto, url);
 
@@ -37,8 +37,6 @@ public class MinerProjects {
         CommitReporter.commits.clear();
 
         GitService gitService = new GitServiceImpl();
-
-        GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
 
         gitService.cloneIfNotExists("tmp/" + projectName, projectUrl);
 
@@ -58,7 +56,7 @@ public class MinerProjects {
         try {
 
             logger.info("Analisando todos os comentarios em cada versão do projeto!");
-            // CommentReporter.getAllComments(projectName);
+            CommentReporter.getAllComments(projectName);
 
             logger.info("Analisando todos as refatorações em cada versão do projeto!");
             // RefactoringReporter.getAllRefactoring(miner, repo);
@@ -109,6 +107,8 @@ public class MinerProjects {
                 if (parts.length == 2) {
                     String status = parts[0].trim();
                     String filePath = parts[1].trim();
+                    // File path para o padrao do sistema
+                    filePath = filePath.replace("/", File.separator);
                     currentCommit.getFilesMAD().put(filePath, status);
                 }
             }

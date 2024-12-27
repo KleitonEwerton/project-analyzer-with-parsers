@@ -18,63 +18,54 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.minerprojects.CLI.CLIExecute;
 import com.minerprojects.CLI.CLIExecution;
+import com.minerprojects.Data.DataComment;
 
 public class CommentReporter {
 
     private static final Logger logger = Logger.getLogger(CommentReporter.class.getName());
 
-    private String hash;
     private String hashClassPath;
-    private String classPath;
 
-    private String parentsHash;
     private String parentHashClassPath;
 
-    private String type;
+    private int type;
+
     private int startLine;
+
     private int endLine;
+
     private int segmentos;
 
-    private int isBlockComment;
-    private int isLineComment;
-    private int isJavaDocComment;
-    private int isOrphanCommenta;
-
     private Path filePath;
+
     private CommitReporter commit;
 
-    public CommentReporter(CommitReporter commit, Path filePath, String type, int startNumber,
-            int endNumber, int isBlockComment, int isLineComment, int isJavaDocComment, int isOrphanComment,
-            String classPath) {
+    public CommentReporter(CommitReporter commit, Path filePath, int type, int startNumber,
+            int endNumber, boolean isParent) {
 
         this.commit = commit;
-        this.hash = commit.getHash();
-        this.parentsHash = commit.getParentHash();
+        this.hashClassPath = commit.getHash() + File.separator + filePath.toString();
+        this.parentHashClassPath = this.commit.getParentHash() + File.separator + filePath.toString();
+
         this.filePath = filePath;
+
         this.type = type;
+
         this.startLine = startNumber;
+
         this.endLine = endNumber;
+
         this.segmentos = 1 + this.endLine - this.startLine;
-        this.isBlockComment = isBlockComment;
-        this.isLineComment = isLineComment;
-        this.isJavaDocComment = isJavaDocComment;
-        this.isOrphanCommenta = isOrphanComment;
 
-        classPath = classPath.replace("\\", "/");
-        classPath = classPath.substring(classPath.indexOf("/") + 1);
+        if (isParent) {
 
-        this.classPath = classPath.substring(classPath.indexOf("/") + 1);
+            DataComment.updateDadosByhashParentClassPath(this);
 
-        this.hashClassPath = this.hash + File.separator + this.classPath;
-        this.parentHashClassPath = this.commit.getParentHash() + File.separator + this.classPath;
+        } else {
+            DataComment.updateDadosByhashClassPath(this);
 
-    }
+        }
 
-    /**
-     * @param hash the hash to set
-     */
-    public void setHash(String hash) {
-        this.hash = hash;
     }
 
     /**
@@ -89,34 +80,6 @@ public class CommentReporter {
      */
     public void setHashClassPath(String hashClassPath) {
         this.hashClassPath = hashClassPath;
-    }
-
-    /**
-     * @return String return the classPath
-     */
-    public String getClassPath() {
-        return classPath;
-    }
-
-    /**
-     * @param classPath the classPath to set
-     */
-    public void setClassPath(String classPath) {
-        this.classPath = classPath;
-    }
-
-    /**
-     * @return String return the parentsHash
-     */
-    public String getParentsHash() {
-        return parentsHash;
-    }
-
-    /**
-     * @param parentsHash the parentsHash to set
-     */
-    public void setParentsHash(String parentsHash) {
-        this.parentsHash = parentsHash;
     }
 
     /**
@@ -136,14 +99,14 @@ public class CommentReporter {
     /**
      * @return String return the type
      */
-    public String getType() {
+    public int getType() {
         return type;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 
@@ -190,62 +153,6 @@ public class CommentReporter {
     }
 
     /**
-     * @return int return the isBlockComment
-     */
-    public int getIsBlockComment() {
-        return isBlockComment;
-    }
-
-    /**
-     * @param isBlockComment the isBlockComment to set
-     */
-    public void setIsBlockComment(int isBlockComment) {
-        this.isBlockComment = isBlockComment;
-    }
-
-    /**
-     * @return int return the isLineComment
-     */
-    public int getIsLineComment() {
-        return isLineComment;
-    }
-
-    /**
-     * @param isLineComment the isLineComment to set
-     */
-    public void setIsLineComment(int isLineComment) {
-        this.isLineComment = isLineComment;
-    }
-
-    /**
-     * @return int return the isJavaDocComment
-     */
-    public int getIsJavaDocComment() {
-        return isJavaDocComment;
-    }
-
-    /**
-     * @param isJavaDocComment the isJavaDocComment to set
-     */
-    public void setIsJavaDocComment(int isJavaDocComment) {
-        this.isJavaDocComment = isJavaDocComment;
-    }
-
-    /**
-     * @return int return the isOrphanCommenta
-     */
-    public int getIsOrphanCommenta() {
-        return isOrphanCommenta;
-    }
-
-    /**
-     * @param isOrphanCommenta the isOrphanCommenta to set
-     */
-    public void setIsOrphanCommenta(int isOrphanCommenta) {
-        this.isOrphanCommenta = isOrphanCommenta;
-    }
-
-    /**
      * @return Path return the filePath
      */
     public Path getFilePath() {
@@ -273,71 +180,110 @@ public class CommentReporter {
         this.commit = commit;
     }
 
+    @Override
+    public String toString() {
+        return "CommentReporter [commit=" + commit.getHash() + ", endLine=" + endLine + ", filePath=" + filePath
+                + ", hashClassPath="
+                + hashClassPath + ", parentHashClassPath=" + parentHashClassPath + ", segmentos=" + segmentos
+                + ", startLine=" + startLine + ", type=" + type + "]";
+    }
+
     public static void walkToRepositorySeachComment(CommitReporter commit, String projectName) throws Exception {
 
         String command = "git checkout " + commit.getHash();
 
-        CLIExecution execute = CLIExecute.executeCheckout(command, "tmp/" + projectName);
+        CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
 
         if (execute.toString().contains("error:")) {
             if (logger.isLoggable(java.util.logging.Level.INFO)) {
+
                 logger.info(String.format("ERROR%n%s", command));
+
             }
             new ErrorReporter(commit.getHash(), projectName, command + "\n" + execute.toString());
             return;
         }
 
-        collectJavaFiles("tmp/" + projectName).forEach(p -> processJavaFile(p, commit));
+        getPathJavaFilesADM(commit).forEach(p -> processJavaFile(p, commit, false));
 
     }
 
-    public static Set<Path> collectJavaFiles(String projectPath) throws IOException {
+    public static void walkParentToRepositorySeachComment(CommitReporter commit, String projectName) throws Exception {
+
+        String command = "git checkout " + commit.getParentHash();
+
+        CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
+
+        if (execute.toString().contains("error:")) {
+
+            if (logger.isLoggable(java.util.logging.Level.INFO)) {
+
+                logger.info(String.format("ERROR%n%s", command));
+
+            }
+            new ErrorReporter(commit.getHash(), projectName, command + "\n" + execute.toString());
+            return;
+        }
+
+        getParentPathJavaFilesADM(commit).forEach(p -> processJavaFile(p, commit, true));
+
+    }
+
+    public static Set<Path> getPathJavaFilesADM(CommitReporter commit) {
 
         Set<Path> javaFiles = new HashSet<>();
 
-        try (Stream<Path> paths = Files.walk(FileSystems.getDefault().getPath(projectPath))) {
-            javaFiles = paths.filter(Files::isRegularFile)
-                    .filter(p -> p.toString().endsWith(".java"))
-                    .filter(p -> !isHidden(p))
-                    .collect(Collectors.toSet());
+        commit.getFilesMAD().forEach((k, v) -> {
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            if (v.equals("M") || v.equals("A")) {
+                javaFiles.add(FileSystems.getDefault()
+                        .getPath("tmp" + File.separator + commit.getProjectName() + File.separator +
+                                k));
+                DataComment.dataComments.add(new DataComment(commit.getHash() + File.separator + k,
+                        commit.getParentHash() + File.separator + k));
+            }
+
+        });
 
         return javaFiles;
-    }
-
-    private static boolean isHidden(Path path) {
-        try {
-            return Files.isHidden(path) || path.getParent().toFile().isHidden();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
 
     }
 
-    public static void processJavaFile(Path filePath, CommitReporter commit) {
+    public static Set<Path> getParentPathJavaFilesADM(CommitReporter commit) {
+
+        Set<Path> javaFiles = new HashSet<>();
+
+        commit.getFilesMAD().forEach((k, v) -> {
+
+            if (v.equals("M") || v.equals("A")) {
+                javaFiles.add(FileSystems.getDefault()
+                        .getPath("tmp" + File.separator + commit.getProjectName() + File.separator +
+                                k));
+            }
+
+        });
+
+        return javaFiles;
+
+    }
+
+    public static void processJavaFile(Path filePath, CommitReporter commit, Boolean isParent) {
 
         try {
 
-            CompilationUnit staticJavaParser = StaticJavaParser
-                    .parse(filePath);
+            CompilationUnit staticJavaParser = StaticJavaParser.parse(filePath);
 
             staticJavaParser.getAllContainedComments()
                     .stream()
                     .map(p -> new CommentReporter(
                             commit,
-                            filePath,
-                            p.getClass().getSimpleName(),
+                            FileSystems.getDefault().getPath(filePath.toString()),
+                            p.isBlockComment() ? 2 : p.isLineComment() ? 1 : p.isJavadocComment() ? 3 : 0,
                             p.getRange().map(r -> r.begin.line).orElse(0),
                             p.getRange().map(r -> r.end.line).orElse(0),
-                            p.isBlockComment() ? 1 : 0,
-                            p.isLineComment() ? 1 : 0,
-                            p.isJavadocComment() ? 1 : 0,
-                            p.isOrphan() ? 1 : 0,
-                            filePath.toString()))
+                            isParent
+
+                    ))
                     .collect(Collectors.toSet());
 
         } catch (Exception e) {
@@ -352,10 +298,17 @@ public class CommentReporter {
             try {
 
                 if (logger.isLoggable(java.util.logging.Level.INFO)) {
-                    logger.info(String.format("check comments - tmp/%s/%s", projectName, commit.getHash()));
+                    logger.info(
+                            String.format("check comments - tmp%s%s%s", projectName, File.separator, commit.getHash()));
                 }
 
                 CommentReporter.walkToRepositorySeachComment(commit, projectName);
+                CommentReporter.walkParentToRepositorySeachComment(commit, projectName);
+
+                DataComment.dataComments.forEach(c -> {
+
+                    System.out.println(c.toString());
+                });
 
             } catch (Exception e) {
                 e.printStackTrace();
