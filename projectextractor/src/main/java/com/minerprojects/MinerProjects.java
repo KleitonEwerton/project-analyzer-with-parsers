@@ -1,22 +1,21 @@
 
 package com.minerprojects;
 
-import org.refactoringminer.api.GitHistoryRefactoringMiner;
-import org.refactoringminer.api.GitService;
-import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
-import org.refactoringminer.util.GitServiceImpl;
-import com.minerprojects.CLI.CLIExecute;
-import com.minerprojects.CLI.CLIExecution;
-import com.minerprojects.badsmelldetector.ExecutionConfig;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
-import java.util.logging.Logger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import org.refactoringminer.api.GitService;
+import org.refactoringminer.util.GitServiceImpl;
+
+import com.minerprojects.CLI.CLIExecute;
+import com.minerprojects.CLI.CLIExecution;
+import com.minerprojects.badsmelldetector.ExecutionConfig;
 
 public class MinerProjects {
 
@@ -54,13 +53,17 @@ public class MinerProjects {
         try {
 
             logger.info("Analisando todos os comentarios em cada versão do projeto!");
-            CommentReporter.getAllComments(projectName);
+            // CommentReporter.getAllComments(projectName);
 
             logger.info("Analisando todos as refatorações em cada versão do projeto!");
             // RefactoringReporter.getAllRefactoring(miner, repo);
 
             logger.info("Analisando todos os PMD em cada versão do projeto!");
-            // PMDReporter.getAllPMD(projectName);
+
+            CLIExecute.execute(
+                    "del C:\\Users\\kleit\\OneDrive\\Documentos\\tcc\\java-paser-refactoring-and-comments\\projectextractor\\tmp\\.pmdCache");
+
+            PMDReporter.getAllPMD(projectName);
 
         } catch (Exception e) {
             e.printStackTrace();
