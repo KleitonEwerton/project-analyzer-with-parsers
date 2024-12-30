@@ -1,4 +1,4 @@
-package com.projectanalyzer.entities.refactoring;
+package com.projectanalyzer.entities.pmd;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Refactoring {
+public class PMD {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,6 +24,18 @@ public class Refactoring {
 
     @Column(nullable = false)
     private String type;
+
+    @Column(nullable = true)
+    private int beginLine;
+
+    @Column(nullable = true)
+    private int endLine;
+
+    @Column(nullable = true)
+    private int beginColumn;
+
+    @Column(nullable = true)
+    private String priority;
 
     @Column(nullable = true)
     private String parentHash;
@@ -96,6 +108,62 @@ public class Refactoring {
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    /**
+     * @return int return the beginLine
+     */
+    public int getBeginLine() {
+        return beginLine;
+    }
+
+    /**
+     * @param beginLine the beginLine to set
+     */
+    public void setBeginLine(int beginLine) {
+        this.beginLine = beginLine;
+    }
+
+    /**
+     * @return int return the endLine
+     */
+    public int getEndLine() {
+        return endLine;
+    }
+
+    /**
+     * @param endLine the endLine to set
+     */
+    public void setEndLine(int endLine) {
+        this.endLine = endLine;
+    }
+
+    /**
+     * @return int return the beginColumn
+     */
+    public int getBeginColumn() {
+        return beginColumn;
+    }
+
+    /**
+     * @param beginColumn the beginColumn to set
+     */
+    public void setBeginColumn(int beginColumn) {
+        this.beginColumn = beginColumn;
+    }
+
+    /**
+     * @return String return the priority
+     */
+    public String getPriority() {
+        return priority;
+    }
+
+    /**
+     * @param priority the priority to set
+     */
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
 
     /**

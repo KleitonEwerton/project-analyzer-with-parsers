@@ -1,7 +1,6 @@
 package com.projectanalyzer.entities.commit;
 
-import java.util.Set;
-
+import java.util.List;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,18 +9,19 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Commit {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "hash", nullable = false)
+    @Column(nullable = false)
+    private String projectName;
+
+    @Column(nullable = false)
     private String hash;
 
-    @Column(name = "parents_hash", nullable = true)
-    private Set<String> parentsHash;
-
-    @Column(name = "develop", nullable = false)
-    private String develop;
+    @Column(nullable = true)
+    private List<String> parentsHash;
 
     /**
      * @return long return the id
@@ -35,6 +35,20 @@ public class Commit {
      */
     public void setId(long id) {
         this.id = id;
+    }
+
+    /**
+     * @return String return the projectName
+     */
+    public String getProjectName() {
+        return projectName;
+    }
+
+    /**
+     * @param projectName the projectName to set
+     */
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     /**
@@ -52,31 +66,17 @@ public class Commit {
     }
 
     /**
-     * @return Set<String> return the parentsHash
+     * @return List<String> return the parentsHash
      */
-    public Set<String> getParentsHash() {
+    public List<String> getParentsHash() {
         return parentsHash;
     }
 
     /**
      * @param parentsHash the parentsHash to set
      */
-    public void setParentsHash(Set<String> parentsHash) {
+    public void setParentsHash(List<String> parentsHash) {
         this.parentsHash = parentsHash;
-    }
-
-    /**
-     * @return String return the develop
-     */
-    public String getDevelop() {
-        return develop;
-    }
-
-    /**
-     * @param develop the develop to set
-     */
-    public void setDevelop(String develop) {
-        this.develop = develop;
     }
 
 }

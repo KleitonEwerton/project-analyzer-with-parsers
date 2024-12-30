@@ -1,7 +1,5 @@
 package com.projectanalyzer.entities.comment;
 
-import com.projectanalyzer.types.comment.TypeComment;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,26 +12,29 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "commit_id", nullable = false)
-    private long commitId;
+    @Column(nullable = false)
+    private String projectName;
 
-    @Column(name = "content", nullable = false)
-    private String content;
+    @Column(nullable = false)
+    private String hash;
 
-    @Column(name = "file_path", nullable = false)
-    private String filePath;
+    @Column(nullable = false)
+    private String hashPackageClass;
 
-    @Column(name = "type_comment", nullable = false)
-    private TypeComment typeComment;
+    @Column(nullable = false)
+    private String type;
 
-    @Column(name = "start_line", nullable = false)
+    @Column(nullable = false)
+    private int segments;
+
+    @Column(nullable = false)
     private int startLine;
 
-    @Column(name = "end_line", nullable = false)
+    @Column(nullable = false)
     private int endLine;
 
-    @Column(name = "segments", nullable = false)
-    private int segments;
+    @Column(nullable = true)
+    private String parentHash;
 
     /**
      * @return long return the id
@@ -50,59 +51,73 @@ public class Comment {
     }
 
     /**
-     * @return long return the commitId
+     * @return String return the projectName
      */
-    public long getCommitId() {
-        return commitId;
+    public String getProjectName() {
+        return projectName;
     }
 
     /**
-     * @param commitId the commitId to set
+     * @param projectName the projectName to set
      */
-    public void setCommitId(long commitId) {
-        this.commitId = commitId;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     /**
-     * @return String return the content
+     * @return String return the hash
      */
-    public String getContent() {
-        return content;
+    public String getHash() {
+        return hash;
     }
 
     /**
-     * @param content the content to set
+     * @param hash the hash to set
      */
-    public void setContent(String content) {
-        this.content = content;
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
     /**
-     * @return String return the filePath
+     * @return String return the hashPackageClass
      */
-    public String getFilePath() {
-        return filePath;
+    public String getHashPackageClass() {
+        return hashPackageClass;
     }
 
     /**
-     * @param filePath the filePath to set
+     * @param hashPackageClass the hashPackageClass to set
      */
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setHashPackageClass(String hashPackageClass) {
+        this.hashPackageClass = hashPackageClass;
     }
 
     /**
-     * @return TypeComments return the typeComment
+     * @return String return the type
      */
-    public TypeComment getTypeComment() {
-        return typeComment;
+    public String getType() {
+        return type;
     }
 
     /**
-     * @param typeComment the typeComment to set
+     * @param type the type to set
      */
-    public void setTypeComment(TypeComment typeComment) {
-        this.typeComment = typeComment;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * @return int return the segments
+     */
+    public int getSegments() {
+        return segments;
+    }
+
+    /**
+     * @param segments the segments to set
+     */
+    public void setSegments(int segments) {
+        this.segments = segments;
     }
 
     /**
@@ -134,17 +149,17 @@ public class Comment {
     }
 
     /**
-     * @return int return the segments
+     * @return String return the parentHash
      */
-    public int getSegments() {
-        return segments;
+    public String getParentHash() {
+        return parentHash;
     }
 
     /**
-     * @param segments the segments to set
+     * @param parentHash the parentHash to set
      */
-    public void setSegments(int segments) {
-        this.segments = segments;
+    public void setParentHash(String parentHash) {
+        this.parentHash = parentHash;
     }
 
 }

@@ -33,10 +33,13 @@ public class LongMethod extends BadSmellPMD2 {
                         "VIOLATION: "
                                 + violation.getDescription() + " "
                                 + violation.getBeginLine() + " "
+                                + violation.getEndLine() + " "
+                                + violation.getBeginColumn() + " "
                                 + violation.getRule().getName() + " "
                                 + violation.getRule().getPriority() + " "
                                 + violation.getAdditionalInfo().get("packageName"));
             });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
