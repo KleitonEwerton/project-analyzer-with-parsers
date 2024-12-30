@@ -62,13 +62,9 @@ public class DataClass extends BadSmellPMD {
             concat += string + "\n";
         }
 
-        SaxDataClass sax = new SaxDataClass();
-
-        List<DataClass> datasClass = sax.fazerParsing(concat).stream().map(data -> {
+        return new SaxDataClass().fazerParsing(concat).stream().map(data -> {
             data.setVersion(version);
             return data;
         }).collect(Collectors.toList());
-        datasClass.forEach(System.out::println);
-        return datasClass;
     }
 }

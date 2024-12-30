@@ -68,14 +68,9 @@ public class LongMethod extends BadSmellPMD2 {
             concat += string + "\n";
         }
 
-        SaxLongMethod sax = new SaxLongMethod();
-        List<LongMethod> longMethods = sax.fazerParsing(concat).stream().map(l -> {
+        return new SaxLongMethod().fazerParsing(concat).stream().map(l -> {
             l.setVersion(version);
             return l;
         }).collect(Collectors.toList());
-
-        longMethods.forEach(System.out::println);
-
-        return longMethods;
     }
 }

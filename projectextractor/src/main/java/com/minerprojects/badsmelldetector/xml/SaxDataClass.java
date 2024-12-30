@@ -118,8 +118,8 @@ public class SaxDataClass extends DefaultHandler {
         tagAtual = qName;
 
         if (qName.compareTo("violation") == 0) {
-            data = new DataClass();
 
+            data = new DataClass();
             data.getViolationPMD().setBeginLine(Integer.parseInt(atts.getValue("beginline")));
             data.getViolationPMD().setEndLine(Integer.parseInt(atts.getValue("endline")));
             data.getViolationPMD().setBeginColumn(Integer.parseInt(atts.getValue("begincolumn")));

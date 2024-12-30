@@ -13,7 +13,10 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.eclipse.jgit.lib.Repository;
+import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
+import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
 import com.minerprojects.CLI.CLIExecute;
@@ -39,7 +42,9 @@ public class MinerProjects {
 
         GitService gitService = new GitServiceImpl();
 
-        gitService.cloneIfNotExists("tmp/" + projectName, projectUrl);
+        GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
+
+        Repository repo = gitService.cloneIfNotExists("tmp/" + projectName, projectUrl);
 
         logger.info("Iniciando...");
 

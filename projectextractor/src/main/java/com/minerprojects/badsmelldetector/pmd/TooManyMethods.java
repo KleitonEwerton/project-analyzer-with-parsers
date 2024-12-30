@@ -77,13 +77,9 @@ public class TooManyMethods extends BadSmellPMD {
             concat += string + "\n";
         }
 
-        SaxTooManyMethods sax = new SaxTooManyMethods();
-
-        List<TooManyMethods> tooManyMethodss = sax.fazerParsing(concat).stream().map(l -> {
+        return new SaxTooManyMethods().fazerParsing(concat).stream().map(l -> {
             l.setVersion(commitHash);
             return l;
         }).collect(Collectors.toList());
-
-        return tooManyMethodss;
     }
 }

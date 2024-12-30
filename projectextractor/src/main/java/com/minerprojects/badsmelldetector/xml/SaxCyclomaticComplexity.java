@@ -107,7 +107,6 @@ public class SaxCyclomaticComplexity extends DefaultHandler {
 
         if (qName.equals("violation")) {
             CyclomaticComplexity = new CyclomaticComplexity();
-
             CyclomaticComplexity.getViolationPMD2().setBeginLine(Integer.parseInt(atts.getValue("beginline")));
             CyclomaticComplexity.getViolationPMD2().setEndLine(Integer.parseInt(atts.getValue("endline")));
             CyclomaticComplexity.getViolationPMD2().setBeginColumn(Integer.parseInt(atts.getValue("begincolumn")));
@@ -117,7 +116,6 @@ public class SaxCyclomaticComplexity extends DefaultHandler {
             CyclomaticComplexity.getViolationPMD2().setClassFound(atts.getValue("class"));
             CyclomaticComplexity.getViolationPMD2().setExternalInfoUrl(atts.getValue("externalInfoUrl"));
             CyclomaticComplexity.getViolationPMD2().setPriority(Integer.parseInt(atts.getValue("priority")));
-
             CyclomaticComplexitys.add(CyclomaticComplexity);
         }
     }

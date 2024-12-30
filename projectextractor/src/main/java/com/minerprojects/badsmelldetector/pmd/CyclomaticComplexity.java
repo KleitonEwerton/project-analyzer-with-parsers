@@ -65,10 +65,6 @@ public class CyclomaticComplexity extends BadSmellPMD2 {
                     path + "\\.pmdCache_" + projectName + "_CyclomaticComplexity" };
         }
 
-        for (int i = 0; i < command.length; i++) {
-            System.out.print(command[i] + " ");
-        }
-
         CMDOutput cmdArray = CMD.cmdArray(ExecutionConfig.PMD_PATH, command);
 
         String concat = new String();
@@ -76,12 +72,9 @@ public class CyclomaticComplexity extends BadSmellPMD2 {
             concat += string + "\n";
         }
 
-        SaxCyclomaticComplexity sax = new SaxCyclomaticComplexity();
-        List<CyclomaticComplexity> CyclomaticComplexitys = sax.fazerParsing(concat).stream().map(l -> {
+        return new SaxCyclomaticComplexity().fazerParsing(concat).stream().map(l -> {
             l.setVersion(version);
             return l;
         }).collect(Collectors.toList());
-
-        return CyclomaticComplexitys;
     }
 }

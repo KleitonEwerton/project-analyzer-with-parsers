@@ -68,14 +68,9 @@ public class GodClass extends BadSmellPMD {
             concat += string + "\n";
         }
 
-        SaxGodClass sax = new SaxGodClass();
-        List<GodClass> godsClass = sax.fazerParsing(concat).stream().map(data -> {
+        return new SaxGodClass().fazerParsing(concat).stream().map(data -> {
             data.setVersion(version);
             return data;
         }).collect(Collectors.toList());
-
-        godsClass.forEach(System.out::println);
-
-        return godsClass;
     }
 }
