@@ -6,14 +6,11 @@
 package com.minerprojects.badsmelldetector.pmd;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.minerprojects.badsmelldetector.ExecutionConfig;
-import com.minerprojects.badsmelldetector.cmd.CMD;
-import com.minerprojects.badsmelldetector.cmd.CMDOutput;
+import com.minerprojects.PMDReporter;
 import com.minerprojects.badsmelldetector.violation.ViolationPMD2;
-import com.minerprojects.badsmelldetector.xml.SaxLongMethod;
 
 public class LongMethod extends BadSmellPMD2 {
 
@@ -29,48 +26,17 @@ public class LongMethod extends BadSmellPMD2 {
         super(violationPMD2);
     }
 
-    public static List<LongMethod> extractLongMethod(String projectDirectory, String version, String projectName) {
+    public static List<LongMethod> extractLongMethod(String projectDirectory, String projectName) {
 
-        String os = System.getProperty("os.name");
-        String[] command = null;
         String path = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
-        if (os.contains("Windows")) {
-            command = new String[] {
-                    "cmd",
-                    "/c",
-                    "pmd.bat",
-                    "check",
-                    "--file-list",
-                    projectDirectory + "\\java_files_list.txt",
-                    "-R",
-                    "category/java/design.xml/NcssMethodCount",
-                    "-f",
-                    "xml", "--cache",
-                    path + "\\.pmdCache_" + projectName + "_LongMethod" };
-        } else {
-            command = new String[] {
-                    "sh",
-                    "run.sh",
-                    "pmd",
-                    "--file-list",
-                    projectDirectory + "\\java_files_list.txt",
-                    "-R",
-                    "category/java/design.xml/NcssMethodCount",
-                    "-f",
-                    "xml", "--cache",
-                    path + "\\.pmdCache_" + projectName + "_LongMethod" };
-        }
-        CMDOutput cmdArray = CMD.cmdArray(ExecutionConfig.PMD_PATH, command);
-
-        String concat = new String();
-        for (String string : cmdArray.getOutput()) {
-            concat += string + "\n";
+        try {
+            PMDReporter.analyzeFile(path + "\\" + projectName, projectName, "NcssMethodCount");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return new SaxLongMethod().fazerParsing(concat).stream().map(l -> {
-            l.setVersion(version);
-            return l;
-        }).collect(Collectors.toList());
+        List<LongMethod> result = new ArrayList();
+        return result;
     }
 }

@@ -6,14 +6,10 @@
 package com.minerprojects.badsmelldetector.pmd;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import com.minerprojects.badsmelldetector.ExecutionConfig;
-import com.minerprojects.badsmelldetector.cmd.CMD;
-import com.minerprojects.badsmelldetector.cmd.CMDOutput;
+import com.minerprojects.PMDReporter;
 import com.minerprojects.badsmelldetector.violation.ViolationPMD2;
-import com.minerprojects.badsmelldetector.xml.SaxCyclomaticComplexity;
 
 public class CyclomaticComplexity extends BadSmellPMD2 {
 
@@ -29,52 +25,19 @@ public class CyclomaticComplexity extends BadSmellPMD2 {
         super(violationPMD2);
     }
 
-    public static List<CyclomaticComplexity> extractCyclomaticComplexity(String projectDirectory, String version,
+    public static List<CyclomaticComplexity> extractCyclomaticComplexity(String projectDirectory,
             String projectName) {
-
-        String os = System.getProperty("os.name");
-        String[] command = null;
 
         String path = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
-        if (os.contains("Windows")) {
-            command = new String[] {
-                    "cmd",
-                    "/c",
-                    "pmd.bat",
-                    "check",
-                    "--file-list",
-                    projectDirectory + "\\java_files_list.txt",
-                    "-R",
-                    "category/java/design.xml/CyclomaticComplexity",
-                    "-f",
-                    "xml", "--cache",
-                    path + "\\.pmdCache_" + projectName + "_CyclomaticComplexity" };
-        } else {
-            command = new String[] {
-                    "sh",
-                    "run.sh",
+        try {
 
-                    "pmd",
-                    "--file-list",
-                    projectDirectory + "\\java_files_list.txt" + "\\**\\*.java",
-                    "-R",
-                    "category/java/design.xml/CyclomaticComplexity",
-                    "-f",
-                    "xml", "--cache",
-                    path + "\\.pmdCache_" + projectName + "_CyclomaticComplexity" };
+            PMDReporter.analyzeFile(path + "\\" + projectName, projectName, "CyclomaticComplexity");
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        CMDOutput cmdArray = CMD.cmdArray(ExecutionConfig.PMD_PATH, command);
-
-        String concat = new String();
-        for (String string : cmdArray.getOutput()) {
-            concat += string + "\n";
-        }
-
-        return new SaxCyclomaticComplexity().fazerParsing(concat).stream().map(l -> {
-            l.setVersion(version);
-            return l;
-        }).collect(Collectors.toList());
+        List<CyclomaticComplexity> result = new ArrayList();
+        return result;
     }
 }

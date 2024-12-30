@@ -74,6 +74,14 @@
 
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.sourceforge.pmd/pmd -->
+
+
+        <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-java</artifactId>
+            <version>7.9.0</version>
+        </dependency>
 
     </dependencies>
     <name>ExecRefactoringMiner2-4-0v</name>

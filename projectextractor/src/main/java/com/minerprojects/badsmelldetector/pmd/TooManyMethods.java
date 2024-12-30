@@ -6,15 +6,11 @@
 package com.minerprojects.badsmelldetector.pmd;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.minerprojects.CommitReporter;
-import com.minerprojects.badsmelldetector.ExecutionConfig;
-import com.minerprojects.badsmelldetector.cmd.CMD;
-import com.minerprojects.badsmelldetector.cmd.CMDOutput;
+import com.minerprojects.PMDReporter;
 import com.minerprojects.badsmelldetector.violation.ViolationPMD;
-import com.minerprojects.badsmelldetector.xml.SaxTooManyMethods;
 
 public class TooManyMethods extends BadSmellPMD {
 
@@ -30,56 +26,18 @@ public class TooManyMethods extends BadSmellPMD {
         super(violationPMD);
     }
 
-    public static List<TooManyMethods> extractTooManyMethods(String projectDirectory, String commitHash,
+    public static List<TooManyMethods> extractTooManyMethods(String projectDirectory,
             String projectName) {
-
-        String os = System.getProperty("os.name");
-
-        String[] command = null;
 
         String path = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
-        if (os.contains("Windows")) {
-
-            command = new String[] {
-                    "cmd",
-                    "/c",
-                    "pmd.bat",
-                    "check",
-                    "--file-list",
-                    projectDirectory + "\\java_files_list.txt",
-                    "-R",
-                    "category/java/design.xml/TooManyMethods",
-                    "-f",
-                    "xml",
-                    "--cache",
-                    path + "\\.pmdCache_" + projectName + "_TooManyMethods" };
-
-        } else {
-            command = new String[] {
-                    "sh",
-                    "run.sh",
-                    "pmd",
-                    "--file-list",
-                    projectDirectory + "\\java_files_list.txt",
-                    "-R",
-                    "category/java/design.xml/TooManyMethods",
-                    "-f",
-                    "xml",
-                    "--cache", path + "\\.pmdCache_" + projectName + "_TooManyMethods" };
+        try {
+            PMDReporter.analyzeFile(path + "\\" + projectName, projectName, "TooManyMethods");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        CMDOutput cmdArray = CMD.cmdArray(ExecutionConfig.PMD_PATH, command);
-
-        String concat = new String();
-
-        for (String string : cmdArray.getOutput()) {
-            concat += string + "\n";
-        }
-
-        return new SaxTooManyMethods().fazerParsing(concat).stream().map(l -> {
-            l.setVersion(commitHash);
-            return l;
-        }).collect(Collectors.toList());
+        List<TooManyMethods> result = new ArrayList();
+        return result;
     }
 }

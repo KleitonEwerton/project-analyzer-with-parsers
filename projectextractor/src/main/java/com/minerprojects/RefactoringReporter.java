@@ -19,28 +19,37 @@ public class RefactoringReporter {
 
     private String hashPathClass;
 
-    private String movedToPathClass;
-
     private String type;
 
-    private String ocorrido;
+    private String hashPackageClass;
 
-    public RefactoringReporter(String projectName, String hash, String parentHash, String type, String ocorrido,
-            String pathClass,
-            String movedToPathClass) {
+    public RefactoringReporter(
+            String projectName,
+            String hash,
+            String parentHash,
+            String type,
+            String hashPackageClass) {
 
         this.projectName = projectName;
-        this.parentHash = parentHash;
-        this.pathClass = pathClass;
         this.hash = hash;
         this.parentHash = parentHash;
         this.type = type;
-        this.ocorrido = ocorrido;
-        this.movedToPathClass = movedToPathClass;
-        this.pathClass = pathClass;
+        this.hashPackageClass = hashPackageClass;
+    }
 
-        this.hashPathClass = hash + java.io.File.separator + pathClass;
+    public String getHashPackageClass() {
+        return hashPackageClass;
+    }
 
+    public void setHashPackageClass(String hashPackageClass) {
+        this.hashPackageClass = hashPackageClass;
+    }
+
+    @Override
+    public String toString() {
+        return "RefactoringReporter [hash=" + hash + ", type=" + type + ", parentHash="
+                + parentHash + ", pathClass=" + pathClass + ", projectName=" + projectName + ", hashPathClass="
+                + hashPathClass + "]";
     }
 
     /**
@@ -72,20 +81,6 @@ public class RefactoringReporter {
     }
 
     /**
-     * @return String return the ocorrido
-     */
-    public String getOcorrido() {
-        return ocorrido;
-    }
-
-    /**
-     * @param ocorrido the ocorrido to set
-     */
-    public void setOcorrido(String ocorrido) {
-        this.ocorrido = ocorrido;
-    }
-
-    /**
      * @return String return the parentHash
      */
     public String getParentHash() {
@@ -114,20 +109,6 @@ public class RefactoringReporter {
     }
 
     /**
-     * @return String return the movedToPathClass
-     */
-    public String getMovedToPathClass() {
-        return movedToPathClass;
-    }
-
-    /**
-     * @param movedToPathClass the movedToPathClass to set
-     */
-    public void setMovedToPathClass(String movedToPathClass) {
-        this.movedToPathClass = movedToPathClass;
-    }
-
-    /**
      * @return String return the projectName
      */
     public String getProjectName() {
@@ -144,6 +125,7 @@ public class RefactoringReporter {
     /**
      * @return String return the hashPathClass
      */
+
     public String getHashPathClass() {
         return hashPathClass;
 
@@ -185,18 +167,12 @@ public class RefactoringReporter {
 
         for (Refactoring ref : refactorings) {
 
-            String refactoringType = ref.getRefactoringType().toString();
-
-            String referencia = ref.getName() + " "
-                    + ref.toString().replace(",", " ").replace(";", " ");
-
-            String oldPathClass = ref.getInvolvedClassesBeforeRefactoring().toString().split(",")[0];
-            String newPathClass = ref.getInvolvedClassesAfterRefactoring().toString().split(",")[0];
-
-            new RefactoringReporter(commit.getProjectName(), commit.getHash(), commit.getParentHash(),
-                    refactoringType, referencia, oldPathClass.substring(2, oldPathClass.length()),
-                    newPathClass.substring(2, newPathClass.length()));
-
+            new RefactoringReporter(
+                    commit.getProjectName(),
+                    commit.getHash(),
+                    commit.getParentHash(),
+                    ref.getRefactoringType().toString(),
+                    commit.getHash() + "." + ref.getClass().getPackageName() + "." + ref.getClass().getSimpleName());
         }
     }
 
