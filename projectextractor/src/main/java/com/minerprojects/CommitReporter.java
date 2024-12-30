@@ -15,6 +15,7 @@ public class CommitReporter {
     private String hash;
     private CommitReporter parent;
     private Set<String> parentsHash;
+
     private Map<String, String> filesMAD = new HashMap();
     private List<String> javaFiles = new ArrayList<>();
 
@@ -72,10 +73,6 @@ public class CommitReporter {
 
     public int getSizeParents() {
         return this.parentsHash.size();
-    }
-
-    public void setParentsHash(Set<String> parentsHash) {
-        this.parentsHash = parentsHash;
     }
 
     public static Optional<CommitReporter> getCommitByHash(String commitHash) {

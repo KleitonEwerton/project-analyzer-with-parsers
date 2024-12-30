@@ -42,8 +42,8 @@ public class CyclomaticComplexity extends BadSmellPMD2 {
                                 + violation.getDescription() + " "
                                 + violation.getBeginLine() + " "
                                 + violation.getRule().getName() + " "
-                                + violation.getRule().getPriority()
-                                + violation.getLocation());
+                                + violation.getRule().getPriority() + " "
+                                + violation.getAdditionalInfo().get("packageName"));
             });
 
         } catch (Exception e) {

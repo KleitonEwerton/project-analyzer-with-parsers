@@ -31,12 +31,12 @@ public class DataClass extends BadSmellPMD {
         try {
             PMDReporter.analyzeFile(dir, projectName, "DataClass").forEach(violation -> {
                 logger.info(
-                        "VIOLATION\n\n\n"
+                        "VIOLATION: "
                                 + violation.getDescription() + " "
                                 + violation.getBeginLine() + " "
                                 + violation.getRule().getName() + " "
-                                + violation.getRule().getPriority()
-                                + violation.getLocation());
+                                + violation.getRule().getPriority() + " "
+                                + violation.getAdditionalInfo().get("packageName"));
             });
         } catch (Exception e) {
             e.printStackTrace();

@@ -29,6 +29,11 @@ import com.minerprojects.badsmelldetector.pmd.GodClass;
 
 public class PMDReporter {
 
+        // Private constructor to hide the implicit public one
+        private PMDReporter() {
+                throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+        }
+
         private static final Logger logger = Logger.getLogger(PMDReporter.class.getName());
 
         public static void getAllPMD(String projectName) {
@@ -46,14 +51,17 @@ public class PMDReporter {
 
                                 PMDReporter.getPMD(commit, projectName);
 
-                        } catch (Exception e) {
+                        } catch (IOException e) {
+                                e.printStackTrace();
+                        } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
                                 e.printStackTrace();
                         }
 
                 }
         }
 
-        public static void getPMD(CommitReporter commit, String projectName) throws Exception {
+        public static void getPMD(CommitReporter commit, String projectName) throws IOException, InterruptedException {
 
                 String command = "git checkout " + commit.getHash();
 
@@ -115,7 +123,7 @@ public class PMDReporter {
 
                 PMDConfiguration config = new PMDConfiguration();
 
-                final String path = dir + "\\" + projectName;
+                final String path = dir + File.separator + projectName;
 
                 config.setAnalysisCacheLocation(
                                 Paths.get(dir, ".pmdCache_" + projectName + "_" + analiserName).toString());
@@ -132,9 +140,8 @@ public class PMDReporter {
 
                         FileCollector fileCollector = analysis.files();
 
-                        Files.lines(javaFilesListPath).forEach(file -> {
-                                fileCollector.addFile(Paths.get(path, file));
-                        });
+                        Files.lines(javaFilesListPath).forEach(file -> fileCollector.addFile(Paths.get(path, file)));
+
                         return analysis.performAnalysisAndCollectReport().getViolations();
 
                 }

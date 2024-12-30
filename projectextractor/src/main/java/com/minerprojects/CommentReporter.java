@@ -1,18 +1,12 @@
 package com.minerprojects;
 
 import java.io.File;
-import java.io.IOException;
-
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.HashSet;
-
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -57,7 +51,7 @@ public class CommentReporter {
 
         this.segmentos = 1 + this.endLine - this.startLine;
 
-        if (isParent == true) {
+        if (isParent) {
 
             DataComment.updateDadosByhashParentClassPath(this);
 
@@ -243,8 +237,6 @@ public class CommentReporter {
                         .getPath("tmp" + File.separator + commit.getProjectName() + File.separator +
                                 k));
 
-                System.out.println("tmp" + File.separator + commit.getProjectName() + File.separator +
-                        k);
                 new DataComment(
                         commit.getHash() + File.separator + "tmp" + File.separator + commit.getProjectName()
                                 + File.separator + k,
@@ -296,7 +288,7 @@ public class CommentReporter {
                     .collect(Collectors.toSet());
 
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -318,9 +310,7 @@ public class CommentReporter {
 
                 CommentReporter.walkParentToRepositorySeachComment(commit, projectName);
 
-                DataComment.dataComments.forEach(c -> {
-                    System.out.println(c.toString());
-                });
+                DataComment.dataComments.forEach(data -> logger.info(data.toString()));
 
             } catch (Exception e) {
                 e.printStackTrace();

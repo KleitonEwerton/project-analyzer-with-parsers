@@ -8,16 +8,14 @@ package com.minerprojects.badsmelldetector.pmd;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.logging.Logger;
 
 import com.minerprojects.PMDReporter;
-import com.minerprojects.badsmelldetector.ExecutionConfig;
-import com.minerprojects.badsmelldetector.cmd.CMD;
-import com.minerprojects.badsmelldetector.cmd.CMDOutput;
+
 import com.minerprojects.badsmelldetector.violation.ViolationPMD2;
-import com.minerprojects.badsmelldetector.xml.SaxTooManyFields;
 
 public class TooManyFields extends BadSmellPMD2 {
+    private static Logger logger = Logger.getLogger(TooManyFields.class.getName());
 
     @Override
     public String toString() {
@@ -36,7 +34,15 @@ public class TooManyFields extends BadSmellPMD2 {
         String dir = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
         try {
-            PMDReporter.analyzeFile(dir, projectName, "TooManyFields");
+            PMDReporter.analyzeFile(dir, projectName, "TooManyFields").forEach(violation -> {
+                logger.info(
+                        "VIOLATION: "
+                                + violation.getDescription() + " "
+                                + violation.getBeginLine() + " "
+                                + violation.getRule().getName() + " "
+                                + violation.getRule().getPriority() + " "
+                                + violation.getAdditionalInfo().get("packageName"));
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
