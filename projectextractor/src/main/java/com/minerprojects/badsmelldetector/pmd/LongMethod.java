@@ -5,6 +5,7 @@
  */
 package com.minerprojects.badsmelldetector.pmd;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,10 +29,11 @@ public class LongMethod extends BadSmellPMD2 {
         super(violationPMD2);
     }
 
-    public static List<LongMethod> extractLongMethod(String projectDirectory, String version) {
+    public static List<LongMethod> extractLongMethod(String projectDirectory, String version, String projectName) {
 
         String os = System.getProperty("os.name");
         String[] command = null;
+        String path = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
         if (os.contains("Windows")) {
             command = new String[] {
@@ -39,23 +41,25 @@ public class LongMethod extends BadSmellPMD2 {
                     "/c",
                     "pmd.bat",
                     "check",
-                    "-d",
-                    projectDirectory,
+                    "--file-list",
+                    projectDirectory + "\\java_files_list.txt",
                     "-R",
                     "category/java/design.xml/NcssMethodCount",
                     "-f",
-                    "xml" };
+                    "xml", "--cache",
+                    path + "\\.pmdCache_" + projectName + "_LongMethod" };
         } else {
             command = new String[] {
                     "sh",
                     "run.sh",
                     "pmd",
-                    "-d",
-                    projectDirectory,
+                    "--file-list",
+                    projectDirectory + "\\java_files_list.txt",
                     "-R",
                     "category/java/design.xml/NcssMethodCount",
                     "-f",
-                    "xml" };
+                    "xml", "--cache",
+                    path + "\\.pmdCache_" + projectName + "_LongMethod" };
         }
         CMDOutput cmdArray = CMD.cmdArray(ExecutionConfig.PMD_PATH, command);
 
@@ -69,6 +73,8 @@ public class LongMethod extends BadSmellPMD2 {
             l.setVersion(version);
             return l;
         }).collect(Collectors.toList());
+
+        longMethods.forEach(System.out::println);
 
         return longMethods;
     }

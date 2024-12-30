@@ -5,6 +5,7 @@
  */
 package com.minerprojects.badsmelldetector.pmd;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,10 +29,11 @@ public class GodClass extends BadSmellPMD {
         super(violationPMD);
     }
 
-    public static List<GodClass> extractGodClass(String projectDirectory, String version) {
-        System.out.println("Extracting GodClass" + projectDirectory + ":" + version);
+    public static List<GodClass> extractGodClass(String projectDirectory, String version, String projectName) {
+
         String os = System.getProperty("os.name");
         String[] command = null;
+        String path = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
         if (os.contains("Windows")) {
             command = new String[] {
@@ -39,23 +41,25 @@ public class GodClass extends BadSmellPMD {
                     "/c",
                     "pmd.bat",
                     "check",
-                    "-d",
-                    projectDirectory,
+                    "--file-list",
+                    projectDirectory + "\\java_files_list.txt",
                     "-R",
                     "category/java/design.xml/GodClass",
                     "-f",
-                    "xml" };
+                    "xml", "--cache",
+                    path + "\\.pmdCache_" + projectName + "_GodClass" };
         } else {
             command = new String[] {
                     "sh",
                     "run.sh",
                     "pmd",
-                    "-d",
-                    projectDirectory,
+                    "--file-list",
+                    projectDirectory + "\\java_files_list.txt",
                     "-R",
                     "category/java/design.xml/GodClass",
                     "-f",
-                    "xml" };
+                    "xml", "--cache",
+                    path + "\\.pmdCache_" + projectName + "_GodClass" };
         }
         CMDOutput cmdArray = CMD.cmdArray(ExecutionConfig.PMD_PATH, command);
 
@@ -69,6 +73,8 @@ public class GodClass extends BadSmellPMD {
             data.setVersion(version);
             return data;
         }).collect(Collectors.toList());
+
+        godsClass.forEach(System.out::println);
 
         return godsClass;
     }

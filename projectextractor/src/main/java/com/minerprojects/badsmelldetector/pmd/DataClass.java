@@ -1,5 +1,6 @@
 package com.minerprojects.badsmelldetector.pmd;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,9 +23,11 @@ public class DataClass extends BadSmellPMD {
         super(violationPMD);
     }
 
-    public static List<DataClass> extractDataClass(String projectDirectory, String version) {
+    public static List<DataClass> extractDataClass(String projectDirectory, String version, String projectName) {
+
         String os = System.getProperty("os.name");
         String[] command = null;
+        String path = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
         if (os.contains("Windows")) {
             command = new String[] {
@@ -32,23 +35,25 @@ public class DataClass extends BadSmellPMD {
                     "/c",
                     "pmd.bat",
                     "check",
-                    "-d",
-                    projectDirectory,
+                    "--file-list",
+                    projectDirectory + "\\java_files_list.txt",
                     "-R",
                     "category/java/design.xml/DataClass",
                     "-f",
-                    "xml" };
+                    "xml", "--cache",
+                    path + "\\.pmdCache_" + projectName + "_DataClass" };
         } else {
             command = new String[] {
                     "sh",
                     "run.sh",
                     "pmd",
-                    "-d",
-                    projectDirectory,
+                    "--file-list",
+                    projectDirectory + "\\java_files_list.txt",
                     "-R",
                     "category/java/design.xml/DataClass",
                     "-f",
-                    "xml" };
+                    "xml", "--cache",
+                    path + "\\.pmdCache_" + projectName + "_DataClass" };
         }
         CMDOutput cmdArray = CMD.cmdArray(projectDirectory, command);
 
@@ -58,11 +63,12 @@ public class DataClass extends BadSmellPMD {
         }
 
         SaxDataClass sax = new SaxDataClass();
+
         List<DataClass> datasClass = sax.fazerParsing(concat).stream().map(data -> {
             data.setVersion(version);
             return data;
         }).collect(Collectors.toList());
-
+        datasClass.forEach(System.out::println);
         return datasClass;
     }
 }

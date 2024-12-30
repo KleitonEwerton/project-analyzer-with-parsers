@@ -1,20 +1,22 @@
 package com.minerprojects;
 
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class CommitReporter {
 
-    public static Set<CommitReporter> commits = new HashSet<>();
+    public static List<CommitReporter> commits = new ArrayList();
 
     private String projectName;
     private String hash;
     private CommitReporter parent;
     private Set<String> parentsHash;
     private Map<String, String> filesMAD = new HashMap();
+    private List<String> javaFiles = new ArrayList<>();
 
     public CommitReporter(String projectName, String hash, Set<String> parentsHash, Map<String, String> filesMAD) {
         this.projectName = projectName;
@@ -27,6 +29,14 @@ public class CommitReporter {
 
     public String getHash() {
         return hash;
+    }
+
+    public void setJavaFiles(List<String> javaFiles) {
+        this.javaFiles = javaFiles;
+    }
+
+    public List<String> getJavaFiles() {
+        return javaFiles;
     }
 
     public void setHash(String hash) {

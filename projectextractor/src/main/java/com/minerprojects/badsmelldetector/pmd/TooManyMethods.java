@@ -5,6 +5,7 @@
  */
 package com.minerprojects.badsmelldetector.pmd;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,11 +30,14 @@ public class TooManyMethods extends BadSmellPMD {
         super(violationPMD);
     }
 
-    public static List<TooManyMethods> extractTooManyMethods(String projectDirectory, String commitHash) {
+    public static List<TooManyMethods> extractTooManyMethods(String projectDirectory, String commitHash,
+            String projectName) {
 
         String os = System.getProperty("os.name");
 
         String[] command = null;
+
+        String path = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
         if (os.contains("Windows")) {
 
@@ -42,26 +46,27 @@ public class TooManyMethods extends BadSmellPMD {
                     "/c",
                     "pmd.bat",
                     "check",
-                    "-d",
-                    projectDirectory,
+                    "--file-list",
+                    projectDirectory + "\\java_files_list.txt",
                     "-R",
                     "category/java/design.xml/TooManyMethods",
                     "-f",
                     "xml",
-                    "--cache", "../tmp/pmdCache" };
+                    "--cache",
+                    path + "\\.pmdCache_" + projectName + "_TooManyMethods" };
 
         } else {
             command = new String[] {
                     "sh",
                     "run.sh",
                     "pmd",
-                    "-d",
-                    projectDirectory,
+                    "--file-list",
+                    projectDirectory + "\\java_files_list.txt",
                     "-R",
                     "category/java/design.xml/TooManyMethods",
                     "-f",
                     "xml",
-                    "--cache", "../tmp/pmdCache" };
+                    "--cache", path + "\\.pmdCache_" + projectName + "_TooManyMethods" };
         }
 
         CMDOutput cmdArray = CMD.cmdArray(ExecutionConfig.PMD_PATH, command);
