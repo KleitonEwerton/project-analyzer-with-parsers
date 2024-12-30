@@ -29,10 +29,10 @@ public class TooManyMethods extends BadSmellPMD {
     public static List<TooManyMethods> extractTooManyMethods(String projectDirectory,
             String projectName) {
 
-        String path = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
+        String dir = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
         try {
-            PMDReporter.analyzeFile(path + "\\" + projectName, projectName, "TooManyMethods");
+            PMDReporter.analyzeFile(dir, projectName, "TooManyMethods");
         } catch (Exception e) {
             e.printStackTrace();
         }

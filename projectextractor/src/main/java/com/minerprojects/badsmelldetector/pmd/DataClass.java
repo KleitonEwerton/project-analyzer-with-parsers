@@ -3,10 +3,14 @@ package com.minerprojects.badsmelldetector.pmd;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+
 import com.minerprojects.PMDReporter;
 import com.minerprojects.badsmelldetector.violation.ViolationPMD;
 
 public class DataClass extends BadSmellPMD {
+
+    private static Logger logger = Logger.getLogger(DataClass.class.getName());
 
     @Override
     public String toString() {
@@ -22,10 +26,18 @@ public class DataClass extends BadSmellPMD {
 
     public static List<DataClass> extractDataClass(String projectDirectory, String projectName) {
 
-        String path = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
+        String dir = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
         try {
-            PMDReporter.analyzeFile(path + "\\" + projectName, projectName, "DataClass");
+            PMDReporter.analyzeFile(dir, projectName, "DataClass").forEach(violation -> {
+                logger.info(
+                        "VIOLATION\n\n\n"
+                                + violation.getDescription() + " "
+                                + violation.getBeginLine() + " "
+                                + violation.getRule().getName() + " "
+                                + violation.getRule().getPriority()
+                                + violation.getLocation());
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }

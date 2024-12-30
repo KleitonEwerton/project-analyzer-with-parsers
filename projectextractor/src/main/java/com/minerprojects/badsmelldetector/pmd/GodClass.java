@@ -28,10 +28,10 @@ public class GodClass extends BadSmellPMD {
 
     public static List<GodClass> extractGodClass(String projectDirectory, String projectName) {
 
-        String path = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
+        String dir = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
         try {
-            PMDReporter.analyzeFile(path + "\\" + projectName, projectName, "GodClass");
+            PMDReporter.analyzeFile(dir, projectName, "GodClass");
         } catch (Exception e) {
             e.printStackTrace();
         }

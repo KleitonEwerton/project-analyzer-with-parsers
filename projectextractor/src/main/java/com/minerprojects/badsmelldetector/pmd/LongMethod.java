@@ -28,10 +28,10 @@ public class LongMethod extends BadSmellPMD2 {
 
     public static List<LongMethod> extractLongMethod(String projectDirectory, String projectName) {
 
-        String path = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
+        String dir = projectDirectory.substring(0, projectDirectory.lastIndexOf(File.separator));
 
         try {
-            PMDReporter.analyzeFile(path + "\\" + projectName, projectName, "NcssMethodCount");
+            PMDReporter.analyzeFile(dir, projectName, "NcssMethodCount");
         } catch (Exception e) {
             e.printStackTrace();
         }

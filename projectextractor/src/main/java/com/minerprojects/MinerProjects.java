@@ -54,7 +54,7 @@ public class MinerProjects {
         ExecutionConfig.PROJECT_PATH = "C:\\Users\\kleit\\OneDrive\\Documentos\\tcc\\java-paser-refactoring-and-comments\\projectextractor\\tmp\\"
                 + projectName;
 
-        logger.info("GET COMMITS AND MODIFIED, ADDED AND DELETED FILES: " + ExecutionConfig.PROJECT_PATH);
+        logger.info("GET COMMITS AND MODIFIED FILES: " + ExecutionConfig.PROJECT_PATH);
 
         getCommits(projectName);
 

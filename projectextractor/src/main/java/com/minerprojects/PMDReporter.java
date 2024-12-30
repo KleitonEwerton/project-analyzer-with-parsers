@@ -11,21 +11,19 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.minerprojects.CLI.CLIExecute;
-import com.minerprojects.CLI.CLIExecution;
 import com.minerprojects.badsmelldetector.ExecutionConfig;
 import com.minerprojects.badsmelldetector.pmd.CyclomaticComplexity;
 import com.minerprojects.badsmelldetector.pmd.DataClass;
 import com.minerprojects.badsmelldetector.pmd.LongMethod;
+import com.minerprojects.badsmelldetector.pmd.LongParameterList;
+import com.minerprojects.badsmelldetector.pmd.TooManyFields;
 import com.minerprojects.badsmelldetector.pmd.TooManyMethods;
-
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
-import net.sourceforge.pmd.lang.LanguageRegistry;
 import net.sourceforge.pmd.lang.document.FileCollector;
-import net.sourceforge.pmd.lang.rule.RulePriority;
 import net.sourceforge.pmd.lang.rule.RuleSet;
 import net.sourceforge.pmd.lang.rule.RuleSetLoader;
-import net.sourceforge.pmd.reporting.Report;
+import net.sourceforge.pmd.reporting.RuleViolation;
 
 import com.minerprojects.badsmelldetector.pmd.GodClass;
 
@@ -44,18 +42,9 @@ public class PMDReporter {
                                                         commit.getHash()));
                                 }
 
-                                long tempoInicial = System.currentTimeMillis();
-
                                 saveJavaFiles(commit.getJavaFiles(), projectName);
 
                                 PMDReporter.getPMD(commit, projectName);
-
-                                long tempoFinal = System.currentTimeMillis();
-
-                                long tempoDecorrido = (tempoFinal - tempoInicial) / 1000;
-                                // logger.info(
-                                // String.format("Tempo para analisar o commit %s: %d s", commit.getHash(),
-                                // tempoDecorrido));
 
                         } catch (Exception e) {
                                 e.printStackTrace();
@@ -92,6 +81,14 @@ public class PMDReporter {
                                 directory,
                                 projectName);
 
+                LongParameterList.extractLongParameterList(
+                                directory,
+                                projectName);
+
+                TooManyFields.extractTooManyFields(
+                                directory,
+                                projectName);
+
         }
 
         public static void saveJavaFiles(List<String> javaFiles, String projectName) {
@@ -113,12 +110,15 @@ public class PMDReporter {
                 }
         }
 
-        public static void analyzeFile(final String path, String projectName, String analiserName) throws IOException {
+        public static List<RuleViolation> analyzeFile(final String dir, String projectName, String analiserName)
+                        throws IOException {
 
                 PMDConfiguration config = new PMDConfiguration();
 
+                final String path = dir + "\\" + projectName;
+
                 config.setAnalysisCacheLocation(
-                                Paths.get(path, ".pmdCache_" + projectName + "_" + analiserName).toString());
+                                Paths.get(dir, ".pmdCache_" + projectName + "_" + analiserName).toString());
                 config.setReportFormat("xml");
 
                 Path javaFilesListPath = Paths.get(path, "java_files_list.txt");
@@ -135,14 +135,7 @@ public class PMDReporter {
                         Files.lines(javaFilesListPath).forEach(file -> {
                                 fileCollector.addFile(Paths.get(path, file));
                         });
-
-                        analysis.performAnalysisAndCollectReport().getViolations().forEach(violation -> {
-                                logger.info(
-                                                "VIOLATION\n\n\n" + violation.getDescription() + " "
-                                                                + violation.getBeginLine() + " "
-                                                                + violation.getRule().getName() + " "
-                                                                + violation.getRule().getPriority());
-                        });
+                        return analysis.performAnalysisAndCollectReport().getViolations();
 
                 }
         }
