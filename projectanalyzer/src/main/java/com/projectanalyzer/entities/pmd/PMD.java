@@ -20,6 +20,9 @@ public class PMD {
     private String hash;
 
     @Column(nullable = false)
+    private String hashPackage;
+
+    @Column(nullable = false)
     private String hashPackageClass;
 
     @Column(nullable = false)
@@ -41,7 +44,10 @@ public class PMD {
     private String parentHash;
 
     @Column(nullable = true)
-    private String parentPackageClass;
+    private String parentHashPackage;
+
+    @Column(nullable = true)
+    private String parentHashPackageClass;
 
     /**
      * @return long return the id
@@ -83,6 +89,20 @@ public class PMD {
      */
     public void setHash(String hash) {
         this.hash = hash;
+    }
+
+    /**
+     * @return String return the hashPackage
+     */
+    public String getHashPackage() {
+        return hashPackage;
+    }
+
+    /**
+     * @param hashPackage the hashPackage to set
+     */
+    public void setHashPackage(String hashPackage) {
+        this.hashPackage = hashPackage;
     }
 
     /**
@@ -184,17 +204,31 @@ public class PMD {
     }
 
     /**
-     * @return String return the parentPackageClass
+     * @return String return the parentHashPackage
      */
-    public String getParentPackageClass() {
-        return parentPackageClass;
+    public String getParentHashPackage() {
+        return parentHashPackage;
     }
 
     /**
-     * @param parentPackageClass the parentPackageClass to set
+     * @param parentHashPackage the parentHashPackage to set
      */
-    public void setParentPackageClass(String parentPackageClass) {
-        this.parentPackageClass = parentPackageClass;
+    public void setParentHashPackage(String parentHashPackage) {
+        this.parentHashPackage = parentHashPackage;
+    }
+
+    /**
+     * @return String return the parentHashPackageClass
+     */
+    public String getParentHashPackageClass() {
+        return parentHashPackageClass;
+    }
+
+    /**
+     * @param parentHashPackageClass the parentHashPackageClass to set
+     */
+    public void setParentHashPackageClass(String parentHashPackageClass) {
+        this.parentHashPackageClass = parentHashPackageClass;
     }
 
 }

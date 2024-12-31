@@ -1,54 +1,25 @@
-package com.projectanalyzer.entities.refactoring;
+package com.minerprojects.data;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+public class DataRefactoring {
 
-@Entity
-public class Refactoring {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-
-    @Column(nullable = false)
     private String projectName;
 
-    @Column(nullable = false)
     private String hash;
 
-    @Column(nullable = false)
     private String hashPackage;
 
-    @Column(nullable = false)
     private String hashPackageClass;
 
-    @Column(nullable = false)
     private String type;
 
-    @Column(nullable = true)
     private String parentHash;
 
-    @Column(nullable = true)
     private String parentHashPackage;
 
-    @Column(nullable = true)
     private String parentHashPackageClass;
 
-    /**
-     * @return long return the id
-     */
-    public long getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(long id) {
-        this.id = id;
+    public DataRefactoring() {
+        // Constructor is intentionally empty
     }
 
     /**

@@ -40,17 +40,24 @@ public class PMDController {
         return pmdRepository.findById(id)
                 .map(pmd -> {
                     pmd.setProjectName(pmdDetails.getProjectName());
+
                     pmd.setHash(pmdDetails.getHash());
+                    pmd.setHashPackage(pmdDetails.getHashPackage());
                     pmd.setHashPackageClass(pmdDetails.getHashPackageClass());
+
+                    pmd.setParentHash(pmdDetails.getParentHash());
+                    pmd.setParentHashPackage(pmdDetails.getParentHashPackage());
+                    pmd.setParentHashPackageClass(pmdDetails.getParentHashPackageClass());
+
                     pmd.setType(pmdDetails.getType());
                     pmd.setBeginLine(pmdDetails.getBeginLine());
                     pmd.setEndLine(pmdDetails.getEndLine());
                     pmd.setBeginColumn(pmdDetails.getBeginColumn());
                     pmd.setPriority(pmdDetails.getPriority());
-                    pmd.setParentHash(pmdDetails.getParentHash());
-                    pmd.setParentPackageClass(pmdDetails.getParentPackageClass());
+
                     pmd.setParentHash(pmdDetails.getParentHash());
                     PMD updatedPMD = pmdRepository.save(pmd);
+
                     return ResponseEntity.ok(updatedPMD);
                 })
                 .orElse(ResponseEntity.notFound().build());

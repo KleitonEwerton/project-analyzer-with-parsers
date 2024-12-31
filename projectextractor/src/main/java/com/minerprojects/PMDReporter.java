@@ -157,18 +157,32 @@ public class PMDReporter {
                 RestTemplate restTemplate = new RestTemplate();
 
                 pmd.setProjectName(projectName);
+
                 pmd.setHash(commit.getHash());
-                pmd.setHashPackageClass(violation.getAdditionalInfo().get("packageName") + "."
+
+                pmd.setHashPackage(pmd.getHash() + "."
+                                + violation.getAdditionalInfo().get("packageName"));
+
+                pmd.setHashPackageClass(pmd.getHashPackage() + "."
                                 + violation.getAdditionalInfo().get("className"));
+
                 pmd.setType(violation.getRule().getName());
+
                 pmd.setBeginLine(violation.getBeginLine());
+
                 pmd.setEndLine(violation.getEndLine());
+
                 pmd.setBeginColumn(violation.getBeginColumn());
+
                 pmd.setPriority(violation.getRule().getPriority().toString());
+
                 pmd.setParentHash(commit.getParentHash());
-                pmd.setParentPackageClass(
-                                commit.getParentHash() + "." + violation.getAdditionalInfo().get("packageName") + "."
-                                                + violation.getAdditionalInfo().get("className"));
+
+                pmd.setParentHashPackage(
+                                pmd.getParentHash() + "." + violation.getAdditionalInfo().get("packageName"));
+
+                pmd.setParentHashPackageClass(
+                                pmd.getParentHashPackage() + "." + violation.getAdditionalInfo().get("className"));
 
                 try {
                         restTemplate.postForObject("http://localhost:8080/api/pmd", pmd, DataPMD.class);

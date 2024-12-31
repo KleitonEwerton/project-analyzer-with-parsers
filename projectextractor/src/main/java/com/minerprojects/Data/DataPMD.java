@@ -2,11 +2,11 @@ package com.minerprojects.data;
 
 public class DataPMD {
 
-    private long id;
-
     private String projectName;
 
     private String hash;
+
+    private String hashPackage;
 
     private String hashPackageClass;
 
@@ -22,20 +22,12 @@ public class DataPMD {
 
     private String parentHash;
 
-    private String parentPackageClass;
+    private String parentHashPackage;
 
-    /**
-     * @return long return the id
-     */
-    public long getId() {
-        return id;
-    }
+    private String parentHashPackageClass;
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(long id) {
-        this.id = id;
+    public DataPMD() {
+        // Constructor is intentionally empty
     }
 
     /**
@@ -64,6 +56,20 @@ public class DataPMD {
      */
     public void setHash(String hash) {
         this.hash = hash;
+    }
+
+    /**
+     * @return String return the hashPackage
+     */
+    public String getHashPackage() {
+        return hashPackage;
+    }
+
+    /**
+     * @param hashPackage the hashPackage to set
+     */
+    public void setHashPackage(String hashPackage) {
+        this.hashPackage = hashPackage;
     }
 
     /**
@@ -165,17 +171,31 @@ public class DataPMD {
     }
 
     /**
-     * @return String return the parentPackageClass
+     * @return String return the parentHashPackage
      */
-    public String getParentPackageClass() {
-        return parentPackageClass;
+    public String getParentHashPackage() {
+        return parentHashPackage;
     }
 
     /**
-     * @param parentPackageClass the parentPackageClass to set
+     * @param parentHashPackage the parentHashPackage to set
      */
-    public void setParentPackageClass(String parentPackageClass) {
-        this.parentPackageClass = parentPackageClass;
+    public void setParentHashPackage(String parentHashPackage) {
+        this.parentHashPackage = parentHashPackage;
+    }
+
+    /**
+     * @return String return the parentHashPackageClass
+     */
+    public String getParentHashPackageClass() {
+        return parentHashPackageClass;
+    }
+
+    /**
+     * @param parentHashPackageClass the parentHashPackageClass to set
+     */
+    public void setParentHashPackageClass(String parentHashPackageClass) {
+        this.parentHashPackageClass = parentHashPackageClass;
     }
 
 }

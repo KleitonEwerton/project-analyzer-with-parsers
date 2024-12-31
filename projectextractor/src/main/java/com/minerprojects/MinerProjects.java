@@ -25,12 +25,11 @@ public class MinerProjects {
 
     public static void main(String[] args) throws Exception {
 
-        String nomeProjeto = "auto";
-        String url = "https://github.com/google/auto.git";
+        // String nomeProjeto = "auto";
+        // String url = "https://github.com/google/auto.git";
 
-        // String nomeProjeto = "examples-for-refactoring-testing";
-        // String url =
-        // "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+        String nomeProjeto = "examples-for-refactoring-testing";
+        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
 
         checar(nomeProjeto, url);
 
