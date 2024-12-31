@@ -22,6 +22,8 @@ public class DataPMD {
 
     private String parentHash;
 
+    private String parentPackageClass;
+
     /**
      * @return long return the id
      */
@@ -160,6 +162,20 @@ public class DataPMD {
      */
     public void setParentHash(String parentHash) {
         this.parentHash = parentHash;
+    }
+
+    /**
+     * @return String return the parentPackageClass
+     */
+    public String getParentPackageClass() {
+        return parentPackageClass;
+    }
+
+    /**
+     * @param parentPackageClass the parentPackageClass to set
+     */
+    public void setParentPackageClass(String parentPackageClass) {
+        this.parentPackageClass = parentPackageClass;
     }
 
 }

@@ -53,6 +53,9 @@ public class CyclomaticComplexity extends BadSmellPMD2 {
                 pmd.setBeginColumn(violation.getBeginColumn());
                 pmd.setPriority(violation.getRule().getPriority().toString());
                 pmd.setParentHash(commit.getParentHash());
+                pmd.setParentPackageClass(
+                        commit.getParentHash() + violation.getAdditionalInfo().get("packageName") + "."
+                                + violation.getAdditionalInfo().get("className"));
 
                 try {
                     restTemplate.postForObject("http://localhost:8080/api/pmd", pmd, DataPMD.class);

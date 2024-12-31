@@ -40,6 +40,9 @@ public class PMD {
     @Column(nullable = true)
     private String parentHash;
 
+    @Column(nullable = true)
+    private String parentPackageClass;
+
     /**
      * @return long return the id
      */
