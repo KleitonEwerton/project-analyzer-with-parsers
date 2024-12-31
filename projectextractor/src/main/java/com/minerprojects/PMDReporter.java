@@ -8,7 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.springframework.web.client.RestTemplate;
 
 import com.minerprojects.CLI.CLIExecute;
 import com.minerprojects.badsmelldetector.ExecutionConfig;
@@ -18,6 +21,8 @@ import com.minerprojects.badsmelldetector.pmd.LongMethod;
 import com.minerprojects.badsmelldetector.pmd.LongParameterList;
 import com.minerprojects.badsmelldetector.pmd.TooManyFields;
 import com.minerprojects.badsmelldetector.pmd.TooManyMethods;
+import com.minerprojects.data.DataPMD;
+
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
 import net.sourceforge.pmd.lang.document.FileCollector;
@@ -144,6 +149,34 @@ public class PMDReporter {
 
                         return analysis.performAnalysisAndCollectReport().getViolations();
 
+                }
+        }
+
+        public static void save(RuleViolation violation, String projectName, CommitReporter commit) {
+                DataPMD pmd = new DataPMD();
+                RestTemplate restTemplate = new RestTemplate();
+
+                pmd.setProjectName(projectName);
+                pmd.setHash(commit.getHash());
+                pmd.setHashPackageClass(violation.getAdditionalInfo().get("packageName") + "."
+                                + violation.getAdditionalInfo().get("className"));
+                pmd.setType(violation.getRule().getName());
+                pmd.setBeginLine(violation.getBeginLine());
+                pmd.setEndLine(violation.getEndLine());
+                pmd.setBeginColumn(violation.getBeginColumn());
+                pmd.setPriority(violation.getRule().getPriority().toString());
+                pmd.setParentHash(commit.getParentHash());
+                pmd.setParentPackageClass(
+                                commit.getParentHash() + violation.getAdditionalInfo().get("packageName") + "."
+                                                + violation.getAdditionalInfo().get("className"));
+
+                try {
+                        restTemplate.postForObject("http://localhost:8080/api/pmd", pmd, DataPMD.class);
+                        logger.info(
+                                        "Dados enviados com sucesso para a API." + violation.getAdditionalInfo());
+
+                } catch (Exception e) {
+                        logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);
                 }
         }
 
