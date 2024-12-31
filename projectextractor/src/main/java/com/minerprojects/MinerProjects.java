@@ -28,8 +28,12 @@ public class MinerProjects {
         // String nomeProjeto = "auto";
         // String url = "https://github.com/google/auto.git";
 
-        String nomeProjeto = "examples-for-refactoring-testing";
-        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+        // String nomeProjeto = "examples-for-refactoring-testing";
+        // String url =
+        // "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+
+        String nomeProjeto = "project-analyzer-with-parsers";
+        String url = "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
 
         checar(nomeProjeto, url);
 
