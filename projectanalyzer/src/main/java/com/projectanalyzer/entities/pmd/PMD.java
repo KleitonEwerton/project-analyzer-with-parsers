@@ -183,4 +183,18 @@ public class PMD {
         this.parentHash = parentHash;
     }
 
+    /**
+     * @return String return the parentPackageClass
+     */
+    public String getParentPackageClass() {
+        return parentPackageClass;
+    }
+
+    /**
+     * @param parentPackageClass the parentPackageClass to set
+     */
+    public void setParentPackageClass(String parentPackageClass) {
+        this.parentPackageClass = parentPackageClass;
+    }
+
 }
