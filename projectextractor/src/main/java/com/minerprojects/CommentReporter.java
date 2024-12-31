@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import com.minerprojects.CLI.CLIExecute;
-import com.minerprojects.CLI.CLIExecution;
+import com.minerprojects.cli.CLIExecute;
+import com.minerprojects.cli.CLIExecution;
 import com.minerprojects.data.DataComment;
 
 public class CommentReporter {

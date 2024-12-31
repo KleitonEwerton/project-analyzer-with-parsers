@@ -1,4 +1,4 @@
-package com.minerprojects.CLI;
+package com.minerprojects.cli;
 
 import java.util.ArrayList;
 import java.util.List;

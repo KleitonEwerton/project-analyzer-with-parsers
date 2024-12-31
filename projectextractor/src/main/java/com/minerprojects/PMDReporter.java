@@ -13,15 +13,16 @@ import java.util.logging.Logger;
 
 import org.springframework.web.client.RestTemplate;
 
-import com.minerprojects.CLI.CLIExecute;
-import com.minerprojects.badsmelldetector.ExecutionConfig;
-import com.minerprojects.badsmelldetector.pmd.CyclomaticComplexity;
-import com.minerprojects.badsmelldetector.pmd.DataClass;
-import com.minerprojects.badsmelldetector.pmd.LongMethod;
-import com.minerprojects.badsmelldetector.pmd.LongParameterList;
-import com.minerprojects.badsmelldetector.pmd.TooManyFields;
-import com.minerprojects.badsmelldetector.pmd.TooManyMethods;
+import com.minerprojects.cli.CLIExecute;
 import com.minerprojects.data.DataPMD;
+import com.minerprojects.pmddetector.ExecutionConfig;
+import com.minerprojects.pmddetector.pmd.CyclomaticComplexity;
+import com.minerprojects.pmddetector.pmd.DataClass;
+import com.minerprojects.pmddetector.pmd.GodClass;
+import com.minerprojects.pmddetector.pmd.LongMethod;
+import com.minerprojects.pmddetector.pmd.LongParameterList;
+import com.minerprojects.pmddetector.pmd.TooManyFields;
+import com.minerprojects.pmddetector.pmd.TooManyMethods;
 
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
@@ -29,8 +30,6 @@ import net.sourceforge.pmd.lang.document.FileCollector;
 import net.sourceforge.pmd.lang.rule.RuleSet;
 import net.sourceforge.pmd.lang.rule.RuleSetLoader;
 import net.sourceforge.pmd.reporting.RuleViolation;
-
-import com.minerprojects.badsmelldetector.pmd.GodClass;
 
 public class PMDReporter {
 

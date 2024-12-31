@@ -15,9 +15,9 @@ import org.refactoringminer.api.GitService;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
-import com.minerprojects.CLI.CLIExecute;
-import com.minerprojects.CLI.CLIExecution;
-import com.minerprojects.badsmelldetector.ExecutionConfig;
+import com.minerprojects.cli.CLIExecute;
+import com.minerprojects.cli.CLIExecution;
+import com.minerprojects.pmddetector.ExecutionConfig;
 
 public class MinerProjects {
 
@@ -51,7 +51,7 @@ public class MinerProjects {
             logger.info(String.format("Projeto: %s", projectUrl));
         }
 
-        ExecutionConfig.PROJECT_PATH = "C:\\Users\\kleit\\OneDrive\\Documentos\\tcc\\java-paser-refactoring-and-comments\\projectextractor\\tmp\\"
+        ExecutionConfig.PROJECT_PATH = "C:\\Users\\kleit\\OneDrive\\Documentos\\tcc\\project-analyzer-with-parsers\\projectextractor\\tmp\\"
                 + projectName;
 
         logger.info("GET COMMITS AND MODIFIED FILES: " + ExecutionConfig.PROJECT_PATH);

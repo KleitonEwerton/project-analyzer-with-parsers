@@ -1,4 +1,4 @@
-package com.minerprojects.CLI;
+package com.minerprojects.cli;
 
 import java.io.BufferedReader;
 import java.io.File;
