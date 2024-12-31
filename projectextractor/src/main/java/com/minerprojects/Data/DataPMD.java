@@ -1,229 +1,165 @@
-package com.minerprojects.Data;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.minerprojects.CommentReporter;
+package com.minerprojects.data;
 
 public class DataPMD {
 
-    public static List<DataPMD> dataComments = new ArrayList<>();
+    private long id;
 
-    private String hashClassPath;
-    private String parentHashClassPath;
+    private String projectName;
 
-    private int qntCommentReporterType1;
-    private int qntInParentCommentReporterType1;
+    private String hash;
 
-    private int qntCommentReporterType2;
-    private int qntInParentCommentReporterType2;
+    private String hashPackageClass;
 
-    private int qntCommentReporterType3;
-    private int qntInParentCommentReporterType3;
+    private String type;
 
-    private int qntSegmentos;
-    private int qntParentSegmentos;
+    private int beginLine;
 
-    public DataPMD(String hashClassPath, String parentHashClassPath) {
+    private int endLine;
 
-        this.hashClassPath = hashClassPath;
-        this.parentHashClassPath = parentHashClassPath;
+    private int beginColumn;
 
-        this.qntCommentReporterType1 = 0;
-        this.qntInParentCommentReporterType1 = 0;
+    private String priority;
 
-        this.qntCommentReporterType2 = 0;
-        this.qntInParentCommentReporterType2 = 0;
+    private String parentHash;
 
-        this.qntCommentReporterType3 = 0;
-        this.qntInParentCommentReporterType3 = 0;
-
-        this.qntSegmentos = 0;
-        this.qntParentSegmentos = 0;
-
-        dataComments.add(this);
-    }
-
-    public static void updateDadosByhashClassPath(CommentReporter comment) {
-
-        dataComments.stream().filter(c -> c.getHashClassPath().equals(comment.getHashClassPath()))
-                .forEach(c -> {
-
-                    c.qntCommentReporterType1 += comment.getType() == 1 ? 1 : 0;
-                    c.qntCommentReporterType2 += comment.getType() == 2 ? 1 : 0;
-                    c.qntCommentReporterType3 += comment.getType() == 3 ? 1 : 0;
-                    c.qntSegmentos += comment.getSegmentos();
-
-                });
-
-    }
-
-    public static void updateDadosByhashParentClassPath(CommentReporter comment) {
-
-        dataComments.stream().filter(c -> c.getHashClassPath().equals(comment.getHashClassPath())).forEach(c -> {
-
-            c.qntInParentCommentReporterType1 += comment.getType() == 1 ? 1 : 0;
-            c.qntInParentCommentReporterType2 += comment.getType() == 2 ? 1 : 0;
-            c.qntInParentCommentReporterType3 += comment.getType() == 3 ? 1 : 0;
-            c.qntParentSegmentos += comment.getSegmentos();
-
-        });
-
-    }
-
-    @Override
-    public String toString() {
-
-        return "DataComment [hashClassPath=" + hashClassPath + ", parentHashClassPath=" + parentHashClassPath
-                + ", qntCommentReporterType1=" + qntCommentReporterType1 + ", qntInParentCommentReporterType1="
-                + qntInParentCommentReporterType1 + ", qntCommentReporterType2=" + qntCommentReporterType2
-                + ", qntInParentCommentReporterType2=" + qntInParentCommentReporterType2
-                + ", qntCommentReporterType3=" + qntCommentReporterType3 + ", qntInParentCommentReporterType3="
-                + qntInParentCommentReporterType3 + ", qntSegmentos=" + qntSegmentos + ", qntParentSegmentos="
-                + qntParentSegmentos + "]";
+    /**
+     * @return long return the id
+     */
+    public long getId() {
+        return id;
     }
 
     /**
-     * @return String return the hashClassPath
+     * @param id the id to set
      */
-    public String getHashClassPath() {
-        return hashClassPath;
+    public void setId(long id) {
+        this.id = id;
     }
 
     /**
-     * @param hashClassPath the hashClassPath to set
+     * @return String return the projectName
      */
-    public void setHashClassPath(String hashClassPath) {
-        this.hashClassPath = hashClassPath;
+    public String getProjectName() {
+        return projectName;
     }
 
     /**
-     * @return String return the parentHashClassPath
+     * @param projectName the projectName to set
      */
-    public String getParentHashClassPath() {
-        return parentHashClassPath;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     /**
-     * @param parentHashClassPath the parentHashClassPath to set
+     * @return String return the hash
      */
-    public void setParentHashClassPath(String parentHashClassPath) {
-        this.parentHashClassPath = parentHashClassPath;
+    public String getHash() {
+        return hash;
     }
 
     /**
-     * @return int return the qntCommentReporterType1
+     * @param hash the hash to set
      */
-    public int getQntCommentReporterType1() {
-        return qntCommentReporterType1;
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
     /**
-     * @param qntCommentReporterType1 the qntCommentReporterType1 to set
+     * @return String return the hashPackageClass
      */
-    public void setQntCommentReporterType1(int qntCommentReporterType1) {
-        this.qntCommentReporterType1 = qntCommentReporterType1;
+    public String getHashPackageClass() {
+        return hashPackageClass;
     }
 
     /**
-     * @return int return the qntCommentReporterType2
+     * @param hashPackageClass the hashPackageClass to set
      */
-    public int getQntCommentReporterType2() {
-        return qntCommentReporterType2;
+    public void setHashPackageClass(String hashPackageClass) {
+        this.hashPackageClass = hashPackageClass;
     }
 
     /**
-     * @param qntCommentReporterType2 the qntCommentReporterType2 to set
+     * @return String return the type
      */
-    public void setQntCommentReporterType2(int qntCommentReporterType2) {
-        this.qntCommentReporterType2 = qntCommentReporterType2;
+    public String getType() {
+        return type;
     }
 
     /**
-     * @return int return the qntCommentReporterType3
+     * @param type the type to set
      */
-    public int getQntCommentReporterType3() {
-        return qntCommentReporterType3;
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**
-     * @param qntCommentReporterType3 the qntCommentReporterType3 to set
+     * @return int return the beginLine
      */
-    public void setQntCommentReporterType3(int qntCommentReporterType3) {
-        this.qntCommentReporterType3 = qntCommentReporterType3;
+    public int getBeginLine() {
+        return beginLine;
     }
 
     /**
-     * @return int return the qntInParentCommentReporterType1
+     * @param beginLine the beginLine to set
      */
-    public int getQntInParentCommentReporterType1() {
-        return qntInParentCommentReporterType1;
+    public void setBeginLine(int beginLine) {
+        this.beginLine = beginLine;
     }
 
     /**
-     * @param qntInParentCommentReporterType1 the qntInParentCommentReporterType1 to
-     *                                        set
+     * @return int return the endLine
      */
-    public void setQntInParentCommentReporterType1(int qntInParentCommentReporterType1) {
-        this.qntInParentCommentReporterType1 = qntInParentCommentReporterType1;
+    public int getEndLine() {
+        return endLine;
     }
 
     /**
-     * @return int return the qntInParentCommentReporterType2
+     * @param endLine the endLine to set
      */
-    public int getQntInParentCommentReporterType2() {
-        return qntInParentCommentReporterType2;
+    public void setEndLine(int endLine) {
+        this.endLine = endLine;
     }
 
     /**
-     * @param qntInParentCommentReporterType2 the qntInParentCommentReporterType2 to
-     *                                        set
+     * @return int return the beginColumn
      */
-    public void setQntInParentCommentReporterType2(int qntInParentCommentReporterType2) {
-        this.qntInParentCommentReporterType2 = qntInParentCommentReporterType2;
+    public int getBeginColumn() {
+        return beginColumn;
     }
 
     /**
-     * @return int return the qntInParentCommentReporterType3
+     * @param beginColumn the beginColumn to set
      */
-    public int getQntInParentCommentReporterType3() {
-        return qntInParentCommentReporterType3;
+    public void setBeginColumn(int beginColumn) {
+        this.beginColumn = beginColumn;
     }
 
     /**
-     * @param qntInParentCommentReporterType3 the qntInParentCommentReporterType3 to
-     *                                        set
+     * @return String return the priority
      */
-    public void setQntInParentCommentReporterType3(int qntInParentCommentReporterType3) {
-        this.qntInParentCommentReporterType3 = qntInParentCommentReporterType3;
+    public String getPriority() {
+        return priority;
     }
 
     /**
-     * @return int return the qntSegmentos
+     * @param priority the priority to set
      */
-    public int getQntSegmentos() {
-        return qntSegmentos;
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
 
     /**
-     * @param qntSegmentos the qntSegmentos to set
+     * @return String return the parentHash
      */
-    public void setQntSegmentos(int qntSegmentos) {
-        this.qntSegmentos = qntSegmentos;
+    public String getParentHash() {
+        return parentHash;
     }
 
     /**
-     * @return int return the qntParentSegmentos
+     * @param parentHash the parentHash to set
      */
-    public int getQntParentSegmentos() {
-        return qntParentSegmentos;
-    }
-
-    /**
-     * @param qntParentSegmentos the qntParentSegmentos to set
-     */
-    public void setQntParentSegmentos(int qntParentSegmentos) {
-        this.qntParentSegmentos = qntParentSegmentos;
+    public void setParentHash(String parentHash) {
+        this.parentHash = parentHash;
     }
 
 }

@@ -12,7 +12,7 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.minerprojects.CLI.CLIExecute;
 import com.minerprojects.CLI.CLIExecution;
-import com.minerprojects.Data.DataComment;
+import com.minerprojects.data.DataComment;
 
 public class CommentReporter {
 

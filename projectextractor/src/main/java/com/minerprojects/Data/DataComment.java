@@ -1,4 +1,4 @@
-package com.minerprojects.Data;
+package com.minerprojects.data;
 
 import java.util.ArrayList;
 import java.util.List;

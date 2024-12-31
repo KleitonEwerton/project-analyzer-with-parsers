@@ -71,31 +71,31 @@ public class PMDReporter {
 
                 CyclomaticComplexity.extractCyclomaticComplexity(
                                 directory,
-                                projectName);
+                                projectName, commit);
 
                 DataClass.extractDataClass(
                                 directory,
-                                projectName);
+                                projectName, commit);
 
                 GodClass.extractGodClass(
                                 directory,
-                                projectName);
+                                projectName, commit);
 
                 LongMethod.extractLongMethod(
                                 directory,
-                                projectName);
+                                projectName, commit);
 
                 TooManyMethods.extractTooManyMethods(
                                 directory,
-                                projectName);
+                                projectName, commit);
 
                 LongParameterList.extractLongParameterList(
                                 directory,
-                                projectName);
+                                projectName, commit);
 
                 TooManyFields.extractTooManyFields(
                                 directory,
-                                projectName);
+                                projectName, commit);
 
         }
 
