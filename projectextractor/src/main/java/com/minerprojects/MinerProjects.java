@@ -1,7 +1,6 @@
 
 package com.minerprojects;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,11 +25,12 @@ public class MinerProjects {
 
     public static void main(String[] args) throws Exception {
 
-        // String nomeProjeto = "auto";
-        // String url = "https://github.com/google/auto.git";
+        String nomeProjeto = "auto";
+        String url = "https://github.com/google/auto.git";
 
-        String nomeProjeto = "project-analyzer-with-parsers";
-        String url = "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
+        // String nomeProjeto = "project-analyzer-with-parsers";
+        // String url =
+        // "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
 
         // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "openpnp";
@@ -79,7 +79,6 @@ public class MinerProjects {
     public static void checar(String projectName, String projectUrl) throws Exception {
 
         CommitReporter.commits.clear();
-        ErrorReporter.errosCheckout.clear();
 
         GitService gitService = new GitServiceImpl();
 

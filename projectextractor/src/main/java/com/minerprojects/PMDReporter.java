@@ -199,8 +199,6 @@ public class PMDReporter {
 
                 try {
                         restTemplate.postForObject("http://localhost:8080/api/pmd", pmd, DataPMD.class);
-                        logger.info(
-                                        "Dados enviados com sucesso para a API." + violation.getAdditionalInfo());
 
                 } catch (Exception e) {
                         logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);

@@ -20,8 +20,6 @@ public class ErrorReporter {
 
     private String erroMSG;
 
-    public static List<ErrorReporter> errosCheckout = new ArrayList<>();
-
     public ErrorReporter(String projectName, String hash, Set<String> parentsHash, String erroMSG) {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -29,14 +27,10 @@ public class ErrorReporter {
         this.parentsHash = parentsHash;
         this.projectName = projectName;
         this.erroMSG = erroMSG;
-        errosCheckout.add(this);
 
         try {
-            restTemplate.postForObject("http://localhost:8080/api/commitErro", this, ErrorReporter.class);
 
-            logger.info(
-                    "Dados enviados com sucesso para a API.  - "
-                            + this.projectName + " - " + this.erroMSG);
+            restTemplate.postForObject("http://localhost:8080/api/commitErro", this, ErrorReporter.class);
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);
