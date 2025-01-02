@@ -1,6 +1,4 @@
-package com.projectanalyzer.entities.commiterro;
-
-import java.util.List;
+package com.projectanalyzer.entities.commiterror;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class CommitErro {
+public class CommitError {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,9 +21,6 @@ public class CommitErro {
 
     @Column(nullable = false)
     private String erroMSG;
-
-    @Column(nullable = true)
-    private List<String> parentsHash;
 
     /**
      * @return long return the id
@@ -81,20 +76,6 @@ public class CommitErro {
      */
     public void setErroMSG(String erroMSG) {
         this.erroMSG = erroMSG;
-    }
-
-    /**
-     * @return List<String> return the parentsHash
-     */
-    public List<String> getParentsHash() {
-        return parentsHash;
-    }
-
-    /**
-     * @param parentsHash the parentsHash to set
-     */
-    public void setParentsHash(List<String> parentsHash) {
-        this.parentsHash = parentsHash;
     }
 
 }

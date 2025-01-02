@@ -1,4 +1,4 @@
-package com.projectanalyzer.controller.commiterro;
+package com.projectanalyzer.controller.commiterror;
 
 import java.util.List;
 
@@ -11,24 +11,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.projectanalyzer.entities.commiterro.CommitErro;
-import com.projectanalyzer.repositories.commiterro.CommitErroRepository;
+import com.projectanalyzer.entities.commiterror.CommitError;
+import com.projectanalyzer.repositories.commiterror.CommitErrorRepository;
 
 @RestController
-@RequestMapping("/api/commitErro")
-public class CommitErroController {
+@RequestMapping("/api/commiterror")
+public class CommitErrorController {
 
     @Autowired
-    private CommitErroRepository commitErroRepository;
+    private CommitErrorRepository commitErroRepository;
 
     @GetMapping
-    public List<CommitErro> getAllCommitErroRepositorys() {
+    public List<CommitError> getAllCommitErroRepositorys() {
         return commitErroRepository.findAll();
     }
 
     // Buscar por ID
     @GetMapping("/{id}")
-    public ResponseEntity<CommitErro> getCommitErroRepositoryById(@PathVariable Long id) {
+    public ResponseEntity<CommitError> getCommitErroRepositoryById(@PathVariable Long id) {
         return commitErroRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -36,7 +36,7 @@ public class CommitErroController {
 
     // Criar novo
     @PostMapping
-    public CommitErro createCommitErroRepository(@RequestBody CommitErro commitErro) {
+    public CommitError createCommitErroRepository(@RequestBody CommitError commitErro) {
         return commitErroRepository.save(commitErro);
     }
 

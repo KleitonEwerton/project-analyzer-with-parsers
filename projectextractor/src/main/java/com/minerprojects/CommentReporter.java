@@ -193,9 +193,8 @@ public class CommentReporter {
 
             logger.info(String.format("ERROR%n%s%n%s", command, execute.toString()));
 
-            new ErrorReporter(projectName,
+            new CommitError(projectName,
                     commit.getHash(),
-                    commit.getParentsHash(),
                     command + "\n" + execute.toString());
 
             return;
@@ -216,9 +215,8 @@ public class CommentReporter {
 
             logger.info(String.format("ERROR%n%s%n%s", command, execute.toString()));
 
-            new ErrorReporter(projectName,
+            new CommitError(projectName,
                     commit.getHash(),
-                    commit.getParentsHash(),
                     command + "\n" + execute.toString());
 
             return;

@@ -1,38 +1,36 @@
 package com.minerprojects;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 
 import org.springframework.web.client.RestTemplate;
 
-public class ErrorReporter {
+public class CommitError {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger
-            .getLogger(ErrorReporter.class.getName());
+            .getLogger(CommitError.class.getName());
 
     private String projectName;
 
     private String hash;
 
-    private Set<String> parentsHash;
-
     private String erroMSG;
 
-    public ErrorReporter(String projectName, String hash, Set<String> parentsHash, String erroMSG) {
+    public CommitError() {
+    }
+
+    public CommitError(String projectName, String hash, String erroMSG) {
         RestTemplate restTemplate = new RestTemplate();
 
         this.hash = hash;
-        this.parentsHash = parentsHash;
         this.projectName = projectName;
         this.erroMSG = erroMSG;
 
         try {
 
-            restTemplate.postForObject("http://localhost:8080/api/commitErro", this, ErrorReporter.class);
+            restTemplate.postForObject("http://localhost:8080/api/commiterror", this, CommitError.class);
 
         } catch (Exception e) {
+
             logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);
         }
 
@@ -78,20 +76,6 @@ public class ErrorReporter {
      */
     public void setErroMSG(String erroMSG) {
         this.erroMSG = erroMSG;
-    }
-
-    /**
-     * @return Set<String> return the parentsHash
-     */
-    public Set<String> getParentsHash() {
-        return parentsHash;
-    }
-
-    /**
-     * @param parentsHash the parentsHash to set
-     */
-    public void setParentsHash(Set<String> parentsHash) {
-        this.parentsHash = parentsHash;
     }
 
 }

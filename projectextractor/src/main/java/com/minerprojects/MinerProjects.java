@@ -25,24 +25,27 @@ public class MinerProjects {
 
     public static void main(String[] args) throws Exception {
 
-        String nomeProjeto = "auto";
-        String url = "https://github.com/google/auto.git";
+        // String nomeProjeto = "auto";
+        // String url = "https://github.com/google/auto.git";
 
         // String nomeProjeto = "project-analyzer-with-parsers";
         // String url =
         // "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
 
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? true - não feito
         // String nomeProjeto = "openpnp";
         // String url = "https://github.com/openpnp/openpnp.git";
 
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? false - The path does not have a
+        // Git Repository or Name is Bigger - many htmls
         // String nomeProjeto = "morphia";
         // String url = "https://github.com/MorphiaOrg/morphia.git";
 
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
-        // String nomeProjeto = "spring-data-mongodb";
-        // String url = "https://github.com/spring-projects/spring-data-mongodb.git";
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? true
+        String nomeProjeto = "spring-data-mongodb";
+        String url = "https://github.com/spring-projects/spring-data-mongodb.git";
+
+        new CommitError("teste", "teste", "teste msg");
 
         // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "controlsfx";
