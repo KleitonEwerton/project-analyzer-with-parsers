@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import org.springframework.web.client.RestTemplate;
 
 import com.minerprojects.cli.CLIExecute;
+import com.minerprojects.cli.CLIExecution;
 import com.minerprojects.data.DataPMD;
 import com.minerprojects.pmddetector.ExecutionConfig;
 import com.minerprojects.pmddetector.pmd.CyclomaticComplexity;
@@ -69,7 +70,17 @@ public class PMDReporter {
 
                 String command = "git checkout " + commit.getHash();
 
-                CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
+                CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
+
+                if (execute.toString().contains("error:")) {
+
+                        if (logger.isLoggable(java.util.logging.Level.INFO)) {
+                                logger.info(String.format("ERROR%n%s", command));
+                        }
+
+                        new ErrorReporter(commit.getHash(), projectName, command + "\n" + execute.toString());
+                        return;
+                }
 
                 String directory = Paths.get(ExecutionConfig.PROJECT_PATH).toString();
 

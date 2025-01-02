@@ -1,18 +1,14 @@
 package com.minerprojects;
 
-import com.opencsv.bean.CsvBindByName;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ErrorReporter {
 
-    @CsvBindByName(column = "10_HASH")
     private String hash;
 
-    @CsvBindByName(column = "11_PARENTHASH")
     private String parentHash;
 
-    @CsvBindByName(column = "MSG_ERRO")
     private String erroMSG;
 
     public static List<ErrorReporter> errosCheckout = new ArrayList<>();
@@ -22,6 +18,7 @@ public class ErrorReporter {
         this.parentHash = parentHash;
         this.erroMSG = erroMSG;
         errosCheckout.add(this);
+
     }
 
     /**

@@ -1,6 +1,7 @@
 
 package com.minerprojects;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,15 +26,38 @@ public class MinerProjects {
 
     public static void main(String[] args) throws Exception {
 
-        // String nomeProjeto = "auto";
-        // String url = "https://github.com/google/auto.git";
-
-        // String nomeProjeto = "examples-for-refactoring-testing";
-        // String url =
-        // "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
-
         String nomeProjeto = "project-analyzer-with-parsers";
         String url = "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
+
+        // String nomeProjeto = "openpnp";
+        // String url = "https://github.com/openpnp/openpnp.git";
+
+        // String nomeProjeto = "morphia";
+        // String url = "https://github.com/MorphiaOrg/morphia.git";
+
+        // String nomeProjeto = "spring-data-mongodb";
+        // String url = "https://github.com/spring-projects/spring-data-mongodb.git";
+
+        // String nomeProjeto = "controlsfx";
+        // String url = "https://github.com/controlsfx/controlsfx.git";
+
+        // String nomeProjeto = "pgjdbc";
+        // String url = "https://github.com/pgjdbc/pgjdbc.git";
+
+        // String nomeProjeto = "httpcomponents-client";
+        // String url = "https://github.com/apache/httpcomponents-client.git";
+
+        // String nomeProjeto = "github-api";
+        // String url = "https://github.com/hub4j/github-api.git";
+
+        // String nomeProjeto = "mondrian";
+        // String url = "https://github.com/pentaho/mondrian.git";
+
+        // String nomeProjeto = "SpongeAPI";
+        // String url = "https://github.com/SpongePowered/SpongeAPI.git";
+
+        // String nomeProjeto = "SpongeForge";
+        // String url = "https://github.com/SpongePowered/SpongeForge.git";
 
         checar(nomeProjeto, url);
 
@@ -42,6 +66,7 @@ public class MinerProjects {
     public static void checar(String projectName, String projectUrl) throws Exception {
 
         CommitReporter.commits.clear();
+        ErrorReporter.errosCheckout.clear();
 
         GitService gitService = new GitServiceImpl();
 
@@ -58,7 +83,8 @@ public class MinerProjects {
         ExecutionConfig.PROJECT_PATH = "C:\\Users\\kleit\\OneDrive\\Documentos\\tcc\\project-analyzer-with-parsers\\projectextractor\\tmp\\"
                 + projectName;
 
-        logger.info("GET COMMITS AND MODIFIED FILES: " + ExecutionConfig.PROJECT_PATH);
+        logger.info("Pegando todos os commit, arquivos modificados por commit e suas integridades no SO usado: "
+                + ExecutionConfig.PROJECT_PATH);
 
         getCommits(projectName);
 
@@ -71,7 +97,6 @@ public class MinerProjects {
             // RefactoringReporter.getAllRefactoring(miner, repo);
 
             logger.info("Analisando todos os PMD em cada versão do projeto!");
-
             PMDReporter.getAllPMD(projectName);
 
         } catch (Exception e) {
@@ -82,7 +107,8 @@ public class MinerProjects {
 
     }
 
-    public static void getCommits(String projectName) throws IOException {
+    public static void getCommits(String projectName) throws IOException, InterruptedException {
+
         String command = "git log --all --pretty=\"hash:'%H'parents:'%P'\" --name-status --reverse";
         String path = "tmp/" + projectName;
 
@@ -94,6 +120,8 @@ public class MinerProjects {
 
         Map<String, CommitReporter> commitsMap = new HashMap<>();
         CommitReporter currentCommit = null;
+
+        int erros = 0;
 
         for (String line : execute.getOutput()) {
             if (line.startsWith("hash:")) {
@@ -108,10 +136,16 @@ public class MinerProjects {
 
                 Set<String> parentsSet = new HashSet<>(Arrays.asList(parents.split(" ")));
                 currentCommit = new CommitReporter(projectName, hash, parentsSet, new HashMap<>());
-                commitsMap.put(hash, currentCommit);
+
+                if (checarCheckout(currentCommit)) {
+                    commitsMap.put(hash, currentCommit);
+                } else {
+                    erros++;
+                }
+
             } else if (currentCommit != null
                     && (line.startsWith("M") || line.startsWith("A")) && line.endsWith(".java")) {
-                // Processa arquivos modificados, adicionados ou deletados
+
                 String[] parts = line.split("\t", 2);
                 if (parts.length == 2) {
                     String status = parts[0].trim();
@@ -122,14 +156,45 @@ public class MinerProjects {
             }
         }
 
+        logger.info("Erros: " + erros);
+        logger.info("Checkouts sem erros: " + CommitReporter.commits.size());
+
         // Configura as relações pai-filho entre os commits
         for (CommitReporter commit : commitsMap.values()) {
             for (String parentHash : commit.getParentHashes()) {
+
                 CommitReporter parent = commitsMap.get(parentHash);
+
                 if (parent != null) {
+
                     commit.setParent(parent);
+
                 }
             }
+        }
+
+    }
+
+    public static boolean checarCheckout(CommitReporter commit) throws IOException, InterruptedException {
+
+        String command = "git checkout " + commit.getHash();
+
+        CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + commit.getProjectName());
+
+        if (execute.toString().contains("error:")) {
+
+            if (logger.isLoggable(java.util.logging.Level.INFO)) {
+                logger.info(String.format("ERROR%n%s%n%s", command, execute.toString()));
+            }
+
+            new ErrorReporter(commit.getHash(), commit.getProjectName(), command + "\n" + execute.toString());
+
+            return false;
+
+        } else {
+
+            return true;
+
         }
 
     }
