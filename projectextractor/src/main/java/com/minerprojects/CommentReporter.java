@@ -189,16 +189,17 @@ public class CommentReporter {
 
         CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
 
-        if (execute.toString().contains("error:")) {
+        if (!execute.getError().isEmpty()) {
 
-            if (logger.isLoggable(java.util.logging.Level.INFO)) {
+            logger.info(String.format("ERROR%n%s%n%s", command, execute.toString()));
 
-                logger.info(String.format("ERROR%n%s", command));
-
-            }
-            new ErrorReporter(commit.getHash(), projectName, command + "\n" + execute.toString());
+            new ErrorReporter(projectName,
+                    commit.getHash(),
+                    commit.getParentsHash(),
+                    command + "\n" + execute.toString());
 
             return;
+
         }
 
         getPathJavaFilesADM(commit).forEach(p -> processJavaFile(p, commit, false));
@@ -211,15 +212,17 @@ public class CommentReporter {
 
         CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
 
-        if (execute.toString().contains("error:")) {
+        if (!execute.getError().isEmpty()) {
 
-            if (logger.isLoggable(java.util.logging.Level.INFO)) {
+            logger.info(String.format("ERROR%n%s%n%s", command, execute.toString()));
 
-                logger.info(String.format("ERROR%n%s", command));
+            new ErrorReporter(projectName,
+                    commit.getHash(),
+                    commit.getParentsHash(),
+                    command + "\n" + execute.toString());
 
-            }
-            new ErrorReporter(commit.getHash(), projectName, command + "\n" + execute.toString());
             return;
+
         }
 
         getParentPathJavaFilesADM(commit).forEach(p -> processJavaFile(p, commit, true));

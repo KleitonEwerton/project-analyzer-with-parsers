@@ -72,14 +72,17 @@ public class PMDReporter {
 
                 CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
 
-                if (execute.toString().contains("error:")) {
+                if (!execute.getError().isEmpty()) {
 
-                        if (logger.isLoggable(java.util.logging.Level.INFO)) {
-                                logger.info(String.format("ERROR%n%s", command));
-                        }
+                        logger.info(String.format("ERROR%n%s%n%s", command, execute.toString()));
 
-                        new ErrorReporter(commit.getHash(), projectName, command + "\n" + execute.toString());
+                        new ErrorReporter(projectName,
+                                        commit.getHash(),
+                                        commit.getParentsHash(),
+                                        command + "\n" + execute.toString());
+
                         return;
+
                 }
 
                 String directory = Paths.get(ExecutionConfig.PROJECT_PATH).toString();

@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CLIExecute {
 
@@ -13,20 +15,17 @@ public class CLIExecute {
 
         Runtime runtime = Runtime.getRuntime();
 
-        Process exec = runtime.exec(command, null,
-                new File(directory));
+        Process exec = runtime.exec(command, null, new File(directory));
 
         String s;
 
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(exec.getInputStream()));
         BufferedReader stdError = new BufferedReader(new InputStreamReader(exec.getErrorStream()));
 
-        // read the output from the command
         while ((s = stdInput.readLine()) != null) {
             execution.addOutput(s);
         }
 
-        // read any errors from the attempted command
         while ((s = stdError.readLine()) != null) {
             execution.addError(s);
         }
@@ -36,41 +35,36 @@ public class CLIExecute {
 
     public static CLIExecution executeCheckout(String command, String directory)
             throws IOException, InterruptedException {
+
         CLIExecution execution = new CLIExecution();
 
-        Runtime runtime = Runtime.getRuntime();
-        Process exec = runtime.exec(command, null, new File(directory));
+        try {
 
-        BufferedReader stdInput = new BufferedReader(new InputStreamReader(exec.getInputStream()));
-        BufferedReader stdError = new BufferedReader(new InputStreamReader(exec.getErrorStream()));
+            Runtime runtime = Runtime.getRuntime();
 
-        Thread outputThread = new Thread(() -> {
-            try {
-                String s;
-                while ((s = stdInput.readLine()) != null) {
-                    execution.addOutput(s);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+            Process exec = runtime.exec(command, null, new File(directory));
 
-        Thread errorThread = new Thread(() -> {
-            try {
-                String s;
+            String s;
+
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(exec.getErrorStream()));
+
+            int exitCode = exec.waitFor();
+
+            if (exitCode != 0) {
                 while ((s = stdError.readLine()) != null) {
-                    execution.addError(s);
+                    execution.addError(s); // Adiciona mensagens de erro reais
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } else {
+                while ((s = stdError.readLine()) != null) {
+                    execution.addOutput(s); // Trata mensagens informativas como saída
+                }
             }
-        });
 
-        outputThread.start();
-        errorThread.start();
+        } catch (
 
-        outputThread.join();
-        errorThread.join();
+        IOException ex) {
+            Logger.getLogger(CLIExecute.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         return execution;
     }

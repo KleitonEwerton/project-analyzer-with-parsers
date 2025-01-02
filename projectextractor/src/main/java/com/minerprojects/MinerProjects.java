@@ -26,36 +26,49 @@ public class MinerProjects {
 
     public static void main(String[] args) throws Exception {
 
+        // String nomeProjeto = "auto";
+        // String url = "https://github.com/google/auto.git";
+
         String nomeProjeto = "project-analyzer-with-parsers";
         String url = "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
 
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "openpnp";
         // String url = "https://github.com/openpnp/openpnp.git";
 
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "morphia";
         // String url = "https://github.com/MorphiaOrg/morphia.git";
 
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "spring-data-mongodb";
         // String url = "https://github.com/spring-projects/spring-data-mongodb.git";
 
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "controlsfx";
         // String url = "https://github.com/controlsfx/controlsfx.git";
 
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "pgjdbc";
         // String url = "https://github.com/pgjdbc/pgjdbc.git";
 
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "httpcomponents-client";
         // String url = "https://github.com/apache/httpcomponents-client.git";
 
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "github-api";
         // String url = "https://github.com/hub4j/github-api.git";
 
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "mondrian";
         // String url = "https://github.com/pentaho/mondrian.git";
 
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "SpongeAPI";
         // String url = "https://github.com/SpongePowered/SpongeAPI.git";
 
+        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
         // String nomeProjeto = "SpongeForge";
         // String url = "https://github.com/SpongePowered/SpongeForge.git";
 
@@ -109,7 +122,7 @@ public class MinerProjects {
 
     public static void getCommits(String projectName) throws IOException, InterruptedException {
 
-        String command = "git log --all --pretty=\"hash:'%H'parents:'%P'\" --name-status --reverse";
+        String command = "git log --all --pretty=\"hash:'%H'parents:'%P'\" --name-status";
         String path = "tmp/" + projectName;
 
         CLIExecution execute = CLIExecute.execute(command, path);
@@ -137,11 +150,7 @@ public class MinerProjects {
                 Set<String> parentsSet = new HashSet<>(Arrays.asList(parents.split(" ")));
                 currentCommit = new CommitReporter(projectName, hash, parentsSet, new HashMap<>());
 
-                if (checarCheckout(currentCommit)) {
-                    commitsMap.put(hash, currentCommit);
-                } else {
-                    erros++;
-                }
+                commitsMap.put(hash, currentCommit);
 
             } else if (currentCommit != null
                     && (line.startsWith("M") || line.startsWith("A")) && line.endsWith(".java")) {
@@ -171,30 +180,6 @@ public class MinerProjects {
 
                 }
             }
-        }
-
-    }
-
-    public static boolean checarCheckout(CommitReporter commit) throws IOException, InterruptedException {
-
-        String command = "git checkout " + commit.getHash();
-
-        CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + commit.getProjectName());
-
-        if (execute.toString().contains("error:")) {
-
-            if (logger.isLoggable(java.util.logging.Level.INFO)) {
-                logger.info(String.format("ERROR%n%s%n%s", command, execute.toString()));
-            }
-
-            new ErrorReporter(commit.getHash(), commit.getProjectName(), command + "\n" + execute.toString());
-
-            return false;
-
-        } else {
-
-            return true;
-
         }
 
     }
