@@ -32,7 +32,7 @@ public class ErrorReporter {
         errosCheckout.add(this);
 
         try {
-            restTemplate.postForObject("http://localhost:8080/api/pmd", this, ErrorReporter.class);
+            restTemplate.postForObject("http://localhost:8080/api/commitErro", this, ErrorReporter.class);
 
             logger.info(
                     "Dados enviados com sucesso para a API.  - "
