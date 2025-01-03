@@ -61,13 +61,13 @@ public class CLIExecution {
     public String toString() {
         String result = "";
 
-        result += "==========================Output==============================\n";
+        result += "Output:";
         for (String string : output) {
             result += string + "\n";
         }
 
         if (!error.isEmpty()) {
-            result += "==========================Error==============================\n";
+            result += "Error:";
             for (String string : error) {
                 result += string + "\n";
             }

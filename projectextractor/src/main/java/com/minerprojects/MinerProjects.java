@@ -28,9 +28,8 @@ public class MinerProjects {
         // String nomeProjeto = "auto";
         // String url = "https://github.com/google/auto.git";
 
-        // String nomeProjeto = "project-analyzer-with-parsers";
-        // String url =
-        // "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
+        String nomeProjeto = "project-analyzer-with-parsers";
+        String url = "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
 
         // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? true - não feito
         // String nomeProjeto = "openpnp";
@@ -41,9 +40,9 @@ public class MinerProjects {
         // String nomeProjeto = "morphia";
         // String url = "https://github.com/MorphiaOrg/morphia.git";
 
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? true
-        String nomeProjeto = "spring-data-mongodb";
-        String url = "https://github.com/spring-projects/spring-data-mongodb.git";
+        // // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? false
+        // String nomeProjeto = "spring-data-mongodb";
+        // String url = "https://github.com/spring-projects/spring-data-mongodb.git";
 
         new CommitError("testeinsert", "testeinsert",
                 "testeinsert1-testeinsert2-testeinsert3-testeinsert4-testeinsert5-testeinsert6-testeinsert7-testeinsert8-testeinsert9-teste1insert0-teste1insert1-teste1insert2-teste1insert3-teste1insert4-teste1insert5-teste1insert6-teste1insert7-teste1insert8-teste1insert9-teste2insert0-teste2insert21-teste2insert22-teste2insert23-teste2insert24-teste2insert25");
@@ -96,7 +95,7 @@ public class MinerProjects {
             logger.info(String.format("Projeto: %s", projectUrl));
         }
 
-        ExecutionConfig.PROJECT_PATH = "C:\\Users\\kleit\\OneDrive\\Documentos\\tcc\\project-analyzer-with-parsers\\projectextractor\\tmp\\"
+        ExecutionConfig.PROJECT_PATH = "C:\\project-analyzer-with-parsers\\projectextractor\\tmp\\"
                 + projectName;
 
         logger.info("Pegando todos os commit, arquivos modificados por commit e suas integridades no SO usado: "

@@ -185,7 +185,7 @@ public class CommentReporter {
 
     public static void walkToRepositorySeachComment(CommitReporter commit, String projectName) throws Exception {
 
-        String command = "git checkout " + commit.getHash();
+        String command = "git checkout -f " + commit.getHash();
 
         CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
 
@@ -207,7 +207,7 @@ public class CommentReporter {
 
     public static void walkParentToRepositorySeachComment(CommitReporter commit, String projectName) throws Exception {
 
-        String command = "git checkout " + commit.getParentHash();
+        String command = "git checkout -f " + commit.getParentHash();
 
         CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
 

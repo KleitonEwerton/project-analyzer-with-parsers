@@ -52,7 +52,7 @@ public class PMDReporter {
                                                         commit.getHash()));
                                 }
 
-                                saveJavaFiles(commit.getJavaFiles(), projectName);
+                                saveJavaFiles(commit.getJavaFiles());
 
                                 PMDReporter.getPMD(commit, projectName);
 
@@ -68,7 +68,7 @@ public class PMDReporter {
 
         public static void getPMD(CommitReporter commit, String projectName) throws IOException, InterruptedException {
 
-                String command = "git checkout " + commit.getHash();
+                String command = "git checkout -f " + commit.getHash();
 
                 CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
 
@@ -116,9 +116,9 @@ public class PMDReporter {
 
         }
 
-        public static void saveJavaFiles(List<String> javaFiles, String projectName) {
+        public static void saveJavaFiles(List<String> javaFiles) {
 
-                String tmpDir = "tmp/" + projectName;
+                String tmpDir = "tmp";
 
                 File directory = new File(tmpDir);
                 if (!directory.exists()) {
@@ -130,7 +130,9 @@ public class PMDReporter {
                                 writer.write(javaFile);
                                 writer.newLine();
                         }
-                } catch (IOException e) {
+                } catch (
+
+                IOException e) {
                         e.printStackTrace();
                 }
         }
@@ -146,7 +148,7 @@ public class PMDReporter {
                                 Paths.get(dir, ".pmdCache_" + projectName + "_" + analiserName).toString());
                 config.setReportFormat("xml");
 
-                Path javaFilesListPath = Paths.get(path, "java_files_list.txt");
+                Path javaFilesListPath = Paths.get(dir, "java_files_list.txt");
 
                 try (PmdAnalysis analysis = PmdAnalysis.create(config)) {
                         // Carregar a regra CyclomaticComplexity
