@@ -23,7 +23,8 @@ public class CommitError {
 
         this.hash = hash;
         this.projectName = projectName;
-        this.erroMSG = erroMSG;
+        // MAX 200 characters
+        this.erroMSG = erroMSG.substring(0, erroMSG.length() > 200 ? 200 : erroMSG.length());
 
         try {
 
