@@ -45,10 +45,10 @@ public class CommentReporter {
         this.segmentos = 1 + endNumber - startNumber;
 
         // if hashPackageClass não está no DataComment.da
-        if (DataComment.dataComments.stream()
-                .noneMatch(data -> data.getHashPackageClass().equals(this.hashPackageClass))) {
-            DataComment.dataComments.add(
-                    new DataComment(commit, this.hashPackage, this.hashPackageClass));
+        if (DataComment.dataComments.stream().noneMatch(c -> c.getHashPackageClass().equals(this.hashPackageClass))) {
+
+            new DataComment(commit, this.hashPackage, this.hashPackageClass);
+
         } else {
 
             DataComment.updateDadosByhashClassPath(this);

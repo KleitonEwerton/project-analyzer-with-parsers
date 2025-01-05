@@ -1,14 +1,14 @@
 package com.minerprojects.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.minerprojects.CommentReporter;
 import com.minerprojects.CommitReporter;
 
 public class DataComment {
 
-    public static List<DataComment> dataComments = new ArrayList<>();
+    public static Set<DataComment> dataComments = new HashSet();
 
     private String projectName;
 
