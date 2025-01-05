@@ -28,15 +28,6 @@ public class Refactoring {
     @Column(nullable = false)
     private String type;
 
-    @Column(nullable = true)
-    private String parentHash;
-
-    @Column(nullable = true)
-    private String parentHashPackage;
-
-    @Column(nullable = true)
-    private String parentHashPackageClass;
-
     /**
      * @return long return the id
      */
@@ -119,48 +110,6 @@ public class Refactoring {
      */
     public void setType(String type) {
         this.type = type;
-    }
-
-    /**
-     * @return String return the parentHash
-     */
-    public String getParentHash() {
-        return parentHash;
-    }
-
-    /**
-     * @param parentHash the parentHash to set
-     */
-    public void setParentHash(String parentHash) {
-        this.parentHash = parentHash;
-    }
-
-    /**
-     * @return String return the parentHashPackage
-     */
-    public String getParentHashPackage() {
-        return parentHashPackage;
-    }
-
-    /**
-     * @param parentHashPackage the parentHashPackage to set
-     */
-    public void setParentHashPackage(String parentHashPackage) {
-        this.parentHashPackage = parentHashPackage;
-    }
-
-    /**
-     * @return String return the parentHashPackageClass
-     */
-    public String getParentHashPackageClass() {
-        return parentHashPackageClass;
-    }
-
-    /**
-     * @param parentHashPackageClass the parentHashPackageClass to set
-     */
-    public void setParentHashPackageClass(String parentHashPackageClass) {
-        this.parentHashPackageClass = parentHashPackageClass;
     }
 
 }

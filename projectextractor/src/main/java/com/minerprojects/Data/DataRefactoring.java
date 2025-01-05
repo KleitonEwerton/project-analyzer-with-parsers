@@ -1,5 +1,7 @@
 package com.minerprojects.data;
 
+import com.minerprojects.CommitReporter;
+
 public class DataRefactoring {
 
     private String projectName;
@@ -12,14 +14,18 @@ public class DataRefactoring {
 
     private String type;
 
-    private String parentHash;
+    public DataRefactoring(CommitReporter commit, String hpackage, String hclass, String type) {
 
-    private String parentHashPackage;
+        this.projectName = commit.getProjectName();
 
-    private String parentHashPackageClass;
+        this.hash = commit.getHash();
 
-    public DataRefactoring() {
-        // Constructor is intentionally empty
+        this.hashPackage = commit.getHash() + "." + hpackage;
+
+        this.hashPackageClass = commit.getHash() + "." + hpackage + "." + hclass;
+
+        this.type = type;
+
     }
 
     /**
@@ -90,48 +96,6 @@ public class DataRefactoring {
      */
     public void setType(String type) {
         this.type = type;
-    }
-
-    /**
-     * @return String return the parentHash
-     */
-    public String getParentHash() {
-        return parentHash;
-    }
-
-    /**
-     * @param parentHash the parentHash to set
-     */
-    public void setParentHash(String parentHash) {
-        this.parentHash = parentHash;
-    }
-
-    /**
-     * @return String return the parentHashPackage
-     */
-    public String getParentHashPackage() {
-        return parentHashPackage;
-    }
-
-    /**
-     * @param parentHashPackage the parentHashPackage to set
-     */
-    public void setParentHashPackage(String parentHashPackage) {
-        this.parentHashPackage = parentHashPackage;
-    }
-
-    /**
-     * @return String return the parentHashPackageClass
-     */
-    public String getParentHashPackageClass() {
-        return parentHashPackageClass;
-    }
-
-    /**
-     * @param parentHashPackageClass the parentHashPackageClass to set
-     */
-    public void setParentHashPackageClass(String parentHashPackageClass) {
-        this.parentHashPackageClass = parentHashPackageClass;
     }
 
 }

@@ -7,9 +7,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.minerprojects.cli.CLIExecute;
 import com.minerprojects.cli.CLIExecution;
 import com.minerprojects.data.DataComment;
@@ -18,169 +19,41 @@ public class CommentReporter {
 
     private static final Logger logger = Logger.getLogger(CommentReporter.class.getName());
 
-    private String hashClassPath;
+    private String hash;
 
-    private String parentHashClassPath;
+    private String hashPackage;
+
+    private String hashPackageClass;
 
     private int type;
 
-    private int startLine;
-
-    private int endLine;
-
     private int segmentos;
-
-    private Path filePath;
 
     private CommitReporter commit;
 
-    public CommentReporter(CommitReporter commit, Path filePath, int type, int startNumber,
-            int endNumber, boolean isParent) {
+    public CommentReporter(CommitReporter commit, int type, int startNumber,
+            int endNumber, String hpackage, String hclass) {
 
-        this.commit = commit;
-        this.hashClassPath = commit.getHash() + File.separator + filePath.toString();
-        this.parentHashClassPath = this.commit.getParentHash() + File.separator + filePath.toString();
+        this.hash = commit.getHash();
 
-        this.filePath = filePath;
+        this.hashPackage = commit.getHash() + "." + hpackage;
+
+        this.hashPackageClass = commit.getHash() + "." + hpackage + "." + hclass;
 
         this.type = type;
 
-        this.startLine = startNumber;
+        this.segmentos = 1 + endNumber - startNumber;
 
-        this.endLine = endNumber;
-
-        this.segmentos = 1 + this.endLine - this.startLine;
-
-        if (isParent) {
-
-            DataComment.updateDadosByhashParentClassPath(this);
-
+        // if hashPackageClass não está no DataComment.da
+        if (DataComment.dataComments.stream()
+                .noneMatch(data -> data.getHashPackageClass().equals(this.hashPackageClass))) {
+            DataComment.dataComments.add(
+                    new DataComment(commit, this.hashPackage, this.hashPackageClass));
         } else {
 
             DataComment.updateDadosByhashClassPath(this);
-
         }
 
-    }
-
-    /**
-     * @return String return the hashClassPath
-     */
-    public String getHashClassPath() {
-        return hashClassPath;
-    }
-
-    /**
-     * @param hashClassPath the hashClassPath to set
-     */
-    public void setHashClassPath(String hashClassPath) {
-        this.hashClassPath = hashClassPath;
-    }
-
-    /**
-     * @return String return the parentHashClassPath
-     */
-    public String getParentHashClassPath() {
-        return parentHashClassPath;
-    }
-
-    /**
-     * @param parentHashClassPath the parentHashClassPath to set
-     */
-    public void setParentHashClassPath(String parentHashClassPath) {
-        this.parentHashClassPath = parentHashClassPath;
-    }
-
-    /**
-     * @return String return the type
-     */
-    public int getType() {
-        return type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    /**
-     * @return int return the startLine
-     */
-    public int getStartLine() {
-        return startLine;
-    }
-
-    /**
-     * @param startLine the startLine to set
-     */
-    public void setStartLine(int startLine) {
-        this.startLine = startLine;
-    }
-
-    /**
-     * @return int return the endLine
-     */
-    public int getEndLine() {
-        return endLine;
-    }
-
-    /**
-     * @param endLine the endLine to set
-     */
-    public void setEndLine(int endLine) {
-        this.endLine = endLine;
-    }
-
-    /**
-     * @return int return the segmentos
-     */
-    public int getSegmentos() {
-        return segmentos;
-    }
-
-    /**
-     * @param segmentos the segmentos to set
-     */
-    public void setSegmentos(int segmentos) {
-        this.segmentos = segmentos;
-    }
-
-    /**
-     * @return Path return the filePath
-     */
-    public Path getFilePath() {
-        return filePath;
-    }
-
-    /**
-     * @param filePath the filePath to set
-     */
-    public void setFilePath(Path filePath) {
-        this.filePath = filePath;
-    }
-
-    /**
-     * @return CommitReporter return the commit
-     */
-    public CommitReporter getCommit() {
-        return commit;
-    }
-
-    /**
-     * @param commit the commit to set
-     */
-    public void setCommit(CommitReporter commit) {
-        this.commit = commit;
-    }
-
-    @Override
-    public String toString() {
-        return "CommentReporter [commit=" + commit.getHash() + ", endLine=" + endLine + ", filePath=" + filePath
-                + ", hashClassPath="
-                + hashClassPath + ", parentHashClassPath=" + parentHashClassPath + ", segmentos=" + segmentos
-                + ", startLine=" + startLine + ", type=" + type + "]";
     }
 
     public static void walkToRepositorySeachComment(CommitReporter commit, String projectName) throws Exception {
@@ -191,7 +64,7 @@ public class CommentReporter {
 
         if (!execute.getError().isEmpty()) {
 
-            logger.info(String.format("ERROR%n%s%n%s", command, execute.toString()));
+            logger.info(String.format("ERROR%s%s", command, execute.toString()));
 
             new CommitError(projectName,
                     commit.getHash(),
@@ -201,29 +74,7 @@ public class CommentReporter {
 
         }
 
-        getPathJavaFilesADM(commit).forEach(p -> processJavaFile(p, commit, false));
-
-    }
-
-    public static void walkParentToRepositorySeachComment(CommitReporter commit, String projectName) throws Exception {
-
-        String command = "git checkout -f " + commit.getParentHash();
-
-        CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
-
-        if (!execute.getError().isEmpty()) {
-
-            logger.info(String.format("ERROR%n%s%n%s", command, execute.toString()));
-
-            new CommitError(projectName,
-                    commit.getHash(),
-                    command + "\n" + execute.toString());
-
-            return;
-
-        }
-
-        getParentPathJavaFilesADM(commit).forEach(p -> processJavaFile(p, commit, true));
+        getPathJavaFilesADM(commit).forEach(p -> processJavaFile(p, commit));
 
     }
 
@@ -233,17 +84,8 @@ public class CommentReporter {
 
         commit.getFilesMAD().forEach((k, v) -> {
 
-            if ((v.equals("M") || v.equals("A")) && k.endsWith(".java")) {
-                javaFiles.add(FileSystems.getDefault()
-                        .getPath("tmp" + File.separator + commit.getProjectName() + File.separator +
-                                k));
-
-                new DataComment(
-                        commit.getHash() + File.separator + "tmp" + File.separator + commit.getProjectName()
-                                + File.separator + k,
-                        commit.getParentHash() + File.separator + "tmp" + File.separator + commit.getProjectName()
-                                + File.separator + k);
-            }
+            javaFiles.add(FileSystems.getDefault()
+                    .getPath("tmp" + File.separator + commit.getProjectName() + File.separator + k));
 
         });
 
@@ -251,39 +93,28 @@ public class CommentReporter {
 
     }
 
-    public static Set<Path> getParentPathJavaFilesADM(CommitReporter commit) {
-
-        Set<Path> javaFiles = new HashSet<>();
-
-        commit.getFilesMAD().forEach((k, v) -> {
-
-            if ((v.equals("M") || v.equals("A")) && k.endsWith(".java")) {
-                javaFiles.add(FileSystems.getDefault()
-                        .getPath("tmp" + File.separator + commit.getProjectName() + File.separator +
-                                k));
-            }
-
-        });
-
-        return javaFiles;
-
-    }
-
-    public static void processJavaFile(Path filePath, CommitReporter commit, boolean isParent) {
+    public static void processJavaFile(Path filePath, CommitReporter commit) {
 
         try {
 
             CompilationUnit staticJavaParser = StaticJavaParser.parse(filePath);
 
+            String packageName = staticJavaParser.getPackageDeclaration()
+                    .map(PackageDeclaration::getNameAsString)
+                    .orElse("default");
+
+            String className = staticJavaParser.findFirst(ClassOrInterfaceDeclaration.class)
+                    .map(ClassOrInterfaceDeclaration::getNameAsString)
+                    .orElse("Unknown");
+
             staticJavaParser.getAllContainedComments()
                     .stream()
                     .map(p -> new CommentReporter(
                             commit,
-                            FileSystems.getDefault().getPath(filePath.toString()),
                             p.isBlockComment() ? 2 : p.isLineComment() ? 1 : p.isJavadocComment() ? 3 : 0,
                             p.getRange().map(r -> r.begin.line).orElse(0),
                             p.getRange().map(r -> r.end.line).orElse(0),
-                            isParent
+                            packageName, className
 
                     ))
                     .collect(Collectors.toSet());
@@ -309,8 +140,6 @@ public class CommentReporter {
 
                 CommentReporter.walkToRepositorySeachComment(commit, projectName);
 
-                CommentReporter.walkParentToRepositorySeachComment(commit, projectName);
-
                 DataComment.dataComments.forEach(data -> logger.info(data.toString()));
 
             } catch (Exception e) {
@@ -318,6 +147,90 @@ public class CommentReporter {
             }
 
         }
+    }
+
+    /**
+     * @param hash the hash to set
+     */
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
+    /**
+     * @param hash the hash to set
+     */
+    public String getHash() {
+        return this.hash;
+    }
+
+    /**
+     * @return String return the hashPackage
+     */
+    public String getHashPackage() {
+        return hashPackage;
+    }
+
+    /**
+     * @param hashPackage the hashPackage to set
+     */
+    public void setHashPackage(String hashPackage) {
+        this.hashPackage = hashPackage;
+    }
+
+    /**
+     * @return String return the hashPackageClass
+     */
+    public String getHashPackageClass() {
+        return hashPackageClass;
+    }
+
+    /**
+     * @param hashPackageClass the hashPackageClass to set
+     */
+    public void setHashPackageClass(String hashPackageClass) {
+        this.hashPackageClass = hashPackageClass;
+    }
+
+    /**
+     * @return int return the type
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    /**
+     * @return int return the segmentos
+     */
+    public int getSegmentos() {
+        return segmentos;
+    }
+
+    /**
+     * @param segmentos the segmentos to set
+     */
+    public void setSegmentos(int segmentos) {
+        this.segmentos = segmentos;
+    }
+
+    /**
+     * @return CommitReporter return the commit
+     */
+    public CommitReporter getCommit() {
+        return commit;
+    }
+
+    /**
+     * @param commit the commit to set
+     */
+    public void setCommit(CommitReporter commit) {
+        this.commit = commit;
     }
 
 }

@@ -190,14 +190,6 @@ public class PMDReporter {
 
                 pmd.setPriority(violation.getRule().getPriority().toString());
 
-                pmd.setParentHash(commit.getParentHash());
-
-                pmd.setParentHashPackage(
-                                pmd.getParentHash() + "." + violation.getAdditionalInfo().get("packageName"));
-
-                pmd.setParentHashPackageClass(
-                                pmd.getParentHashPackage() + "." + violation.getAdditionalInfo().get("className"));
-
                 try {
                         restTemplate.postForObject("http://localhost:8080/api/pmd", pmd, DataPMD.class);
 

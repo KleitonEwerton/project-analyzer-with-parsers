@@ -20,12 +20,6 @@ public class DataPMD {
 
     private String priority;
 
-    private String parentHash;
-
-    private String parentHashPackage;
-
-    private String parentHashPackageClass;
-
     public DataPMD() {
         // Constructor is intentionally empty
     }
@@ -154,48 +148,6 @@ public class DataPMD {
      */
     public void setPriority(String priority) {
         this.priority = priority;
-    }
-
-    /**
-     * @return String return the parentHash
-     */
-    public String getParentHash() {
-        return parentHash;
-    }
-
-    /**
-     * @param parentHash the parentHash to set
-     */
-    public void setParentHash(String parentHash) {
-        this.parentHash = parentHash;
-    }
-
-    /**
-     * @return String return the parentHashPackage
-     */
-    public String getParentHashPackage() {
-        return parentHashPackage;
-    }
-
-    /**
-     * @param parentHashPackage the parentHashPackage to set
-     */
-    public void setParentHashPackage(String parentHashPackage) {
-        this.parentHashPackage = parentHashPackage;
-    }
-
-    /**
-     * @return String return the parentHashPackageClass
-     */
-    public String getParentHashPackageClass() {
-        return parentHashPackageClass;
-    }
-
-    /**
-     * @param parentHashPackageClass the parentHashPackageClass to set
-     */
-    public void setParentHashPackageClass(String parentHashPackageClass) {
-        this.parentHashPackageClass = parentHashPackageClass;
     }
 
 }

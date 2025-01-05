@@ -45,17 +45,12 @@ public class PMDController {
                     pmd.setHashPackage(pmdDetails.getHashPackage());
                     pmd.setHashPackageClass(pmdDetails.getHashPackageClass());
 
-                    pmd.setParentHash(pmdDetails.getParentHash());
-                    pmd.setParentHashPackage(pmdDetails.getParentHashPackage());
-                    pmd.setParentHashPackageClass(pmdDetails.getParentHashPackageClass());
-
                     pmd.setType(pmdDetails.getType());
                     pmd.setBeginLine(pmdDetails.getBeginLine());
                     pmd.setEndLine(pmdDetails.getEndLine());
                     pmd.setBeginColumn(pmdDetails.getBeginColumn());
                     pmd.setPriority(pmdDetails.getPriority());
 
-                    pmd.setParentHash(pmdDetails.getParentHash());
                     PMD updatedPMD = pmdRepository.save(pmd);
 
                     return ResponseEntity.ok(updatedPMD);

@@ -26,39 +26,16 @@ public class Comment {
     private String hashPackageClass;
 
     @Column(nullable = false)
-    private int qntCommentReporterType1; // LINE
+    private int qntCommentLine;
 
     @Column(nullable = false)
-    private int qntCommentReporterType2; // BLOCK
+    private int qntCommentBlock;
 
     @Column(nullable = false)
-    private int qntCommentReporterType3;// DOC
+    private int qntCommentDoc;
 
     @Column(nullable = false)
     private int qntSegmentos;
-
-    // PARENT
-
-    @Column(nullable = true)
-    private String parentHash;
-
-    @Column(nullable = true)
-    private String parentHashPackage;
-
-    @Column(nullable = true)
-    private String parentHashPackageClass;
-
-    @Column(nullable = true)
-    private int qntInParentCommentReporterType1;// LINE
-
-    @Column(nullable = true)
-    private int qntInParentCommentReporterType2; // BLOCK
-
-    @Column(nullable = true)
-    private int qntInParentCommentReporterType3;// DOC
-
-    @Column(nullable = true)
-    private int qntParentSegmentos;
 
     /**
      * @return long return the id
@@ -145,59 +122,45 @@ public class Comment {
     }
 
     /**
-     * @return String return the parentHash
+     * @return int return the qntCommentLine
      */
-    public String getParentHash() {
-        return parentHash;
+    public int getQntCommentLine() {
+        return qntCommentLine;
     }
 
     /**
-     * @param parentHash the parentHash to set
+     * @param qntCommentLine the qntCommentLine to set
      */
-    public void setParentHash(String parentHash) {
-        this.parentHash = parentHash;
+    public void setQntCommentLine(int qntCommentLine) {
+        this.qntCommentLine = qntCommentLine;
     }
 
     /**
-     * @return String return the parentHashPackage
+     * @return int return the qntCommentBlock
      */
-    public String getParentHashPackage() {
-        return parentHashPackage;
+    public int getQntCommentBlock() {
+        return qntCommentBlock;
     }
 
     /**
-     * @param parentHashPackage the parentHashPackage to set
+     * @param qntCommentBlock the qntCommentBlock to set
      */
-    public void setParentHashPackage(String parentHashPackage) {
-        this.parentHashPackage = parentHashPackage;
+    public void setQntCommentBlock(int qntCommentBlock) {
+        this.qntCommentBlock = qntCommentBlock;
     }
 
     /**
-     * @return String return the parentHashPackageClass
+     * @return int return the qntCommentDoc
      */
-    public String getParentHashPackageClass() {
-        return parentHashPackageClass;
+    public int getQntCommentDoc() {
+        return qntCommentDoc;
     }
 
     /**
-     * @param parentHashPackageClass the parentHashPackageClass to set
+     * @param qntCommentDoc the qntCommentDoc to set
      */
-    public void setParentHashPackageClass(String parentHashPackageClass) {
-        this.parentHashPackageClass = parentHashPackageClass;
-    }
-
-    /**
-     * @return int return the qntParentSegmentos
-     */
-    public int getQntParentSegmentos() {
-        return qntParentSegmentos;
-    }
-
-    /**
-     * @param qntParentSegmentos the qntParentSegmentos to set
-     */
-    public void setQntParentSegmentos(int qntParentSegmentos) {
-        this.qntParentSegmentos = qntParentSegmentos;
+    public void setQntCommentDoc(int qntCommentDoc) {
+        this.qntCommentDoc = qntCommentDoc;
     }
 
 }

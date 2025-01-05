@@ -4,198 +4,146 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.minerprojects.CommentReporter;
+import com.minerprojects.CommitReporter;
 
 public class DataComment {
 
     public static List<DataComment> dataComments = new ArrayList<>();
 
-    private String hashClassPath;
-    private String parentHashClassPath;
+    private String projectName;
 
-    private int qntCommentReporterType1;
-    private int qntInParentCommentReporterType1;
+    private String hash;
 
-    private int qntCommentReporterType2;
-    private int qntInParentCommentReporterType2;
+    private String hashPackage;
 
-    private int qntCommentReporterType3;
-    private int qntInParentCommentReporterType3;
+    private String hashPackageClass;
+
+    private int qntCommentLine;
+
+    private int qntCommentBlock;
+
+    private int qntCommentDoc;
 
     private int qntSegmentos;
-    private int qntParentSegmentos;
 
-    public DataComment(String hashClassPath, String parentHashClassPath) {
+    public DataComment(CommitReporter commit, String hashPackage, String hashPackageClass) {
 
-        this.hashClassPath = hashClassPath;
-        this.parentHashClassPath = parentHashClassPath;
+        this.projectName = commit.getProjectName();
 
-        this.qntCommentReporterType1 = 0;
-        this.qntInParentCommentReporterType1 = 0;
+        this.hash = commit.getHash();
+        this.hashPackage = hashPackage;
+        this.hashPackageClass = hashPackageClass;
 
-        this.qntCommentReporterType2 = 0;
-        this.qntInParentCommentReporterType2 = 0;
-
-        this.qntCommentReporterType3 = 0;
-        this.qntInParentCommentReporterType3 = 0;
-
+        this.qntCommentLine = 0;
+        this.qntCommentBlock = 0;
+        this.qntCommentDoc = 0;
         this.qntSegmentos = 0;
-        this.qntParentSegmentos = 0;
-
         dataComments.add(this);
     }
 
     public static void updateDadosByhashClassPath(CommentReporter comment) {
 
-        dataComments.stream().filter(c -> c.getHashClassPath().equals(comment.getHashClassPath()))
+        dataComments.stream().filter(c -> c.getHashPackageClass().equals(comment.getHashPackageClass()))
                 .forEach(c -> {
 
-                    c.qntCommentReporterType1 += comment.getType() == 1 ? 1 : 0;
-                    c.qntCommentReporterType2 += comment.getType() == 2 ? 1 : 0;
-                    c.qntCommentReporterType3 += comment.getType() == 3 ? 1 : 0;
+                    c.qntCommentLine += comment.getType() == 1 ? 1 : 0;
+                    c.qntCommentBlock += comment.getType() == 2 ? 1 : 0;
+                    c.qntCommentDoc += comment.getType() == 3 ? 1 : 0;
                     c.qntSegmentos += comment.getSegmentos();
 
                 });
 
     }
 
-    public static void updateDadosByhashParentClassPath(CommentReporter comment) {
-
-        dataComments.stream().filter(c -> c.getHashClassPath().equals(comment.getHashClassPath())).forEach(c -> {
-
-            c.qntInParentCommentReporterType1 += comment.getType() == 1 ? 1 : 0;
-            c.qntInParentCommentReporterType2 += comment.getType() == 2 ? 1 : 0;
-            c.qntInParentCommentReporterType3 += comment.getType() == 3 ? 1 : 0;
-            c.qntParentSegmentos += comment.getSegmentos();
-
-        });
-
-    }
-
-    @Override
-    public String toString() {
-
-        return "DataComment [hashClassPath=" + hashClassPath + ", parentHashClassPath=" + parentHashClassPath
-                + ", qntCommentReporterType1=" + qntCommentReporterType1 + ", qntInParentCommentReporterType1="
-                + qntInParentCommentReporterType1 + ", qntCommentReporterType2=" + qntCommentReporterType2
-                + ", qntInParentCommentReporterType2=" + qntInParentCommentReporterType2
-                + ", qntCommentReporterType3=" + qntCommentReporterType3 + ", qntInParentCommentReporterType3="
-                + qntInParentCommentReporterType3 + ", qntSegmentos=" + qntSegmentos + ", qntParentSegmentos="
-                + qntParentSegmentos + "]";
+    /**
+     * @return String return the projectName
+     */
+    public String getProjectName() {
+        return projectName;
     }
 
     /**
-     * @return String return the hashClassPath
+     * @param projectName the projectName to set
      */
-    public String getHashClassPath() {
-        return hashClassPath;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     /**
-     * @param hashClassPath the hashClassPath to set
+     * @param hash the hash to set
      */
-    public void setHashClassPath(String hashClassPath) {
-        this.hashClassPath = hashClassPath;
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
     /**
-     * @return String return the parentHashClassPath
+     * @return String return the hashPackage
      */
-    public String getParentHashClassPath() {
-        return parentHashClassPath;
+    public String getHashPackage() {
+        return hashPackage;
     }
 
     /**
-     * @param parentHashClassPath the parentHashClassPath to set
+     * @param hashPackage the hashPackage to set
      */
-    public void setParentHashClassPath(String parentHashClassPath) {
-        this.parentHashClassPath = parentHashClassPath;
+    public void setHashPackage(String hashPackage) {
+        this.hashPackage = hashPackage;
     }
 
     /**
-     * @return int return the qntCommentReporterType1
+     * @return int return the qntCommentLine
      */
-    public int getQntCommentReporterType1() {
-        return qntCommentReporterType1;
+    public int getQntCommentLine() {
+        return qntCommentLine;
     }
 
     /**
-     * @param qntCommentReporterType1 the qntCommentReporterType1 to set
+     * @param qntCommentLine the qntCommentLine to set
      */
-    public void setQntCommentReporterType1(int qntCommentReporterType1) {
-        this.qntCommentReporterType1 = qntCommentReporterType1;
+    public void setQntCommentLine(int qntCommentLine) {
+        this.qntCommentLine = qntCommentLine;
     }
 
     /**
-     * @return int return the qntCommentReporterType2
+     * @return int return the qntCommentBlock
      */
-    public int getQntCommentReporterType2() {
-        return qntCommentReporterType2;
+    public int getQntCommentBlock() {
+        return qntCommentBlock;
     }
 
     /**
-     * @param qntCommentReporterType2 the qntCommentReporterType2 to set
+     * @param qntCommentBlock the qntCommentBlock to set
      */
-    public void setQntCommentReporterType2(int qntCommentReporterType2) {
-        this.qntCommentReporterType2 = qntCommentReporterType2;
+    public void setQntCommentBlock(int qntCommentBlock) {
+        this.qntCommentBlock = qntCommentBlock;
     }
 
     /**
-     * @return int return the qntCommentReporterType3
+     * @return int return the qntCommentDoc
      */
-    public int getQntCommentReporterType3() {
-        return qntCommentReporterType3;
+    public int getQntCommentDoc() {
+        return qntCommentDoc;
     }
 
     /**
-     * @param qntCommentReporterType3 the qntCommentReporterType3 to set
+     * @param qntCommentDoc the qntCommentDoc to set
      */
-    public void setQntCommentReporterType3(int qntCommentReporterType3) {
-        this.qntCommentReporterType3 = qntCommentReporterType3;
+    public void setQntCommentDoc(int qntCommentDoc) {
+        this.qntCommentDoc = qntCommentDoc;
     }
 
     /**
-     * @return int return the qntInParentCommentReporterType1
+     * @return String return the hashPackageClass
      */
-    public int getQntInParentCommentReporterType1() {
-        return qntInParentCommentReporterType1;
+    public String getHashPackageClass() {
+        return hashPackageClass;
     }
 
     /**
-     * @param qntInParentCommentReporterType1 the qntInParentCommentReporterType1 to
-     *                                        set
+     * @param hashPackageClass the hashPackageClass to set
      */
-    public void setQntInParentCommentReporterType1(int qntInParentCommentReporterType1) {
-        this.qntInParentCommentReporterType1 = qntInParentCommentReporterType1;
-    }
-
-    /**
-     * @return int return the qntInParentCommentReporterType2
-     */
-    public int getQntInParentCommentReporterType2() {
-        return qntInParentCommentReporterType2;
-    }
-
-    /**
-     * @param qntInParentCommentReporterType2 the qntInParentCommentReporterType2 to
-     *                                        set
-     */
-    public void setQntInParentCommentReporterType2(int qntInParentCommentReporterType2) {
-        this.qntInParentCommentReporterType2 = qntInParentCommentReporterType2;
-    }
-
-    /**
-     * @return int return the qntInParentCommentReporterType3
-     */
-    public int getQntInParentCommentReporterType3() {
-        return qntInParentCommentReporterType3;
-    }
-
-    /**
-     * @param qntInParentCommentReporterType3 the qntInParentCommentReporterType3 to
-     *                                        set
-     */
-    public void setQntInParentCommentReporterType3(int qntInParentCommentReporterType3) {
-        this.qntInParentCommentReporterType3 = qntInParentCommentReporterType3;
+    public void setHashPackageClass(String hashPackageClass) {
+        this.hashPackageClass = hashPackageClass;
     }
 
     /**
@@ -212,18 +160,11 @@ public class DataComment {
         this.qntSegmentos = qntSegmentos;
     }
 
-    /**
-     * @return int return the qntParentSegmentos
-     */
-    public int getQntParentSegmentos() {
-        return qntParentSegmentos;
+    @Override
+    public String toString() {
+        return "DataComment [projectName=" + projectName + ", hash=" + hash + ", hashPackage=" + hashPackage
+                + ", hashPackageClass=" + hashPackageClass + ", qntCommentLine=" + qntCommentLine
+                + ", qntCommentBlock=" + qntCommentBlock + ", qntCommentDoc=" + qntCommentDoc
+                + ", qntSegmentos=" + qntSegmentos + "]";
     }
-
-    /**
-     * @param qntParentSegmentos the qntParentSegmentos to set
-     */
-    public void setQntParentSegmentos(int qntParentSegmentos) {
-        this.qntParentSegmentos = qntParentSegmentos;
-    }
-
 }

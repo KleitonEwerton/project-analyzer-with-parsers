@@ -25,61 +25,45 @@ public class MinerProjects {
 
     public static void main(String[] args) throws Exception {
 
-        // String nomeProjeto = "auto";
-        // String url = "https://github.com/google/auto.git";
-
         String nomeProjeto = "project-analyzer-with-parsers";
         String url = "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
+        String branch = "main";
 
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? true - não feito
+        // APROVADO feito +17.000 pmd
         // String nomeProjeto = "openpnp";
         // String url = "https://github.com/openpnp/openpnp.git";
+        // String branch = "develop";
 
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? false - The path does not have a
-        // Git Repository or Name is Bigger - many htmls
-        // String nomeProjeto = "morphia";
-        // String url = "https://github.com/MorphiaOrg/morphia.git";
-
-        // // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? false
+        // APROVADO +19.000 pmd
         // String nomeProjeto = "spring-data-mongodb";
         // String url = "https://github.com/spring-projects/spring-data-mongodb.git";
+        // String branch = "main";
 
-        new CommitError("testeinsert", "testeinsert",
-                "testeinsert1-testeinsert2-testeinsert3-testeinsert4-testeinsert5-testeinsert6-testeinsert7-testeinsert8-testeinsert9-teste1insert0-teste1insert1-teste1insert2-teste1insert3-teste1insert4-teste1insert5-teste1insert6-teste1insert7-teste1insert8-teste1insert9-teste2insert0-teste2insert21-teste2insert22-teste2insert23-teste2insert24-teste2insert25");
-
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
+        // APROVADO +8.000
         // String nomeProjeto = "controlsfx";
         // String url = "https://github.com/controlsfx/controlsfx.git";
+        // String branch = "master";
 
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
+        // APROVADO +
         // String nomeProjeto = "pgjdbc";
         // String url = "https://github.com/pgjdbc/pgjdbc.git";
+        // String branch = "master";
 
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
+        // APROVADO +
         // String nomeProjeto = "httpcomponents-client";
         // String url = "https://github.com/apache/httpcomponents-client.git";
+        // String branch = "master";
 
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
-        // String nomeProjeto = "github-api";
-        // String url = "https://github.com/hub4j/github-api.git";
-
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
+        // APROVADO +
         // String nomeProjeto = "mondrian";
         // String url = "https://github.com/pentaho/mondrian.git";
+        // String branch = "master";
 
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
-        // String nomeProjeto = "SpongeAPI";
-        // String url = "https://github.com/SpongePowered/SpongeAPI.git";
-
-        // COMMITS : ???? ERROR CHECKOUT: ??? APROVADO? ????
-        // String nomeProjeto = "SpongeForge";
-        // String url = "https://github.com/SpongePowered/SpongeForge.git";
-
-        checar(nomeProjeto, url);
+        checar(nomeProjeto, url, branch);
 
     }
 
-    public static void checar(String projectName, String projectUrl) throws Exception {
+    public static void checar(String projectName, String projectUrl, String branch) throws Exception {
 
         CommitReporter.commits.clear();
 
@@ -88,8 +72,6 @@ public class MinerProjects {
         GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
 
         Repository repo = gitService.cloneIfNotExists("tmp/" + projectName, projectUrl);
-
-        logger.info("Iniciando...");
 
         if (logger.isLoggable(java.util.logging.Level.INFO)) {
             logger.info(String.format("Projeto: %s", projectUrl));
@@ -101,18 +83,18 @@ public class MinerProjects {
         logger.info("Pegando todos os commit, arquivos modificados por commit e suas integridades no SO usado: "
                 + ExecutionConfig.PROJECT_PATH);
 
-        getCommits(projectName);
+        getCommits(projectName, branch);
 
         try {
 
             logger.info("Analisando todos os comentarios em cada versão do projeto!");
-            // CommentReporter.getAllComments(projectName);
+            CommentReporter.getAllComments(projectName);
 
             logger.info("Analisando todos as refatorações em cada versão do projeto!");
             // RefactoringReporter.getAllRefactoring(miner, repo);
 
             logger.info("Analisando todos os PMD em cada versão do projeto!");
-            PMDReporter.getAllPMD(projectName);
+            // PMDReporter.getAllPMD(projectName);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,9 +104,9 @@ public class MinerProjects {
 
     }
 
-    public static void getCommits(String projectName) throws IOException, InterruptedException {
+    public static void getCommits(String projectName, String branch) throws IOException, InterruptedException {
 
-        String command = "git log --all --pretty=\"hash:'%H'parents:'%P'\" --name-status";
+        String command = "git log " + branch + " --pretty=\"hash:'%H'parents:'%P'\" --name-status";
         String path = "tmp/" + projectName;
 
         CLIExecution execute = CLIExecute.execute(command, path);
@@ -135,8 +117,6 @@ public class MinerProjects {
 
         Map<String, CommitReporter> commitsMap = new HashMap<>();
         CommitReporter currentCommit = null;
-
-        int erros = 0;
 
         for (String line : execute.getOutput()) {
             if (line.startsWith("hash:")) {
@@ -167,8 +147,7 @@ public class MinerProjects {
             }
         }
 
-        logger.info("Erros: " + erros);
-        logger.info("Checkouts sem erros: " + CommitReporter.commits.size());
+        logger.info("Commits: " + CommitReporter.commits.size());
 
         // Configura as relações pai-filho entre os commits
         for (CommitReporter commit : commitsMap.values()) {

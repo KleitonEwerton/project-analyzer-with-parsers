@@ -44,7 +44,6 @@ public class RefactoringController {
                     refactoring.setHash(refactoringDetails.getHash());
                     refactoring.setHashPackageClass(refactoringDetails.getHashPackageClass());
                     refactoring.setType(refactoringDetails.getType());
-                    refactoring.setParentHash(refactoringDetails.getParentHash());
                     Refactoring updatedRefactoring = refactoringRepository.save(refactoring);
                     return ResponseEntity.ok(updatedRefactoring);
                 })
