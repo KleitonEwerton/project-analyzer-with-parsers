@@ -1,8 +1,15 @@
 package com.minerprojects.data;
 
-import com.minerprojects.CommitReporter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.springframework.web.client.RestTemplate;
+
+import com.minerprojects.RefactoringReporter;
 
 public class DataRefactoring {
+
+    private static Logger logger = Logger.getLogger(DataRefactoring.class.getName());
 
     private String projectName;
 
@@ -14,17 +21,28 @@ public class DataRefactoring {
 
     private String type;
 
-    public DataRefactoring(CommitReporter commit, String hpackage, String hclass, String type) {
+    public DataRefactoring(RefactoringReporter reporter) {
 
-        this.projectName = commit.getProjectName();
+        RestTemplate restTemplate = new RestTemplate();
 
-        this.hash = commit.getHash();
+        this.projectName = reporter.getProjectName();
+        this.hash = reporter.getHash();
+        this.hashPackage = reporter.getHashPackage();
+        this.hashPackageClass = reporter.getHashPackageClass();
+        this.type = reporter.getType();
 
-        this.hashPackage = commit.getHash() + "." + hpackage;
+        try {
 
-        this.hashPackageClass = commit.getHash() + "." + hpackage + "." + hclass;
+            restTemplate.postForObject("http://localhost:8080/api/refactorings", this, DataRefactoring.class);
 
-        this.type = type;
+        } catch (Exception e) {
+
+            logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);
+        }
+
+    }
+
+    public DataRefactoring() {
 
     }
 

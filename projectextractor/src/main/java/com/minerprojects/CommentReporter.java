@@ -5,8 +5,12 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import org.springframework.web.client.RestTemplate;
+
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
@@ -126,6 +130,8 @@ public class CommentReporter {
 
     public static void getAllComments(String projectName) {
 
+        RestTemplate restTemplate = new RestTemplate();
+
         for (CommitReporter commit : CommitReporter.commits) {
 
             try {
@@ -140,7 +146,16 @@ public class CommentReporter {
 
                 CommentReporter.walkToRepositorySeachComment(commit, projectName);
 
-                DataComment.dataComments.forEach(data -> logger.info(data.toString()));
+                DataComment.dataComments.forEach(data -> {
+                    try {
+
+                        restTemplate.postForObject("http://localhost:8080/api/comments", data, DataComment.class);
+
+                    } catch (Exception e) {
+
+                        logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);
+                    }
+                });
 
             } catch (Exception e) {
                 e.printStackTrace();

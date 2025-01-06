@@ -8,19 +8,11 @@ package com.minerprojects.pmddetector.pmd;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.springframework.web.client.RestTemplate;
-
 import com.minerprojects.CommitReporter;
 import com.minerprojects.PMDReporter;
-import com.minerprojects.data.DataPMD;
 import com.minerprojects.pmddetector.violation.ViolationPMD2;
 
 public class CyclomaticComplexity extends BadSmellPMD2 {
-
-    private static Logger logger = Logger.getLogger(CyclomaticComplexity.class.getName());
 
     @Override
     public String toString() {
