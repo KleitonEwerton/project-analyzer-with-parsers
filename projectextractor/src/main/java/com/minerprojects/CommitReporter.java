@@ -1,6 +1,7 @@
 package com.minerprojects;
 
-import java.util.Set;
+import com.minerprojects.data.DataCommit;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,18 +14,19 @@ public class CommitReporter {
 
     private String projectName;
     private String hash;
-    private CommitReporter parent;
-    private Set<String> parentsHash;
-
+    private List<String> parentsHash;
     private Map<String, String> filesMAD = new HashMap();
     private List<String> javaFiles = new ArrayList<>();
 
-    public CommitReporter(String projectName, String hash, Set<String> parentsHash, Map<String, String> filesMAD) {
+    public CommitReporter(String projectName, String hash, List<String> parentsHash, Map<String, String> filesMAD) {
         this.projectName = projectName;
         this.hash = hash;
         this.parentsHash = parentsHash;
         this.filesMAD = filesMAD;
+
         commits.add(this);
+
+        new DataCommit(projectName, hash, parentsHash);
 
     }
 
@@ -48,7 +50,7 @@ public class CommitReporter {
         return filesMAD;
     }
 
-    public void setParentHashes(Set<String> parentsHash) {
+    public void setParentHashes(List<String> parentsHash) {
         this.parentsHash = parentsHash;
 
     }
@@ -67,7 +69,7 @@ public class CommitReporter {
 
     }
 
-    public Set<String> getParentHashes() {
+    public List<String> getParentHashes() {
         return this.parentsHash;
     }
 
@@ -86,16 +88,8 @@ public class CommitReporter {
     /**
      * @return Set<String> return the parentsHash
      */
-    public Set<String> getParentsHash() {
+    public List<String> getParentsHash() {
         return parentsHash;
-    }
-
-    public CommitReporter getParent() {
-        return this.parent;
-    }
-
-    public void setParent(CommitReporter parent) {
-        this.parent = parent;
     }
 
     public String getProjectName() {

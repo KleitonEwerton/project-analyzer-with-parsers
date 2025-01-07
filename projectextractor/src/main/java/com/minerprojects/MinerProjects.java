@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -29,32 +30,32 @@ public class MinerProjects {
         String url = "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
         String branch = "main";
 
-        // APROVADO feito +17.000 pmd
+        // APROVADO feito pmd Comment? Refactoring?
         // String nomeProjeto = "openpnp";
         // String url = "https://github.com/openpnp/openpnp.git";
         // String branch = "develop";
 
-        // APROVADO +19.000 pmd
+        // APROVADO feito pmd Comment? Refactoring?
         // String nomeProjeto = "spring-data-mongodb";
         // String url = "https://github.com/spring-projects/spring-data-mongodb.git";
         // String branch = "main";
 
-        // APROVADO +8.000
+        // APROVADO feito pmd Comment? Refactoring?
         // String nomeProjeto = "controlsfx";
         // String url = "https://github.com/controlsfx/controlsfx.git";
         // String branch = "master";
 
-        // APROVADO +
+        // APROVADO feito pmd Comment? Refactoring?
         // String nomeProjeto = "pgjdbc";
         // String url = "https://github.com/pgjdbc/pgjdbc.git";
         // String branch = "master";
 
-        // APROVADO +
+        // APROVADO feito pmd Comment? Refactoring?
         // String nomeProjeto = "httpcomponents-client";
         // String url = "https://github.com/apache/httpcomponents-client.git";
         // String branch = "master";
 
-        // APROVADO +
+        // APROVADO feito pmd Comment? Refactoring?
         // String nomeProjeto = "mondrian";
         // String url = "https://github.com/pentaho/mondrian.git";
         // String branch = "master";
@@ -129,7 +130,7 @@ public class MinerProjects {
                 String hash = line.substring(hashBegin, hashEnd);
                 String parents = line.substring(parentsBegin, parentsEnd);
 
-                Set<String> parentsSet = new HashSet<>(Arrays.asList(parents.split(" ")));
+                List<String> parentsSet = Arrays.asList(parents.split(" "));
                 currentCommit = new CommitReporter(projectName, hash, parentsSet, new HashMap<>());
 
                 commitsMap.put(hash, currentCommit);
@@ -143,22 +144,6 @@ public class MinerProjects {
                     String filePath = parts[1].trim();
                     currentCommit.getFilesMAD().put(filePath, status);
                     currentCommit.getJavaFiles().add(filePath);
-                }
-            }
-        }
-
-        logger.info("Commits: " + CommitReporter.commits.size());
-
-        // Configura as relações pai-filho entre os commits
-        for (CommitReporter commit : commitsMap.values()) {
-            for (String parentHash : commit.getParentHashes()) {
-
-                CommitReporter parent = commitsMap.get(parentHash);
-
-                if (parent != null) {
-
-                    commit.setParent(parent);
-
                 }
             }
         }

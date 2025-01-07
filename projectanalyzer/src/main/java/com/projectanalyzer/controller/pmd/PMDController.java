@@ -34,27 +34,4 @@ public class PMDController {
         return pmdRepository.save(pmd);
     }
 
-    // Atualizar
-    @PutMapping("/{id}")
-    public ResponseEntity<PMD> updatePMD(@PathVariable Long id, @RequestBody PMD pmdDetails) {
-        return pmdRepository.findById(id)
-                .map(pmd -> {
-                    pmd.setProjectName(pmdDetails.getProjectName());
-
-                    pmd.setHash(pmdDetails.getHash());
-                    pmd.setHashPackage(pmdDetails.getHashPackage());
-                    pmd.setHashPackageClass(pmdDetails.getHashPackageClass());
-
-                    pmd.setType(pmdDetails.getType());
-                    pmd.setBeginLine(pmdDetails.getBeginLine());
-                    pmd.setEndLine(pmdDetails.getEndLine());
-                    pmd.setBeginColumn(pmdDetails.getBeginColumn());
-                    pmd.setPriority(pmdDetails.getPriority());
-
-                    PMD updatedPMD = pmdRepository.save(pmd);
-
-                    return ResponseEntity.ok(updatedPMD);
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
 }

@@ -32,7 +32,6 @@ public class CommentController {
     // Criar novo
     @PostMapping
     public Comment createComment(@RequestBody Comment comment) {
-        System.out.println(comment.getHash());
         return commentRepository.save(comment);
     }
 
