@@ -41,6 +41,9 @@ public class DataComment {
         dataComments.add(this);
     }
 
+    public DataComment() {
+    }
+
     public static void updateDadosByhashClassPath(CommentReporter comment) {
 
         dataComments.stream().filter(c -> c.getHashPackageClass().equals(comment.getHashPackageClass()))
@@ -76,7 +79,15 @@ public class DataComment {
         this.hash = hash;
     }
 
+    public String getHash() {
+
+        return this.hash;
+    }
+
     /**
+     * {
+     * }
+     * 
      * @return String return the hashPackage
      */
     public String getHashPackage() {

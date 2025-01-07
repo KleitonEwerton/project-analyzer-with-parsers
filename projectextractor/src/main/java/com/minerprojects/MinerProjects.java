@@ -88,7 +88,7 @@ public class MinerProjects {
         try {
 
             logger.info("Analisando todos os comentarios em cada versão do projeto!");
-            // CommentReporter.getAllComments(projectName);
+            CommentReporter.getAllComments(projectName);
 
             logger.info("Analisando todos as refatorações em cada versão do projeto!");
             RefactoringReporter.getAllRefactoring(miner, repo);
