@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.springframework.web.client.RestTemplate;
 
+import com.minerprojects.CommitError;
 import com.minerprojects.RefactoringReporter;
 
 public class DataRefactoring {
@@ -38,6 +39,10 @@ public class DataRefactoring {
         } catch (Exception e) {
 
             logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);
+            new CommitError(projectName,
+                    this.hash,
+                    "Erro ao enviar dados para a api. " + DataRefactoring.class.getName() + "."
+                            + this.hashPackageClass);
         }
 
     }

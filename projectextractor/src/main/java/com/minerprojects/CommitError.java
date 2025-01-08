@@ -4,6 +4,8 @@ import java.util.logging.Level;
 
 import org.springframework.web.client.RestTemplate;
 
+import com.minerprojects.data.DataComment;
+
 public class CommitError {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger
@@ -33,6 +35,7 @@ public class CommitError {
         } catch (Exception e) {
 
             logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);
+
         }
 
     }

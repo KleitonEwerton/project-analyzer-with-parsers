@@ -15,6 +15,7 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.comments.Comment;
 import com.minerprojects.cli.CLIExecute;
 import com.minerprojects.cli.CLIExecution;
 import com.minerprojects.data.DataComment;
@@ -154,6 +155,10 @@ public class CommentReporter {
                     } catch (Exception e) {
 
                         logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);
+                        new CommitError(projectName,
+                                commit.getHash(),
+                                "Erro ao enviar dados para a api. " + DataComment.class.getName() + "."
+                                        + data.getHashPackageClass());
                     }
                 });
 

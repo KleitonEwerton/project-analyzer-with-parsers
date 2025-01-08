@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.minerprojects.cli.CLIExecute;
 import com.minerprojects.cli.CLIExecution;
+import com.minerprojects.data.DataComment;
 import com.minerprojects.data.DataPMD;
 import com.minerprojects.pmddetector.ExecutionConfig;
 import com.minerprojects.pmddetector.pmd.CyclomaticComplexity;
@@ -194,7 +195,10 @@ public class PMDReporter {
                         restTemplate.postForObject("http://localhost:8080/api/pmd", pmd, DataPMD.class);
 
                 } catch (Exception e) {
-                        logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);
+                        logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage());
+                        new CommitError(projectName,
+                                        commit.getHash(),
+                                        "Erro ao enviar dados para a api. " + DataPMD.class.getName() + ".");
                 }
         }
 

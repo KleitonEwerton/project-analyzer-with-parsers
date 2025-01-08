@@ -4,10 +4,8 @@ package com.minerprojects;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.eclipse.jgit.lib.Repository;
@@ -26,14 +24,15 @@ public class MinerProjects {
 
     public static void main(String[] args) throws Exception {
 
-        String nomeProjeto = "project-analyzer-with-parsers";
-        String url = "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
-        String branch = "main";
+        // String nomeProjeto = "project-analyzer-with-parsers";
+        // String url =
+        // "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
+        // String branch = "main";
 
         // APROVADO feito pmd Comment? Refactoring?
-        // String nomeProjeto = "openpnp";
-        // String url = "https://github.com/openpnp/openpnp.git";
-        // String branch = "develop";
+        String nomeProjeto = "openpnp";
+        String url = "https://github.com/openpnp/openpnp.git";
+        String branch = "develop";
 
         // APROVADO feito pmd Comment? Refactoring?
         // String nomeProjeto = "spring-data-mongodb";
@@ -94,7 +93,7 @@ public class MinerProjects {
             logger.info("Analisando todos as refatorações em cada versão do projeto!");
             RefactoringReporter.getAllRefactoring(miner, repo);
 
-            logger.info("Analisando todos os PMD em cada versão do projeto!");
+            // logger.info("Analisando todos os PMD em cada versão do projeto!");
             // PMDReporter.getAllPMD(projectName);
 
         } catch (Exception e) {
