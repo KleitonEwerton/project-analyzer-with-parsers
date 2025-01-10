@@ -1,14 +1,14 @@
 package com.minerprojects.data;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.minerprojects.CommentReporter;
 import com.minerprojects.CommitReporter;
 
 public class DataComment {
 
-    public static Set<DataComment> dataComments = new HashSet();
+    public static List<DataComment> dataComments = new ArrayList<>();
 
     private String projectName;
 
@@ -47,6 +47,10 @@ public class DataComment {
         this.qntCommentBlock = 0;
         this.qntCommentDoc = 0;
         this.qntSegmentos = 0;
+
+        if (commit.getParentHashes().size() > 1) {
+            System.out.println("Aqui");
+        }
         dataComments.add(this);
     }
 

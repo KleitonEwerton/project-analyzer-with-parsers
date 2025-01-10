@@ -23,6 +23,7 @@ public class DataCommit {
         RestTemplate restTemplate = new RestTemplate();
 
         this.hash = hash;
+
         this.projectName = projectName;
         this.parentsHash = parentsHash;
 

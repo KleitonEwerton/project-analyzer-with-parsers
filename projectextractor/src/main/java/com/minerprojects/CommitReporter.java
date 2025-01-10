@@ -55,26 +55,8 @@ public class CommitReporter {
 
     }
 
-    public String getParentHash() {
-        if (parentsHash.size() == 1) {
-
-            return parentsHash.stream().findFirst().orElse(null);
-
-        } else if (parentsHash.size() > 1) {
-            // retorna todos os pais entre [ ] separador por |
-            return parentsHash.toString().replace(", ", "|");
-        }
-
-        return null;
-
-    }
-
     public List<String> getParentHashes() {
         return this.parentsHash;
-    }
-
-    public int getSizeParents() {
-        return this.parentsHash.size();
     }
 
     public static Optional<CommitReporter> getCommitByHash(String commitHash) {

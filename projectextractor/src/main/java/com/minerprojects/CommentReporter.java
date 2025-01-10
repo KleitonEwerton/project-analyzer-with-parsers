@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -160,7 +161,7 @@ public class CommentReporter {
                     .collect(Collectors.toSet());
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -182,8 +183,12 @@ public class CommentReporter {
 
                 CommentReporter.walkToRepositorySeachComment(commit, projectName);
 
+                List<DataComment> cmm = DataComment.dataComments;
+
                 for (String parentHash : commit.getParentHashes()) {
+
                     CommentReporter.walkToRepositoryParentSeachComment(commit, projectName, parentHash);
+
                 }
 
                 DataComment.dataComments.forEach(data -> {
