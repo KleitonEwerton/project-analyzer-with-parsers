@@ -14,6 +14,8 @@ public class DataComment {
 
     private String hash;
 
+    private String hashParent;
+
     private String hashPackage;
 
     private String hashPackageClass;
@@ -26,14 +28,21 @@ public class DataComment {
 
     private int qntSegmentos;
 
-    public DataComment(CommitReporter commit, String hashPackage, String hashPackageClass) {
+    private int parentQntCommentLine;
+
+    private int parentQntCommentBlock;
+
+    private int parentQntCommentDoc;
+
+    private int parentQntSegmentos;
+
+    public DataComment(CommitReporter commit, String hashPackage, String hashPackageClass, String hashParent) {
 
         this.projectName = commit.getProjectName();
-
+        this.hashParent = hashParent;
         this.hash = commit.getHash();
         this.hashPackage = hashPackage;
         this.hashPackageClass = hashPackageClass;
-
         this.qntCommentLine = 0;
         this.qntCommentBlock = 0;
         this.qntCommentDoc = 0;
@@ -46,13 +55,30 @@ public class DataComment {
 
     public static void updateDadosByhashClassPath(CommentReporter comment) {
 
-        dataComments.stream().filter(c -> c.getHashPackageClass().equals(comment.getHashPackageClass()))
+        dataComments.stream()
+                .filter(c -> c.getHashPackageClass().equals(comment.getHashPackageClass()))
                 .forEach(c -> {
 
                     c.qntCommentLine += comment.getType() == 1 ? 1 : 0;
                     c.qntCommentBlock += comment.getType() == 2 ? 1 : 0;
                     c.qntCommentDoc += comment.getType() == 3 ? 1 : 0;
                     c.qntSegmentos += comment.getSegmentos();
+
+                });
+
+    }
+
+    public static void updateParentComment(CommentReporter comment) {
+
+        dataComments.stream()
+                .filter(c -> c.getHashPackageClass().equals(comment.getHashPackageClass())
+                        && c.getHashParent().equals(comment.getHashParent()))
+                .forEach(c -> {
+
+                    c.parentQntCommentLine += comment.getType() == 1 ? 1 : 0;
+                    c.parentQntCommentBlock += comment.getType() == 2 ? 1 : 0;
+                    c.parentQntCommentDoc += comment.getType() == 3 ? 1 : 0;
+                    c.parentQntSegmentos += comment.getSegmentos();
 
                 });
 
@@ -178,4 +204,75 @@ public class DataComment {
                 + ", qntCommentBlock=" + qntCommentBlock + ", qntCommentDoc=" + qntCommentDoc
                 + ", qntSegmentos=" + qntSegmentos + "]";
     }
+
+    /**
+     * @return int return the parentQntCommentLine
+     */
+    public int getParentQntCommentLine() {
+        return parentQntCommentLine;
+    }
+
+    /**
+     * @param parentQntCommentLine the parentQntCommentLine to set
+     */
+    public void setParentQntCommentLine(int parentQntCommentLine) {
+        this.parentQntCommentLine = parentQntCommentLine;
+    }
+
+    /**
+     * @return int return the parentQntCommentBlock
+     */
+    public int getParentQntCommentBlock() {
+        return parentQntCommentBlock;
+    }
+
+    /**
+     * @param parentQntCommentBlock the parentQntCommentBlock to set
+     */
+    public void setParentQntCommentBlock(int parentQntCommentBlock) {
+        this.parentQntCommentBlock = parentQntCommentBlock;
+    }
+
+    /**
+     * @return int return the parentQntCommentDoc
+     */
+    public int getParentQntCommentDoc() {
+        return parentQntCommentDoc;
+    }
+
+    /**
+     * @param parentQntCommentDoc the parentQntCommentDoc to set
+     */
+    public void setParentQntCommentDoc(int parentQntCommentDoc) {
+        this.parentQntCommentDoc = parentQntCommentDoc;
+    }
+
+    /**
+     * @return int return the parentQntSegmentos
+     */
+    public int getParentQntSegmentos() {
+        return parentQntSegmentos;
+    }
+
+    /**
+     * @param parentQntSegmentos the parentQntSegmentos to set
+     */
+    public void setParentQntSegmentos(int parentQntSegmentos) {
+        this.parentQntSegmentos = parentQntSegmentos;
+    }
+
+    /**
+     * @return String return the hashParent
+     */
+    public String getHashParent() {
+        return hashParent;
+    }
+
+    /**
+     * @param hashParent the hashParent to set
+     */
+    public void setHashParent(String hashParent) {
+        this.hashParent = hashParent;
+    }
+
 }

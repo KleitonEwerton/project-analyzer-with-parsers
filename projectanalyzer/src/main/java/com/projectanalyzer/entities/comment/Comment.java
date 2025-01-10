@@ -25,6 +25,12 @@ public class Comment {
     @Column(nullable = false)
     private String hashPackageClass;
 
+    @Column(nullable = true)
+    private String packager;
+
+    @Column(nullable = true)
+    private String packageClass;
+
     @Column(nullable = false)
     private int qntCommentLine;
 
@@ -36,6 +42,47 @@ public class Comment {
 
     @Column(nullable = false)
     private int qntSegmentos;
+
+    @Column(nullable = true)
+    private int parentQntCommentLine;
+
+    @Column(nullable = true)
+    private int parentQntCommentBlock;
+
+    @Column(nullable = true)
+    private int parentQntCommentDoc;
+    @Column(nullable = true)
+
+    private int parentQntSegmentos;
+    @Column(nullable = true)
+    private String hashParent;
+
+    /*
+     * 
+     * UPDATE public.comment
+     * SET
+     * package_class = REGEXP_REPLACE(hash_package_class, '^.*?\.(.*)$', '\1'),
+     * packager = REGEXP_REPLACE(hash_package, '^.*?\.(.*)$', '\1')
+     * WHERE
+     * package_class NOT LIKE '%.%' -- Atualiza apenas se o formato estiver errado
+     * OR packager NOT LIKE '%.%'
+     * OR package_class is null
+     * or packager is null
+     * ; -- Atualiza apenas se o formato estiver errado
+     */
+
+    /*
+     * 
+     * CREATE INDEX idx_comment_hash ON public.comment (hash);
+     * CREATE INDEX idx_commit_hash ON public.commit (hash);
+     * CREATE INDEX idx_commit_parents_hash ON public.commit USING gin
+     * (parents_hash);
+     * CREATE INDEX idx_comment_package_class ON public.comment (package_class);
+     * CREATE INDEX idx_comment_project_name ON public.comment (project_name);
+     * CREATE INDEX idx_comment_package_class_project_name ON public.comment
+     * (package_class, project_name);
+     * 
+     */
 
     /**
      * @return long return the id
@@ -161,6 +208,104 @@ public class Comment {
      */
     public void setQntCommentDoc(int qntCommentDoc) {
         this.qntCommentDoc = qntCommentDoc;
+    }
+
+    /**
+     * @return String return the packager
+     */
+    public String getPackager() {
+        return packager;
+    }
+
+    /**
+     * @param packager the packager to set
+     */
+    public void setPackager(String packager) {
+        this.packager = packager;
+    }
+
+    /**
+     * @return String return the packageClass
+     */
+    public String getPackageClass() {
+        return packageClass;
+    }
+
+    /**
+     * @param packageClass the packageClass to set
+     */
+    public void setPackageClass(String packageClass) {
+        this.packageClass = packageClass;
+    }
+
+    /**
+     * @return int return the parentQntCommentLine
+     */
+    public int getParentQntCommentLine() {
+        return parentQntCommentLine;
+    }
+
+    /**
+     * @param parentQntCommentLine the parentQntCommentLine to set
+     */
+    public void setParentQntCommentLine(int parentQntCommentLine) {
+        this.parentQntCommentLine = parentQntCommentLine;
+    }
+
+    /**
+     * @return int return the parentQntCommentBlock
+     */
+    public int getParentQntCommentBlock() {
+        return parentQntCommentBlock;
+    }
+
+    /**
+     * @param parentQntCommentBlock the parentQntCommentBlock to set
+     */
+    public void setParentQntCommentBlock(int parentQntCommentBlock) {
+        this.parentQntCommentBlock = parentQntCommentBlock;
+    }
+
+    /**
+     * @return int return the parentQntCommentDoc
+     */
+    public int getParentQntCommentDoc() {
+        return parentQntCommentDoc;
+    }
+
+    /**
+     * @param parentQntCommentDoc the parentQntCommentDoc to set
+     */
+    public void setParentQntCommentDoc(int parentQntCommentDoc) {
+        this.parentQntCommentDoc = parentQntCommentDoc;
+    }
+
+    /**
+     * @return int return the parentQntSegmentos
+     */
+    public int getParentQntSegmentos() {
+        return parentQntSegmentos;
+    }
+
+    /**
+     * @param parentQntSegmentos the parentQntSegmentos to set
+     */
+    public void setParentQntSegmentos(int parentQntSegmentos) {
+        this.parentQntSegmentos = parentQntSegmentos;
+    }
+
+    /**
+     * @return String return the hashParent
+     */
+    public String getHashParent() {
+        return hashParent;
+    }
+
+    /**
+     * @param hashParent the hashParent to set
+     */
+    public void setHashParent(String hashParent) {
+        this.hashParent = hashParent;
     }
 
 }

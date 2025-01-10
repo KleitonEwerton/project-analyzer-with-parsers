@@ -1,13 +1,11 @@
 package com.minerprojects;
 
 import java.util.List;
-import java.util.logging.Level;
 
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
-import org.springframework.web.client.RestTemplate;
 
 import com.minerprojects.data.DataRefactoring;
 

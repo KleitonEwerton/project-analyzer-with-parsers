@@ -15,7 +15,6 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.comments.Comment;
 import com.minerprojects.cli.CLIExecute;
 import com.minerprojects.cli.CLIExecution;
 import com.minerprojects.data.DataComment;
@@ -28,6 +27,8 @@ public class CommentReporter {
 
     private String hashPackage;
 
+    private String hashParent;
+
     private String hashPackageClass;
 
     private int type;
@@ -37,7 +38,7 @@ public class CommentReporter {
     private CommitReporter commit;
 
     public CommentReporter(CommitReporter commit, int type, int startNumber,
-            int endNumber, String hpackage, String hclass) {
+            int endNumber, String hpackage, String hclass, boolean isParent, String hashParent) {
 
         this.hash = commit.getHash();
 
@@ -49,14 +50,25 @@ public class CommentReporter {
 
         this.segmentos = 1 + endNumber - startNumber;
 
-        // if hashPackageClass não está no DataComment.da
-        if (DataComment.dataComments.stream().noneMatch(c -> c.getHashPackageClass().equals(this.hashPackageClass))) {
+        this.hashParent = hashParent;
 
-            new DataComment(commit, this.hashPackage, this.hashPackageClass);
+        if (!isParent) {
+
+            if (DataComment.dataComments.stream()
+                    .noneMatch(c -> c.getHashPackageClass().equals(this.hashPackageClass))) {
+
+                commit.getParentHashes()
+                        .forEach(p -> new DataComment(commit, this.hashPackage, this.hashPackageClass, p));
+
+            } else {
+
+                DataComment.updateDadosByhashClassPath(this);
+            }
 
         } else {
 
-            DataComment.updateDadosByhashClassPath(this);
+            DataComment.updateParentComment(this);
+
         }
 
     }
@@ -79,7 +91,30 @@ public class CommentReporter {
 
         }
 
-        getPathJavaFilesADM(commit).forEach(p -> processJavaFile(p, commit));
+        getPathJavaFilesADM(commit).forEach(p -> processJavaFile(p, commit, false, null));
+
+    }
+
+    public static void walkToRepositoryParentSeachComment(CommitReporter commit, String projectName, String hashParent)
+            throws Exception {
+
+        String command = "git checkout -f " + hashParent;
+
+        CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
+
+        if (!execute.getError().isEmpty()) {
+
+            logger.info(String.format("ERROR%s%s", command, execute.toString()));
+
+            new CommitError(projectName,
+                    commit.getHash(),
+                    command + "\n" + execute.toString());
+
+            return;
+
+        }
+
+        getPathJavaFilesADM(commit).forEach(p -> processJavaFile(p, commit, true, hashParent));
 
     }
 
@@ -98,7 +133,7 @@ public class CommentReporter {
 
     }
 
-    public static void processJavaFile(Path filePath, CommitReporter commit) {
+    public static void processJavaFile(Path filePath, CommitReporter commit, boolean isParent, String hashParent) {
 
         try {
 
@@ -119,13 +154,13 @@ public class CommentReporter {
                             p.isBlockComment() ? 2 : p.isLineComment() ? 1 : p.isJavadocComment() ? 3 : 0,
                             p.getRange().map(r -> r.begin.line).orElse(0),
                             p.getRange().map(r -> r.end.line).orElse(0),
-                            packageName, className
+                            packageName, className, isParent, hashParent
 
                     ))
                     .collect(Collectors.toSet());
 
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -146,6 +181,10 @@ public class CommentReporter {
                 DataComment.dataComments.clear();
 
                 CommentReporter.walkToRepositorySeachComment(commit, projectName);
+
+                for (String parentHash : commit.getParentHashes()) {
+                    CommentReporter.walkToRepositoryParentSeachComment(commit, projectName, parentHash);
+                }
 
                 DataComment.dataComments.forEach(data -> {
                     try {
@@ -251,6 +290,20 @@ public class CommentReporter {
      */
     public void setCommit(CommitReporter commit) {
         this.commit = commit;
+    }
+
+    /**
+     * @return String return the hashParent
+     */
+    public String getHashParent() {
+        return hashParent;
+    }
+
+    /**
+     * @param hashParent the hashParent to set
+     */
+    public void setHashParent(String hashParent) {
+        this.hashParent = hashParent;
     }
 
 }
