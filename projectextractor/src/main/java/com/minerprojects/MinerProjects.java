@@ -24,15 +24,10 @@ public class MinerProjects {
 
     public static void main(String[] args) throws Exception {
 
-        // String nomeProjeto = "project-analyzer-with-parsers";
-        // String url =
-        // "https://github.com/KleitonEwerton/project-analyzer-with-parsers.git";
-        // String branch = "main";
-
         // APROVADO pmd OK Commit OK Comment OK Refactoring OK
-        String nomeProjeto = "openpnp";
-        String url = "https://github.com/openpnp/openpnp.git";
-        String branch = "develop";
+        // String nomeProjeto = "openpnp";
+        // String url = "https://github.com/openpnp/openpnp.git";
+        // String branch = "develop";
 
         // APROVADO pmd OK Commit OK Comment OK Refactoring ok
         // String nomeProjeto = "spring-data-mongodb";
@@ -45,10 +40,6 @@ public class MinerProjects {
         // String branch = "master";
 
         // APROVADO pmd OK Commit OK Comment OK Refactoring OK
-
-        // 10 Commits tivera um erro:com.github.javaparser.ParseProblemException: (line
-        // 303,col 15) 'enum'
-        // cannot be used as an identifier as it is a keyword. e erro no paser
         // String nomeProjeto = "pgjdbc";
         // String url = "https://github.com/pgjdbc/pgjdbc.git";
         // String branch = "master";
@@ -58,10 +49,21 @@ public class MinerProjects {
         // String url = "https://github.com/apache/httpcomponents-client.git";
         // String branch = "master";
 
-        // APROVADO pmd OK Commit OK Comment OK Refactoring?
+        // APROVADO pmd OK Commit OK Comment OK Refactoring OK
         // String nomeProjeto = "mondrian";
         // String url = "https://github.com/pentaho/mondrian.git";
         // String branch = "master";
+
+        // APROVADO pmd OK Commit OK Comment OK Refactoring OK
+        // String nomeProjeto = "morphia";
+        // String url = "https://github.com/MorphiaOrg/morphia.git";
+        // String branch = "master";
+
+        // APROVADO pmd ?? Commit ?? Comment ?? Refactoring ?? The path does not have a
+        // Git Repository or Name is Bigger
+        // String nomeProjeto = "github-api";
+        // String url = "https://github.com/hub4j/github-api.git";
+        // String branch = "main";
 
         checar(nomeProjeto, url, branch);
 
@@ -95,11 +97,11 @@ public class MinerProjects {
 
             CommentReporter.getAllComments(projectName);
 
-            // logger.info("Analisando todos as refatorações em cada versão do projeto!");
-            // RefactoringReporter.getAllRefactoring(miner, repo);
+            logger.info("Analisando todos os PMD em cada versão do projeto!");
+            PMDReporter.getAllPMD(projectName);
 
-            // logger.info("Analisando todos os PMD em cada versão do projeto!");
-            // PMDReporter.getAllPMD(projectName);
+            logger.info("Analisando todos as refatorações em cada versão do projeto!");
+            RefactoringReporter.getAllRefactoring(miner, repo);
 
         } catch (Exception e) {
             e.printStackTrace();

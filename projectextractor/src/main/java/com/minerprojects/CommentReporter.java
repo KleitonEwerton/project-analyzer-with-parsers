@@ -161,7 +161,7 @@ public class CommentReporter {
                     .collect(Collectors.toSet());
 
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -182,8 +182,6 @@ public class CommentReporter {
                 DataComment.dataComments.clear();
 
                 CommentReporter.walkToRepositorySeachComment(commit, projectName);
-
-                List<DataComment> cmm = DataComment.dataComments;
 
                 for (String parentHash : commit.getParentHashes()) {
 

@@ -26,7 +26,7 @@ public class CommitReporter {
 
         commits.add(this);
 
-        // new DataCommit(projectName, hash, parentsHash);
+        new DataCommit(projectName, hash, parentsHash);
 
     }
 
