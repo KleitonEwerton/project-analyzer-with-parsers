@@ -45,9 +45,9 @@ public class MinerProjects {
         // String branch = "master";
 
         // APROVADO pmd OK Commit OK Comment OK Refactoring ok
-        // String nomeProjeto = "httpcomponents-client";
-        // String url = "https://github.com/apache/httpcomponents-client.git";
-        // String branch = "master";
+        String nomeProjeto = "httpcomponents-client";
+        String url = "https://github.com/apache/httpcomponents-client.git";
+        String branch = "master";
 
         // APROVADO pmd OK Commit OK Comment OK Refactoring OK
         // String nomeProjeto = "mondrian";
@@ -97,11 +97,11 @@ public class MinerProjects {
 
             CommentReporter.getAllComments(projectName);
 
-            logger.info("Analisando todos os PMD em cada versão do projeto!");
-            PMDReporter.getAllPMD(projectName);
+            // logger.info("Analisando todos os PMD em cada versão do projeto!");
+            // PMDReporter.getAllPMD(projectName);
 
-            logger.info("Analisando todos as refatorações em cada versão do projeto!");
-            RefactoringReporter.getAllRefactoring(miner, repo);
+            // logger.info("Analisando todos as refatorações em cada versão do projeto!");
+            // RefactoringReporter.getAllRefactoring(miner, repo);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,9 +134,7 @@ public class MinerProjects {
                 int parentsEnd = line.indexOf("'", parentsBegin);
 
                 String hash = line.substring(hashBegin, hashEnd);
-                if (hash.equals("ea84c95b99fde325920335a44ca3d9c74fdd5261")) {
-                    System.out.println("Aqui");
-                }
+
                 String parents = line.substring(parentsBegin, parentsEnd);
 
                 List<String> parentsSet = Arrays.asList(parents.split(" "));

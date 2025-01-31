@@ -48,9 +48,6 @@ public class DataComment {
         this.qntCommentDoc = 0;
         this.qntSegmentos = 0;
 
-        if (commit.getParentHashes().size() > 1) {
-            System.out.println("Aqui");
-        }
         dataComments.add(this);
     }
 

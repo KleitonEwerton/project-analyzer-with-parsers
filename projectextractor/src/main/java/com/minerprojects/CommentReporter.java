@@ -43,6 +43,10 @@ public class CommentReporter {
 
         this.hash = commit.getHash();
 
+        if (type == 0) {
+            return;
+        }
+
         this.hashPackage = commit.getHash() + "." + hpackage;
 
         this.hashPackageClass = commit.getHash() + "." + hpackage + "." + hclass;
@@ -56,11 +60,11 @@ public class CommentReporter {
         if (!isParent) {
 
             if (DataComment.dataComments.stream()
+
                     .noneMatch(c -> c.getHashPackageClass().equals(this.hashPackageClass))) {
 
-                commit.getParentHashes()
-                        .forEach(p -> new DataComment(commit, this.hashPackage, this.hashPackageClass, p));
-
+                new DataComment(commit, this.hashPackage, this.hashPackageClass, commit.getParentHashes().get(0));
+                DataComment.updateDadosByhashClassPath(this);
             } else {
 
                 DataComment.updateDadosByhashClassPath(this);
@@ -152,7 +156,7 @@ public class CommentReporter {
                     .stream()
                     .map(p -> new CommentReporter(
                             commit,
-                            p.isBlockComment() ? 2 : p.isLineComment() ? 1 : p.isJavadocComment() ? 3 : 0,
+                            p.isLineComment() ? 1 : p.isBlockComment() ? 2 : p.isJavadocComment() ? 3 : 0,
                             p.getRange().map(r -> r.begin.line).orElse(0),
                             p.getRange().map(r -> r.end.line).orElse(0),
                             packageName, className, isParent, hashParent

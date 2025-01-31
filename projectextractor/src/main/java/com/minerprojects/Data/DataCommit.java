@@ -3,9 +3,7 @@ package com.minerprojects.data;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.springframework.web.client.RestTemplate;
-
 import com.minerprojects.CommentReporter;
 import com.minerprojects.CommitError;
 
