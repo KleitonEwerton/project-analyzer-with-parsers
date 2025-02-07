@@ -24,46 +24,40 @@ public class MinerProjects {
 
     public static void main(String[] args) throws Exception {
 
-        // APROVADO pmd OK Commit OK Comment OK Refactoring OK
+        // APROVADO
+        // String nomeProjeto = "httpcomponents-client";
+        // String url = "https://github.com/apache/httpcomponents-client.git";
+        // String branch = "master";
+
+        // APROVADO
         // String nomeProjeto = "openpnp";
         // String url = "https://github.com/openpnp/openpnp.git";
         // String branch = "develop";
 
-        // APROVADO pmd OK Commit OK Comment OK Refactoring ok
+        // APROVADO
         // String nomeProjeto = "spring-data-mongodb";
         // String url = "https://github.com/spring-projects/spring-data-mongodb.git";
         // String branch = "main";
 
-        // APROVADO pmd OK Commit OK Comment OK Refactoring ok
+        // APROVADO
         // String nomeProjeto = "controlsfx";
         // String url = "https://github.com/controlsfx/controlsfx.git";
         // String branch = "master";
 
-        // APROVADO pmd OK Commit OK Comment OK Refactoring OK
+        // APROVADO
         // String nomeProjeto = "pgjdbc";
         // String url = "https://github.com/pgjdbc/pgjdbc.git";
         // String branch = "master";
 
-        // APROVADO pmd OK Commit OK Comment OK Refactoring ok
-        String nomeProjeto = "httpcomponents-client";
-        String url = "https://github.com/apache/httpcomponents-client.git";
-        String branch = "master";
-
-        // APROVADO pmd OK Commit OK Comment OK Refactoring OK
+        // APROVADO
         // String nomeProjeto = "mondrian";
         // String url = "https://github.com/pentaho/mondrian.git";
         // String branch = "master";
 
         // APROVADO pmd OK Commit OK Comment OK Refactoring OK
-        // String nomeProjeto = "morphia";
-        // String url = "https://github.com/MorphiaOrg/morphia.git";
-        // String branch = "master";
-
-        // APROVADO pmd ?? Commit ?? Comment ?? Refactoring ?? The path does not have a
-        // Git Repository or Name is Bigger
-        // String nomeProjeto = "github-api";
-        // String url = "https://github.com/hub4j/github-api.git";
-        // String branch = "main";
+        String nomeProjeto = "morphia";
+        String url = "https://github.com/MorphiaOrg/morphia.git";
+        String branch = "master";
 
         checar(nomeProjeto, url, branch);
 

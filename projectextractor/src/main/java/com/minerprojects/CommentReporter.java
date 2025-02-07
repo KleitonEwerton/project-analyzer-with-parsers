@@ -166,6 +166,11 @@ public class CommentReporter {
 
         } catch (Exception e) {
 
+            logger.log(Level.SEVERE, "Erro ao processar arquivo: " + e.getMessage(), e);
+
+            new CommitError(commit.getProjectName(),
+                    commit.getHash(),
+                    "Erro ao processar arquivo: " + filePath.toString());
         }
     }
 
