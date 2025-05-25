@@ -25,40 +25,64 @@ public class Comment {
     @Column(nullable = false)
     private String hashPackageClass;
 
-    @Column(nullable = false)
-    private int qntCommentReporterType1; // LINE
+    @Column(nullable = true)
+    private String packager;
+
+    @Column(nullable = true)
+    private String packageClass;
 
     @Column(nullable = false)
-    private int qntCommentReporterType2; // BLOCK
+    private int qntCommentLine;
 
     @Column(nullable = false)
-    private int qntCommentReporterType3;// DOC
+    private int qntCommentBlock;
+
+    @Column(nullable = false)
+    private int qntCommentDoc;
 
     @Column(nullable = false)
     private int qntSegmentos;
 
-    // PARENT
+    @Column(nullable = true)
+    private int parentQntCommentLine;
 
     @Column(nullable = true)
-    private String parentHash;
+    private int parentQntCommentBlock;
 
     @Column(nullable = true)
-    private String parentHashPackage;
-
+    private int parentQntCommentDoc;
     @Column(nullable = true)
-    private String parentHashPackageClass;
 
+    private int parentQntSegmentos;
     @Column(nullable = true)
-    private int qntInParentCommentReporterType1;// LINE
+    private String hashParent;
 
-    @Column(nullable = true)
-    private int qntInParentCommentReporterType2; // BLOCK
+    /*
+     * 
+     * UPDATE public.comment
+     * SET
+     * package_class = REGEXP_REPLACE(hash_package_class, '^.*?\.(.*)$', '\1'),
+     * packager = REGEXP_REPLACE(hash_package, '^.*?\.(.*)$', '\1')
+     * WHERE
+     * package_class NOT LIKE '%.%' -- Atualiza apenas se o formato estiver errado
+     * OR packager NOT LIKE '%.%'
+     * OR package_class is null
+     * or packager is null
+     * ; -- Atualiza apenas se o formato estiver errado
+     */
 
-    @Column(nullable = true)
-    private int qntInParentCommentReporterType3;// DOC
-
-    @Column(nullable = true)
-    private int qntParentSegmentos;
+    /*
+     * 
+     * CREATE INDEX idx_comment_hash ON public.comment (hash);
+     * CREATE INDEX idx_commit_hash ON public.commit (hash);
+     * CREATE INDEX idx_commit_parents_hash ON public.commit USING gin
+     * (parents_hash);
+     * CREATE INDEX idx_comment_package_class ON public.comment (package_class);
+     * CREATE INDEX idx_comment_project_name ON public.comment (project_name);
+     * CREATE INDEX idx_comment_package_class_project_name ON public.comment
+     * (package_class, project_name);
+     * 
+     */
 
     /**
      * @return long return the id
@@ -145,59 +169,143 @@ public class Comment {
     }
 
     /**
-     * @return String return the parentHash
+     * @return int return the qntCommentLine
      */
-    public String getParentHash() {
-        return parentHash;
+    public int getQntCommentLine() {
+        return qntCommentLine;
     }
 
     /**
-     * @param parentHash the parentHash to set
+     * @param qntCommentLine the qntCommentLine to set
      */
-    public void setParentHash(String parentHash) {
-        this.parentHash = parentHash;
+    public void setQntCommentLine(int qntCommentLine) {
+        this.qntCommentLine = qntCommentLine;
     }
 
     /**
-     * @return String return the parentHashPackage
+     * @return int return the qntCommentBlock
      */
-    public String getParentHashPackage() {
-        return parentHashPackage;
+    public int getQntCommentBlock() {
+        return qntCommentBlock;
     }
 
     /**
-     * @param parentHashPackage the parentHashPackage to set
+     * @param qntCommentBlock the qntCommentBlock to set
      */
-    public void setParentHashPackage(String parentHashPackage) {
-        this.parentHashPackage = parentHashPackage;
+    public void setQntCommentBlock(int qntCommentBlock) {
+        this.qntCommentBlock = qntCommentBlock;
     }
 
     /**
-     * @return String return the parentHashPackageClass
+     * @return int return the qntCommentDoc
      */
-    public String getParentHashPackageClass() {
-        return parentHashPackageClass;
+    public int getQntCommentDoc() {
+        return qntCommentDoc;
     }
 
     /**
-     * @param parentHashPackageClass the parentHashPackageClass to set
+     * @param qntCommentDoc the qntCommentDoc to set
      */
-    public void setParentHashPackageClass(String parentHashPackageClass) {
-        this.parentHashPackageClass = parentHashPackageClass;
+    public void setQntCommentDoc(int qntCommentDoc) {
+        this.qntCommentDoc = qntCommentDoc;
     }
 
     /**
-     * @return int return the qntParentSegmentos
+     * @return String return the packager
      */
-    public int getQntParentSegmentos() {
-        return qntParentSegmentos;
+    public String getPackager() {
+        return packager;
     }
 
     /**
-     * @param qntParentSegmentos the qntParentSegmentos to set
+     * @param packager the packager to set
      */
-    public void setQntParentSegmentos(int qntParentSegmentos) {
-        this.qntParentSegmentos = qntParentSegmentos;
+    public void setPackager(String packager) {
+        this.packager = packager;
+    }
+
+    /**
+     * @return String return the packageClass
+     */
+    public String getPackageClass() {
+        return packageClass;
+    }
+
+    /**
+     * @param packageClass the packageClass to set
+     */
+    public void setPackageClass(String packageClass) {
+        this.packageClass = packageClass;
+    }
+
+    /**
+     * @return int return the parentQntCommentLine
+     */
+    public int getParentQntCommentLine() {
+        return parentQntCommentLine;
+    }
+
+    /**
+     * @param parentQntCommentLine the parentQntCommentLine to set
+     */
+    public void setParentQntCommentLine(int parentQntCommentLine) {
+        this.parentQntCommentLine = parentQntCommentLine;
+    }
+
+    /**
+     * @return int return the parentQntCommentBlock
+     */
+    public int getParentQntCommentBlock() {
+        return parentQntCommentBlock;
+    }
+
+    /**
+     * @param parentQntCommentBlock the parentQntCommentBlock to set
+     */
+    public void setParentQntCommentBlock(int parentQntCommentBlock) {
+        this.parentQntCommentBlock = parentQntCommentBlock;
+    }
+
+    /**
+     * @return int return the parentQntCommentDoc
+     */
+    public int getParentQntCommentDoc() {
+        return parentQntCommentDoc;
+    }
+
+    /**
+     * @param parentQntCommentDoc the parentQntCommentDoc to set
+     */
+    public void setParentQntCommentDoc(int parentQntCommentDoc) {
+        this.parentQntCommentDoc = parentQntCommentDoc;
+    }
+
+    /**
+     * @return int return the parentQntSegmentos
+     */
+    public int getParentQntSegmentos() {
+        return parentQntSegmentos;
+    }
+
+    /**
+     * @param parentQntSegmentos the parentQntSegmentos to set
+     */
+    public void setParentQntSegmentos(int parentQntSegmentos) {
+        this.parentQntSegmentos = parentQntSegmentos;
+    }
+
+    /**
+     * @return String return the hashParent
+     */
+    public String getHashParent() {
+        return hashParent;
+    }
+
+    /**
+     * @param hashParent the hashParent to set
+     */
+    public void setHashParent(String hashParent) {
+        this.hashParent = hashParent;
     }
 
 }

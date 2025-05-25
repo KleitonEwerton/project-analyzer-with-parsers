@@ -1,6 +1,16 @@
 package com.minerprojects.data;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.springframework.web.client.RestTemplate;
+
+import com.minerprojects.CommitError;
+import com.minerprojects.RefactoringReporter;
+
 public class DataRefactoring {
+
+    private static Logger logger = Logger.getLogger(DataRefactoring.class.getName());
 
     private String projectName;
 
@@ -12,14 +22,33 @@ public class DataRefactoring {
 
     private String type;
 
-    private String parentHash;
+    public DataRefactoring(RefactoringReporter reporter) {
 
-    private String parentHashPackage;
+        RestTemplate restTemplate = new RestTemplate();
 
-    private String parentHashPackageClass;
+        this.projectName = reporter.getProjectName();
+        this.hash = reporter.getHash();
+        this.hashPackage = reporter.getHashPackage();
+        this.hashPackageClass = reporter.getHashPackageClass();
+        this.type = reporter.getType();
+
+        try {
+
+            restTemplate.postForObject("http://localhost:8080/api/refactorings", this, DataRefactoring.class);
+
+        } catch (Exception e) {
+
+            logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);
+            new CommitError(projectName,
+                    this.hash,
+                    "Erro ao enviar dados para a api. " + DataRefactoring.class.getName() + "."
+                            + this.hashPackageClass);
+        }
+
+    }
 
     public DataRefactoring() {
-        // Constructor is intentionally empty
+
     }
 
     /**
@@ -90,48 +119,6 @@ public class DataRefactoring {
      */
     public void setType(String type) {
         this.type = type;
-    }
-
-    /**
-     * @return String return the parentHash
-     */
-    public String getParentHash() {
-        return parentHash;
-    }
-
-    /**
-     * @param parentHash the parentHash to set
-     */
-    public void setParentHash(String parentHash) {
-        this.parentHash = parentHash;
-    }
-
-    /**
-     * @return String return the parentHashPackage
-     */
-    public String getParentHashPackage() {
-        return parentHashPackage;
-    }
-
-    /**
-     * @param parentHashPackage the parentHashPackage to set
-     */
-    public void setParentHashPackage(String parentHashPackage) {
-        this.parentHashPackage = parentHashPackage;
-    }
-
-    /**
-     * @return String return the parentHashPackageClass
-     */
-    public String getParentHashPackageClass() {
-        return parentHashPackageClass;
-    }
-
-    /**
-     * @param parentHashPackageClass the parentHashPackageClass to set
-     */
-    public void setParentHashPackageClass(String parentHashPackageClass) {
-        this.parentHashPackageClass = parentHashPackageClass;
     }
 
 }

@@ -7,136 +7,30 @@ import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
 
+import com.minerprojects.data.DataRefactoring;
+
 public class RefactoringReporter {
 
     private String projectName;
 
-    private String parentHash;
-
-    private String pathClass;
-
     private String hash;
 
-    private String hashPathClass;
-
-    private String type;
+    private String hashPackage;
 
     private String hashPackageClass;
 
+    private String type;
+
     public RefactoringReporter(
-            String projectName,
-            String hash,
-            String parentHash,
-            String type,
-            String hashPackageClass) {
+            CommitReporter commit, String hPackage, String hashPackageClass, String type) {
 
-        this.projectName = projectName;
-        this.hash = hash;
-        this.parentHash = parentHash;
+        this.projectName = commit.getProjectName();
+        this.hash = commit.getHash();
+        this.hashPackage = this.hash + "." + hPackage;
+        this.hashPackageClass = this.hash + "." + hashPackageClass;
         this.type = type;
-        this.hashPackageClass = hashPackageClass;
-    }
 
-    public String getHashPackageClass() {
-        return hashPackageClass;
-    }
-
-    public void setHashPackageClass(String hashPackageClass) {
-        this.hashPackageClass = hashPackageClass;
-    }
-
-    @Override
-    public String toString() {
-        return "RefactoringReporter [hash=" + hash + ", type=" + type + ", parentHash="
-                + parentHash + ", pathClass=" + pathClass + ", projectName=" + projectName + ", hashPathClass="
-                + hashPathClass + "]";
-    }
-
-    /**
-     * @return String return the hash
-     */
-    public String getHash() {
-        return hash;
-    }
-
-    /**
-     * @param hash the hash to set
-     */
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
-
-    /**
-     * @return String return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-     * @return String return the parentHash
-     */
-    public String getParentHash() {
-        return parentHash;
-    }
-
-    /**
-     * @param parentHash the parentHash to set
-     */
-    public void setParentHash(String parentHash) {
-        this.parentHash = parentHash;
-    }
-
-    /**
-     * @return String return the pathClass
-     */
-    public String getPathClass() {
-        return pathClass;
-    }
-
-    /**
-     * @param pathClass the pathClass to set
-     */
-    public void setPathClass(String pathClass) {
-        this.pathClass = pathClass;
-    }
-
-    /**
-     * @return String return the projectName
-     */
-    public String getProjectName() {
-        return projectName;
-    }
-
-    /**
-     * @param projectName the projectName to set
-     */
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    /**
-     * @return String return the hashPathClass
-     */
-
-    public String getHashPathClass() {
-        return hashPathClass;
-
-    }
-
-    /**
-     * @param hashPathClass the hashPathClass to set
-     */
-
-    public void setHashPathClass(String hashPathClass) {
-        this.hashPathClass = hashPathClass;
+        new DataRefactoring(this);
 
     }
 
@@ -167,13 +61,89 @@ public class RefactoringReporter {
 
         for (Refactoring ref : refactorings) {
 
-            new RefactoringReporter(
-                    commit.getProjectName(),
-                    commit.getHash(),
-                    commit.getParentHash(),
-                    ref.getRefactoringType().toString(),
-                    commit.getHash() + "." + ref.getClass().getPackageName() + "." + ref.getClass().getSimpleName());
+            // Itera pelos elementos "antes"
+            ref.getInvolvedClassesBeforeRefactoring().forEach(c -> {
+
+                new RefactoringReporter(
+                        commit,
+                        extractPackageFromClass(c.getValue()),
+                        c.getValue(),
+                        ref.getRefactoringType().toString());
+            });
+
         }
+    }
+
+    public static String extractPackageFromClass(String fullyQualifiedName) {
+        if (fullyQualifiedName != null && fullyQualifiedName.contains(".")) {
+            int lastDotIndex = fullyQualifiedName.lastIndexOf(".");
+            return fullyQualifiedName.substring(0, lastDotIndex); // Retorna o nome do pacote
+        }
+        return ""; // Caso não seja possível identificar
+    }
+
+    /**
+     * @param projectName the projectName to set
+     */
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    /**
+     * @param hash the hash to set
+     */
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
+    /**
+     * @return String return the hashPackage
+     */
+    public String getHashPackage() {
+        return hashPackage;
+    }
+
+    /**
+     * @param hashPackage the hashPackage to set
+     */
+    public void setHashPackage(String hashPackage) {
+        this.hashPackage = hashPackage;
+    }
+
+    /**
+     * @return String return the hashPackageClass
+     */
+    public String getHashPackageClass() {
+        return hashPackageClass;
+    }
+
+    /**
+     * @param hashPackageClass the hashPackageClass to set
+     */
+    public void setHashPackageClass(String hashPackageClass) {
+        this.hashPackageClass = hashPackageClass;
+    }
+
+    /**
+     * @return String return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getProjectName() {
+        return this.projectName;
+    }
+
+    public String getHash() {
+        return this.hash;
     }
 
 }

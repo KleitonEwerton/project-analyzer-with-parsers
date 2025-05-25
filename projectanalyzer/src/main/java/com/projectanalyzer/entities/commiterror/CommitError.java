@@ -1,4 +1,4 @@
-package com.projectanalyzer.entities.refactoring;
+package com.projectanalyzer.entities.commiterror;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Refactoring {
+public class CommitError {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,13 +20,7 @@ public class Refactoring {
     private String hash;
 
     @Column(nullable = false)
-    private String hashPackage;
-
-    @Column(nullable = false)
-    private String hashPackageClass;
-
-    @Column(nullable = false)
-    private String type;
+    private String erroMSG;
 
     /**
      * @return long return the id
@@ -71,45 +65,17 @@ public class Refactoring {
     }
 
     /**
-     * @return String return the hashPackage
+     * @return String return the erroMSG
      */
-    public String getHashPackage() {
-        return hashPackage;
+    public String getErroMSG() {
+        return erroMSG;
     }
 
     /**
-     * @param hashPackage the hashPackage to set
+     * @param erroMSG the erroMSG to set
      */
-    public void setHashPackage(String hashPackage) {
-        this.hashPackage = hashPackage;
-    }
-
-    /**
-     * @return String return the hashPackageClass
-     */
-    public String getHashPackageClass() {
-        return hashPackageClass;
-    }
-
-    /**
-     * @param hashPackageClass the hashPackageClass to set
-     */
-    public void setHashPackageClass(String hashPackageClass) {
-        this.hashPackageClass = hashPackageClass;
-    }
-
-    /**
-     * @return String return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(String type) {
-        this.type = type;
+    public void setErroMSG(String erroMSG) {
+        this.erroMSG = erroMSG;
     }
 
 }

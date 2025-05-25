@@ -34,21 +34,4 @@ public class RefactoringController {
         return refactoringRepository.save(refactoring);
     }
 
-    // Atualizar
-    @PutMapping("/{id}")
-    public ResponseEntity<Refactoring> updateRefactoring(@PathVariable Long id,
-            @RequestBody Refactoring refactoringDetails) {
-        return refactoringRepository.findById(id)
-                .map(refactoring -> {
-                    refactoring.setProjectName(refactoringDetails.getProjectName());
-                    refactoring.setHash(refactoringDetails.getHash());
-                    refactoring.setHashPackageClass(refactoringDetails.getHashPackageClass());
-                    refactoring.setType(refactoringDetails.getType());
-                    refactoring.setParentHash(refactoringDetails.getParentHash());
-                    Refactoring updatedRefactoring = refactoringRepository.save(refactoring);
-                    return ResponseEntity.ok(updatedRefactoring);
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
-
 }

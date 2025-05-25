@@ -4,9 +4,8 @@ package com.minerprojects;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.eclipse.jgit.lib.Repository;
@@ -15,9 +14,9 @@ import org.refactoringminer.api.GitService;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
 
-import com.minerprojects.CLI.CLIExecute;
-import com.minerprojects.CLI.CLIExecution;
-import com.minerprojects.badsmelldetector.ExecutionConfig;
+import com.minerprojects.cli.CLIExecute;
+import com.minerprojects.cli.CLIExecution;
+import com.minerprojects.pmddetector.ExecutionConfig;
 
 public class MinerProjects {
 
@@ -25,17 +24,46 @@ public class MinerProjects {
 
     public static void main(String[] args) throws Exception {
 
-        // String nomeProjeto = "auto";
-        // String url = "https://github.com/google/auto.git";
+        // APROVADO
+        // String nomeProjeto = "httpcomponents-client";
+        // String url = "https://github.com/apache/httpcomponents-client.git";
+        // String branch = "master";
 
-        String nomeProjeto = "examples-for-refactoring-testing";
-        String url = "https://github.com/KleitonEwerton/examples-for-refactoring-testing.git";
+        // APROVADO
+        // String nomeProjeto = "openpnp";
+        // String url = "https://github.com/openpnp/openpnp.git";
+        // String branch = "develop";
 
-        checar(nomeProjeto, url);
+        // APROVADO
+        // String nomeProjeto = "spring-data-mongodb";
+        // String url = "https://github.com/spring-projects/spring-data-mongodb.git";
+        // String branch = "main";
+
+        // APROVADO
+        // String nomeProjeto = "controlsfx";
+        // String url = "https://github.com/controlsfx/controlsfx.git";
+        // String branch = "master";
+
+        // APROVADO
+        // String nomeProjeto = "pgjdbc";
+        // String url = "https://github.com/pgjdbc/pgjdbc.git";
+        // String branch = "master";
+
+        // APROVADO
+        // String nomeProjeto = "mondrian";
+        // String url = "https://github.com/pentaho/mondrian.git";
+        // String branch = "master";
+
+        // APROVADO pmd OK Commit OK Comment OK Refactoring OK
+        String nomeProjeto = "morphia";
+        String url = "https://github.com/MorphiaOrg/morphia.git";
+        String branch = "master";
+
+        checar(nomeProjeto, url, branch);
 
     }
 
-    public static void checar(String projectName, String projectUrl) throws Exception {
+    public static void checar(String projectName, String projectUrl, String branch) throws Exception {
 
         CommitReporter.commits.clear();
 
@@ -45,30 +73,29 @@ public class MinerProjects {
 
         Repository repo = gitService.cloneIfNotExists("tmp/" + projectName, projectUrl);
 
-        logger.info("Iniciando...");
-
         if (logger.isLoggable(java.util.logging.Level.INFO)) {
             logger.info(String.format("Projeto: %s", projectUrl));
         }
 
-        ExecutionConfig.PROJECT_PATH = "C:\\Users\\kleit\\OneDrive\\Documentos\\tcc\\java-paser-refactoring-and-comments\\projectextractor\\tmp\\"
+        ExecutionConfig.PROJECT_PATH = "C:\\project-analyzer-with-parsers\\projectextractor\\tmp\\"
                 + projectName;
 
-        logger.info("GET COMMITS AND MODIFIED FILES: " + ExecutionConfig.PROJECT_PATH);
+        logger.info("Pegando todos os commit, arquivos modificados por commit e suas integridades no SO usado: "
+                + ExecutionConfig.PROJECT_PATH);
 
-        getCommits(projectName);
+        getCommits(projectName, branch);
 
         try {
 
             logger.info("Analisando todos os comentarios em cada versão do projeto!");
-            // CommentReporter.getAllComments(projectName);
 
-            logger.info("Analisando todos as refatorações em cada versão do projeto!");
+            CommentReporter.getAllComments(projectName);
+
+            // logger.info("Analisando todos os PMD em cada versão do projeto!");
+            // PMDReporter.getAllPMD(projectName);
+
+            // logger.info("Analisando todos as refatorações em cada versão do projeto!");
             // RefactoringReporter.getAllRefactoring(miner, repo);
-
-            logger.info("Analisando todos os PMD em cada versão do projeto!");
-
-            PMDReporter.getAllPMD(projectName);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,8 +105,9 @@ public class MinerProjects {
 
     }
 
-    public static void getCommits(String projectName) throws IOException {
-        String command = "git log --all --pretty=\"hash:'%H'parents:'%P'\" --name-status --reverse";
+    public static void getCommits(String projectName, String branch) throws IOException, InterruptedException {
+
+        String command = "git log " + branch + " --pretty=\"hash:'%H'parents:'%P'\" --name-status";
         String path = "tmp/" + projectName;
 
         CLIExecution execute = CLIExecute.execute(command, path);
@@ -100,30 +128,23 @@ public class MinerProjects {
                 int parentsEnd = line.indexOf("'", parentsBegin);
 
                 String hash = line.substring(hashBegin, hashEnd);
+
                 String parents = line.substring(parentsBegin, parentsEnd);
 
-                Set<String> parentsSet = new HashSet<>(Arrays.asList(parents.split(" ")));
+                List<String> parentsSet = Arrays.asList(parents.split(" "));
                 currentCommit = new CommitReporter(projectName, hash, parentsSet, new HashMap<>());
+
                 commitsMap.put(hash, currentCommit);
+
             } else if (currentCommit != null
                     && (line.startsWith("M") || line.startsWith("A")) && line.endsWith(".java")) {
-                // Processa arquivos modificados, adicionados ou deletados
+
                 String[] parts = line.split("\t", 2);
                 if (parts.length == 2) {
                     String status = parts[0].trim();
                     String filePath = parts[1].trim();
                     currentCommit.getFilesMAD().put(filePath, status);
                     currentCommit.getJavaFiles().add(filePath);
-                }
-            }
-        }
-
-        // Configura as relações pai-filho entre os commits
-        for (CommitReporter commit : commitsMap.values()) {
-            for (String parentHash : commit.getParentHashes()) {
-                CommitReporter parent = commitsMap.get(parentHash);
-                if (parent != null) {
-                    commit.setParent(parent);
                 }
             }
         }

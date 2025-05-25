@@ -13,15 +13,18 @@ import java.util.logging.Logger;
 
 import org.springframework.web.client.RestTemplate;
 
-import com.minerprojects.CLI.CLIExecute;
-import com.minerprojects.badsmelldetector.ExecutionConfig;
-import com.minerprojects.badsmelldetector.pmd.CyclomaticComplexity;
-import com.minerprojects.badsmelldetector.pmd.DataClass;
-import com.minerprojects.badsmelldetector.pmd.LongMethod;
-import com.minerprojects.badsmelldetector.pmd.LongParameterList;
-import com.minerprojects.badsmelldetector.pmd.TooManyFields;
-import com.minerprojects.badsmelldetector.pmd.TooManyMethods;
+import com.minerprojects.cli.CLIExecute;
+import com.minerprojects.cli.CLIExecution;
+import com.minerprojects.data.DataComment;
 import com.minerprojects.data.DataPMD;
+import com.minerprojects.pmddetector.ExecutionConfig;
+import com.minerprojects.pmddetector.pmd.CyclomaticComplexity;
+import com.minerprojects.pmddetector.pmd.DataClass;
+import com.minerprojects.pmddetector.pmd.GodClass;
+import com.minerprojects.pmddetector.pmd.LongMethod;
+import com.minerprojects.pmddetector.pmd.LongParameterList;
+import com.minerprojects.pmddetector.pmd.TooManyFields;
+import com.minerprojects.pmddetector.pmd.TooManyMethods;
 
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
@@ -29,8 +32,6 @@ import net.sourceforge.pmd.lang.document.FileCollector;
 import net.sourceforge.pmd.lang.rule.RuleSet;
 import net.sourceforge.pmd.lang.rule.RuleSetLoader;
 import net.sourceforge.pmd.reporting.RuleViolation;
-
-import com.minerprojects.badsmelldetector.pmd.GodClass;
 
 public class PMDReporter {
 
@@ -52,7 +53,7 @@ public class PMDReporter {
                                                         commit.getHash()));
                                 }
 
-                                saveJavaFiles(commit.getJavaFiles(), projectName);
+                                saveJavaFiles(commit.getJavaFiles());
 
                                 PMDReporter.getPMD(commit, projectName);
 
@@ -68,9 +69,21 @@ public class PMDReporter {
 
         public static void getPMD(CommitReporter commit, String projectName) throws IOException, InterruptedException {
 
-                String command = "git checkout " + commit.getHash();
+                String command = "git checkout -f " + commit.getHash();
 
-                CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
+                CLIExecution execute = CLIExecute.executeCheckout(command, "tmp" + File.separator + projectName);
+
+                if (!execute.getError().isEmpty()) {
+
+                        logger.info(String.format("ERROR%n%s%n%s", command, execute.toString()));
+
+                        new CommitError(projectName,
+                                        commit.getHash(),
+                                        command + "\n" + execute.toString());
+
+                        return;
+
+                }
 
                 String directory = Paths.get(ExecutionConfig.PROJECT_PATH).toString();
 
@@ -104,9 +117,9 @@ public class PMDReporter {
 
         }
 
-        public static void saveJavaFiles(List<String> javaFiles, String projectName) {
+        public static void saveJavaFiles(List<String> javaFiles) {
 
-                String tmpDir = "tmp/" + projectName;
+                String tmpDir = "tmp";
 
                 File directory = new File(tmpDir);
                 if (!directory.exists()) {
@@ -118,7 +131,9 @@ public class PMDReporter {
                                 writer.write(javaFile);
                                 writer.newLine();
                         }
-                } catch (IOException e) {
+                } catch (
+
+                IOException e) {
                         e.printStackTrace();
                 }
         }
@@ -134,7 +149,7 @@ public class PMDReporter {
                                 Paths.get(dir, ".pmdCache_" + projectName + "_" + analiserName).toString());
                 config.setReportFormat("xml");
 
-                Path javaFilesListPath = Paths.get(path, "java_files_list.txt");
+                Path javaFilesListPath = Paths.get(dir, "java_files_list.txt");
 
                 try (PmdAnalysis analysis = PmdAnalysis.create(config)) {
                         // Carregar a regra CyclomaticComplexity
@@ -176,21 +191,14 @@ public class PMDReporter {
 
                 pmd.setPriority(violation.getRule().getPriority().toString());
 
-                pmd.setParentHash(commit.getParentHash());
-
-                pmd.setParentHashPackage(
-                                pmd.getParentHash() + "." + violation.getAdditionalInfo().get("packageName"));
-
-                pmd.setParentHashPackageClass(
-                                pmd.getParentHashPackage() + "." + violation.getAdditionalInfo().get("className"));
-
                 try {
                         restTemplate.postForObject("http://localhost:8080/api/pmd", pmd, DataPMD.class);
-                        logger.info(
-                                        "Dados enviados com sucesso para a API." + violation.getAdditionalInfo());
 
                 } catch (Exception e) {
-                        logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage(), e);
+                        logger.log(Level.SEVERE, "Erro ao enviar dados para a API: " + e.getMessage());
+                        new CommitError(projectName,
+                                        commit.getHash(),
+                                        "Erro ao enviar dados para a api. " + DataPMD.class.getName() + ".");
                 }
         }
 
